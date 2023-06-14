@@ -75,4 +75,12 @@ public class Product implements Serializable {
 	@Excel(name = "海报", width = 15)
     @ApiModelProperty(value = "海报")
     private java.lang.String img;
+	/**行程标题*/
+	@Excel(name = "行程标题", width = 15)
+    @ApiModelProperty(value = "行程标题")
+    private java.lang.String journeyTitle;
+	/**行程描述*/
+	@Excel(name = "行程描述", width = 15)
+    @ApiModelProperty(value = "行程描述")
+    private java.lang.String journeyDesc;
 }

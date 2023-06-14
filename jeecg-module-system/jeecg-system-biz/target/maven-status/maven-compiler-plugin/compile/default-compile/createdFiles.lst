@@ -17,7 +17,10 @@ org\jeecg\modules\system\model\TreeModel.class
 org\jeecg\modules\system\mapper\SysThirdAccountMapper.class
 org\jeecg\modules\system\entity\SysPosition.class
 org\jeecg\modules\system\service\impl\SysUserServiceImpl.class
+<<<<<<< HEAD
 org\jeecg\modules\product\entity\Product.class
+=======
+>>>>>>> 3dd8e872c75ee415d8f79af45ebbd2a6fcd968bc
 org\jeecg\modules\system\entity\SysTenant.class
 org\jeecg\modules\system\controller\SysUserAgentController.class
 org\jeecg\modules\system\service\ISysAnnouncementSendService.class
@@ -67,7 +70,10 @@ org\jeecg\config\init\TomcatFactoryConfig.class
 org\jeecg\modules\system\mapper\SysDataLogMapper.class
 org\jeecg\modules\system\service\impl\SysRoleServiceImpl.class
 org\jeecg\modules\message\entity\MsgParams.class
+<<<<<<< HEAD
 org\jeecg\modules\product\service\IProductService.class
+=======
+>>>>>>> 3dd8e872c75ee415d8f79af45ebbd2a6fcd968bc
 org\jeecg\modules\cas\util\XmlUtils$2.class
 org\jeecg\modules\api\controller\SystemApiController.class
 org\jeecg\modules\system\util\XssUtils.class
@@ -141,7 +147,10 @@ org\jeecg\modules\message\controller\SysMessageTemplateController.class
 org\jeecg\modules\system\mapper\SysPermissionMapper.class
 org\jeecg\modules\system\mapper\SysCategoryMapper.class
 org\jeecg\modules\system\mapper\SysDepartRoleUserMapper.class
+<<<<<<< HEAD
 org\jeecg\modules\product\mapper\ProductMapper.class
+=======
+>>>>>>> 3dd8e872c75ee415d8f79af45ebbd2a6fcd968bc
 org\jeecg\modules\system\service\impl\SysBaseApiImpl.class
 org\jeecg\modules\system\controller\SysRoleIndexController.class
 org\jeecg\modules\system\service\ISysUserService.class
@@ -164,7 +173,10 @@ org\jeecg\modules\system\mapper\SysLogMapper.class
 org\jeecg\modules\system\controller\SysDepartController.class
 org\jeecg\modules\system\service\impl\SysRoleIndexServiceImpl.class
 org\jeecg\modules\message\job\SendMsgJob.class
+<<<<<<< HEAD
 org\jeecg\modules\product\controller\ProductController.class
+=======
+>>>>>>> 3dd8e872c75ee415d8f79af45ebbd2a6fcd968bc
 org\jeecg\modules\aop\TenantPackUserLogAspect.class
 org\jeecg\modules\message\handle\enums\SendMsgStatusEnum.class
 org\jeecg\modules\system\service\impl\SysDepartRolePermissionServiceImpl.class
@@ -271,7 +283,10 @@ org\jeecg\modules\system\mapper\SysDepartRoleMapper.class
 org\jeecg\modules\system\vo\tenant\TenantPackUser.class
 org\jeecg\modules\system\vo\SysCommentVO.class
 org\jeecg\modules\system\controller\SysAnnouncementController.class
+<<<<<<< HEAD
 org\jeecg\modules\product\service\impl\ProductServiceImpl.class
+=======
+>>>>>>> 3dd8e872c75ee415d8f79af45ebbd2a6fcd968bc
 org\jeecg\modules\system\vo\tenant\TenantPackAuth.class
 org\jeecg\modules\system\vo\UserAvatar.class
 org\jeecg\modules\message\controller\TestSocketController.class
