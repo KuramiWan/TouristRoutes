@@ -1,4 +1,4 @@
-package org.jeecg.modules.product.entity;
+package org.jeecg.modules.product.task.entity;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -19,17 +19,17 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @Description: 旅游产品表
+ * @Description: 旅行任务表
  * @Author: jeecg-boot
  * @Date:   2023-06-14
  * @Version: V1.0
  */
 @Data
-@TableName("product")
+@TableName("journey_task")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="product对象", description="旅游产品表")
-public class Product implements Serializable {
+@ApiModel(value="journey_task对象", description="旅行任务表")
+public class JourneyTask implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
@@ -59,28 +59,20 @@ public class Product implements Serializable {
 	@Excel(name = "标题", width = 15)
     @ApiModelProperty(value = "标题")
     private java.lang.String title;
-	/**描述*/
-	@Excel(name = "描述", width = 15)
-    @ApiModelProperty(value = "描述")
-    private java.lang.String productDec;
-	/**出发地*/
-	@Excel(name = "出发地", width = 15)
-    @ApiModelProperty(value = "出发地")
-    private java.lang.String departure;
-	/**标签*/
-	@Excel(name = "标签", width = 15)
-    @ApiModelProperty(value = "标签")
-    private java.lang.String tags;
-	/**海报*/
-	@Excel(name = "海报", width = 15)
-    @ApiModelProperty(value = "海报")
-    private java.lang.String img;
-	/**行程标题*/
-	@Excel(name = "行程标题", width = 15)
-    @ApiModelProperty(value = "行程标题")
-    private java.lang.String journeyTitle;
-	/**行程描述*/
-	@Excel(name = "行程描述", width = 15)
-    @ApiModelProperty(value = "行程描述")
-    private java.lang.String journeyDesc;
+	/**行为*/
+	@Excel(name = "行为", width = 15)
+    @ApiModelProperty(value = "行为")
+    private java.lang.String action;
+	/**副标题*/
+	@Excel(name = "副标题", width = 15)
+    @ApiModelProperty(value = "副标题")
+    private java.lang.String subtitle;
+	/**时间*/
+	@Excel(name = "时间", width = 15)
+    @ApiModelProperty(value = "时间")
+    private java.lang.String time;
+	/**旅游日程id*/
+	@Excel(name = "旅游日程id", width = 15)
+    @ApiModelProperty(value = "旅游日程id")
+    private java.lang.String journeyDayId;
 }
