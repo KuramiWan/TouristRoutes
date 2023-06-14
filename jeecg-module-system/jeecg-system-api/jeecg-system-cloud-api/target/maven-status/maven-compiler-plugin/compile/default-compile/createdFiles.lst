@@ -1,0 +1,6 @@
+org\jeecg\common\system\api\fallback\SysBaseAPIFallback.class
+org\jeecg\common\system\api\factory\SysBaseAPIFallbackFactory.class
+org\jeecg\common\system\api\ISysBaseAPI.class
+org\jeecg\common\drag\api\factory\DragBaseApiFallbackFactory.class
+org\jeecg\common\drag\api\fallbak\DragBaseApiFallback.class
+org\jeecg\common\drag\api\IDragBaseApi.class
