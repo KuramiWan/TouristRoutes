@@ -81,7 +81,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
 	 */
 	@AutoLog(value = "旅行任务表-添加")
 	@ApiOperation(value="旅行任务表-添加", notes="旅行任务表-添加")
-	@RequiresPermissions("task:journey_task:add")
+//	@RequiresPermissions("task:journey_task:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody JourneyTask journeyTask) {
 		journeyTaskService.save(journeyTask);
@@ -96,7 +96,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
 	 */
 	@AutoLog(value = "旅行任务表-编辑")
 	@ApiOperation(value="旅行任务表-编辑", notes="旅行任务表-编辑")
-	@RequiresPermissions("task:journey_task:edit")
+//	@RequiresPermissions("task:journey_task:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody JourneyTask journeyTask) {
 		journeyTaskService.updateById(journeyTask);
@@ -111,7 +111,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
 	 */
 	@AutoLog(value = "旅行任务表-通过id删除")
 	@ApiOperation(value="旅行任务表-通过id删除", notes="旅行任务表-通过id删除")
-	@RequiresPermissions("task:journey_task:delete")
+//	@RequiresPermissions("task:journey_task:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		journeyTaskService.removeById(id);
@@ -126,7 +126,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
 	 */
 	@AutoLog(value = "旅行任务表-批量删除")
 	@ApiOperation(value="旅行任务表-批量删除", notes="旅行任务表-批量删除")
-	@RequiresPermissions("task:journey_task:deleteBatch")
+//	@RequiresPermissions("task:journey_task:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.journeyTaskService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
     * @param request
     * @param journeyTask
     */
-    @RequiresPermissions("task:journey_task:exportXls")
+//    @RequiresPermissions("task:journey_task:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, JourneyTask journeyTask) {
         return super.exportXls(request, journeyTask, JourneyTask.class, "旅行任务表");
@@ -169,7 +169,7 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
     * @param response
     * @return
     */
-    @RequiresPermissions("task:journey_task:importExcel")
+//    @RequiresPermissions("task:journey_task:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, JourneyTask.class);

@@ -81,7 +81,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
 	 */
 	@AutoLog(value = "旅游日程表-添加")
 	@ApiOperation(value="旅游日程表-添加", notes="旅游日程表-添加")
-	@RequiresPermissions("day:journey_day:add")
+//	@RequiresPermissions("day:journey_day:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody JourneyDay journeyDay) {
 		journeyDayService.save(journeyDay);
@@ -96,7 +96,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
 	 */
 	@AutoLog(value = "旅游日程表-编辑")
 	@ApiOperation(value="旅游日程表-编辑", notes="旅游日程表-编辑")
-	@RequiresPermissions("day:journey_day:edit")
+//	@RequiresPermissions("day:journey_day:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody JourneyDay journeyDay) {
 		journeyDayService.updateById(journeyDay);
@@ -111,7 +111,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
 	 */
 	@AutoLog(value = "旅游日程表-通过id删除")
 	@ApiOperation(value="旅游日程表-通过id删除", notes="旅游日程表-通过id删除")
-	@RequiresPermissions("day:journey_day:delete")
+//	@RequiresPermissions("day:journey_day:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		journeyDayService.removeById(id);
@@ -126,7 +126,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
 	 */
 	@AutoLog(value = "旅游日程表-批量删除")
 	@ApiOperation(value="旅游日程表-批量删除", notes="旅游日程表-批量删除")
-	@RequiresPermissions("day:journey_day:deleteBatch")
+//	@RequiresPermissions("day:journey_day:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.journeyDayService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +156,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
     * @param request
     * @param journeyDay
     */
-    @RequiresPermissions("day:journey_day:exportXls")
+//    @RequiresPermissions("day:journey_day:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, JourneyDay journeyDay) {
         return super.exportXls(request, journeyDay, JourneyDay.class, "旅游日程表");
@@ -169,7 +169,7 @@ public class JourneyDayController extends JeecgController<JourneyDay, IJourneyDa
     * @param response
     * @return
     */
-    @RequiresPermissions("day:journey_day:importExcel")
+//    @RequiresPermissions("day:journey_day:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, JourneyDay.class);

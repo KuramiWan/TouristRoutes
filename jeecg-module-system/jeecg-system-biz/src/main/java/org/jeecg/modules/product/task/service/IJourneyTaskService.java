@@ -3,6 +3,8 @@ package org.jeecg.modules.product.task.service;
 import org.jeecg.modules.product.task.entity.JourneyTask;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @Description: 旅行任务表
  * @Author: jeecg-boot
@@ -11,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IJourneyTaskService extends IService<JourneyTask> {
 
+    List<JourneyTask> getTaskLists(String id);
 }

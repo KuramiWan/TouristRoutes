@@ -1,5 +1,7 @@
 package org.jeecg.modules.product.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.mapper.ProductMapper;
 import org.jeecg.modules.product.service.IProductService;
@@ -15,5 +17,4 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  */
 @Service
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements IProductService {
-
 }
