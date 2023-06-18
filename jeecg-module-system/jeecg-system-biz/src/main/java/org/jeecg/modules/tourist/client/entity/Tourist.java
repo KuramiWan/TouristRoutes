@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 游客信息表
  * @Author: jeecg-boot
- * @Date:   2023-06-14
+ * @Date:   2023-06-18
  * @Version: V1.0
  */
 @Data
@@ -35,65 +35,66 @@ public class Tourist implements Serializable {
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
-    private String id;
+    private java.lang.String id;
 	/**游客真实名称*/
 	@Excel(name = "游客真实名称", width = 15)
     @ApiModelProperty(value = "游客真实名称")
-    private String touristName;
+    private java.lang.String touristName;
 	/**游客昵称*/
 	@Excel(name = "游客昵称", width = 15)
     @ApiModelProperty(value = "游客昵称")
-    private String touristNickname;
+    private java.lang.String touristNickname;
 	/**游客年龄*/
 	@Excel(name = "游客年龄", width = 15)
     @ApiModelProperty(value = "游客年龄")
-    private Integer touristAge;
+    private java.lang.Integer touristAge;
 	/**游客性别*/
-	@Excel(name = "游客性别", width = 15)
+	@Excel(name = "游客性别", width = 15, dicCode = "gender")
+	@Dict(dicCode = "gender")
     @ApiModelProperty(value = "游客性别")
-    private String touristGender;
+    private java.lang.Integer touristGender;
 	/**游客手机号*/
 	@Excel(name = "游客手机号", width = 15)
     @ApiModelProperty(value = "游客手机号")
-    private String touristPhoneNumber;
+    private java.lang.String touristPhoneNumber;
 	/**游客邮箱*/
 	@Excel(name = "游客邮箱", width = 15)
     @ApiModelProperty(value = "游客邮箱")
-    private String touristEmail;
+    private java.lang.String touristEmail;
 	/**游客国籍*/
 	@Excel(name = "游客国籍", width = 15)
     @ApiModelProperty(value = "游客国籍")
-    private String touristNationality;
+    private java.lang.String touristNationality;
 	/**游客偏好*/
 	@Excel(name = "游客偏好", width = 15)
     @ApiModelProperty(value = "游客偏好")
-    private String touristPreference;
+    private java.lang.String touristPreference;
 	/**游客健康状态*/
 	@Excel(name = "游客健康状态", width = 15)
     @ApiModelProperty(value = "游客健康状态")
-    private String touristHealthCondition;
+    private java.lang.String touristHealthCondition;
 	/**游客平台内货币*/
 	@Excel(name = "游客平台内货币", width = 15)
     @ApiModelProperty(value = "游客平台内货币")
-    private BigDecimal utouristPlatformCurrency;
+    private java.math.BigDecimal utouristPlatformCurrency;
 	/**游客的紧急联系人的手机号码*/
 	@Excel(name = "游客的紧急联系人的手机号码", width = 15)
     @ApiModelProperty(value = "游客的紧急联系人的手机号码")
-    private String touristEmergencyContact;
+    private java.lang.String touristEmergencyContact;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
-    private String createBy;
+    private java.lang.String createBy;
 	/**创建日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "创建日期")
-    private Date createTime;
+    private java.util.Date createTime;
 	/**更新人*/
     @ApiModelProperty(value = "更新人")
-    private String updateBy;
+    private java.lang.String updateBy;
 	/**更新日期*/
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
-    private Date updateTime;
+    private java.util.Date updateTime;
 }

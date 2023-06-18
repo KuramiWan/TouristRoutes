@@ -18,8 +18,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecg.modules.tourist.client.entity.Tourist;
-import org.jeecg.modules.tourist.client.service.ITouristService;
+import org.jeecg.modules.tourist.client.entity.Escort;
+import org.jeecg.modules.tourist.client.service.IEscortService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -38,66 +38,66 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
  /**
- * @Description: 游客信息表
+ * @Description: 伴游人的基本信息
  * @Author: jeecg-boot
  * @Date:   2023-06-18
  * @Version: V1.0
  */
-@Api(tags="游客信息表")
+@Api(tags="伴游人的基本信息")
 @RestController
-@RequestMapping("/client/tourist")
+@RequestMapping("/client/escort")
 @Slf4j
-public class TouristController extends JeecgController<Tourist, ITouristService> {
+public class EscortController extends JeecgController<Escort, IEscortService> {
 	@Autowired
-	private ITouristService touristService;
+	private IEscortService escortService;
 	
 	/**
 	 * 分页列表查询
 	 *
-	 * @param tourist
+	 * @param escort
 	 * @param pageNo
 	 * @param pageSize
 	 * @param req
 	 * @return
 	 */
-	//@AutoLog(value = "游客信息表-分页列表查询")
-	@ApiOperation(value="游客信息表-分页列表查询", notes="游客信息表-分页列表查询")
+	//@AutoLog(value = "伴游人的基本信息-分页列表查询")
+	@ApiOperation(value="伴游人的基本信息-分页列表查询", notes="伴游人的基本信息-分页列表查询")
 	@GetMapping(value = "/list")
-	public Result<IPage<Tourist>> queryPageList(Tourist tourist,
+	public Result<IPage<Escort>> queryPageList(Escort escort,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		QueryWrapper<Tourist> queryWrapper = QueryGenerator.initQueryWrapper(tourist, req.getParameterMap());
-		Page<Tourist> page = new Page<Tourist>(pageNo, pageSize);
-		IPage<Tourist> pageList = touristService.page(page, queryWrapper);
+		QueryWrapper<Escort> queryWrapper = QueryGenerator.initQueryWrapper(escort, req.getParameterMap());
+		Page<Escort> page = new Page<Escort>(pageNo, pageSize);
+		IPage<Escort> pageList = escortService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
 	
 	/**
 	 *   添加
 	 *
-	 * @param tourist
+	 * @param escort
 	 * @return
 	 */
-	@AutoLog(value = "游客信息表-添加")
-	@ApiOperation(value="游客信息表-添加", notes="游客信息表-添加")
+	@AutoLog(value = "伴游人的基本信息-添加")
+	@ApiOperation(value="伴游人的基本信息-添加", notes="伴游人的基本信息-添加")
 	@PostMapping(value = "/add")
-	public Result<String> add(@RequestBody Tourist tourist) {
-		touristService.save(tourist);
+	public Result<String> add(@RequestBody Escort escort) {
+		escortService.save(escort);
 		return Result.OK("添加成功！");
 	}
 	
 	/**
 	 *  编辑
 	 *
-	 * @param tourist
+	 * @param escort
 	 * @return
 	 */
-	@AutoLog(value = "游客信息表-编辑")
-	@ApiOperation(value="游客信息表-编辑", notes="游客信息表-编辑")
+	@AutoLog(value = "伴游人的基本信息-编辑")
+	@ApiOperation(value="伴游人的基本信息-编辑", notes="伴游人的基本信息-编辑")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
-	public Result<String> edit(@RequestBody Tourist tourist) {
-		touristService.updateById(tourist);
+	public Result<String> edit(@RequestBody Escort escort) {
+		escortService.updateById(escort);
 		return Result.OK("编辑成功!");
 	}
 	
@@ -107,11 +107,11 @@ public class TouristController extends JeecgController<Tourist, ITouristService>
 	 * @param id
 	 * @return
 	 */
-	@AutoLog(value = "游客信息表-通过id删除")
-	@ApiOperation(value="游客信息表-通过id删除", notes="游客信息表-通过id删除")
+	@AutoLog(value = "伴游人的基本信息-通过id删除")
+	@ApiOperation(value="伴游人的基本信息-通过id删除", notes="伴游人的基本信息-通过id删除")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		touristService.removeById(id);
+		escortService.removeById(id);
 		return Result.OK("删除成功!");
 	}
 	
@@ -121,11 +121,11 @@ public class TouristController extends JeecgController<Tourist, ITouristService>
 	 * @param ids
 	 * @return
 	 */
-	@AutoLog(value = "游客信息表-批量删除")
-	@ApiOperation(value="游客信息表-批量删除", notes="游客信息表-批量删除")
+	@AutoLog(value = "伴游人的基本信息-批量删除")
+	@ApiOperation(value="伴游人的基本信息-批量删除", notes="伴游人的基本信息-批量删除")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		this.touristService.removeByIds(Arrays.asList(ids.split(",")));
+		this.escortService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
 	
@@ -135,27 +135,27 @@ public class TouristController extends JeecgController<Tourist, ITouristService>
 	 * @param id
 	 * @return
 	 */
-	//@AutoLog(value = "游客信息表-通过id查询")
-	@ApiOperation(value="游客信息表-通过id查询", notes="游客信息表-通过id查询")
+	//@AutoLog(value = "伴游人的基本信息-通过id查询")
+	@ApiOperation(value="伴游人的基本信息-通过id查询", notes="伴游人的基本信息-通过id查询")
 	@GetMapping(value = "/queryById")
-	public Result<Tourist> queryById(@RequestParam(name="id",required=true) String id) {
-		Tourist tourist = touristService.getById(id);
-		if(tourist==null) {
+	public Result<Escort> queryById(@RequestParam(name="id",required=true) String id) {
+		Escort escort = escortService.getById(id);
+		if(escort==null) {
 			return Result.error("未找到对应数据");
 		}
-		return Result.OK(tourist);
+		return Result.OK(escort);
 	}
 
     /**
     * 导出excel
     *
     * @param request
-    * @param tourist
+    * @param escort
     */
-    @RequiresPermissions("touristss:tourist:exportXls")
+    @RequiresPermissions("escort:escort:exportXls")
     @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, Tourist tourist) {
-        return super.exportXls(request, tourist, Tourist.class, "游客信息表");
+    public ModelAndView exportXls(HttpServletRequest request, Escort escort) {
+        return super.exportXls(request, escort, Escort.class, "伴游人的基本信息");
     }
 
     /**
@@ -165,10 +165,10 @@ public class TouristController extends JeecgController<Tourist, ITouristService>
     * @param response
     * @return
     */
-    @RequiresPermissions("touristss:tourist:importExcel")
+    @RequiresPermissions("escort:escort:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, Tourist.class);
+        return super.importExcel(request, response, Escort.class);
     }
 
 }
