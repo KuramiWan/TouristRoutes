@@ -67,10 +67,6 @@ public class ProductBo implements Serializable {
 	@Excel(name = "出发地", width = 15)
     @ApiModelProperty(value = "出发地")
     private String departure;
-	/**标签*/
-	@Excel(name = "标签", width = 15)
-    @ApiModelProperty(value = "标签")
-    private String tags;
 	/**海报*/
 	@Excel(name = "海报", width = 15)
     @ApiModelProperty(value = "海报")

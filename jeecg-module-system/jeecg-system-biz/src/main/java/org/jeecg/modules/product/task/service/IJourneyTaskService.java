@@ -14,4 +14,6 @@ import java.util.List;
 public interface IJourneyTaskService extends IService<JourneyTask> {
 
     List<JourneyTask> getTaskLists(String id);
+
+    boolean saveTask(List<JourneyTask> tasks);
 }

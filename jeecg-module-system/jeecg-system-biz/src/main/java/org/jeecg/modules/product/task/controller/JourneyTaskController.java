@@ -175,4 +175,8 @@ public class JourneyTaskController extends JeecgController<JourneyTask, IJourney
         return super.importExcel(request, response, JourneyTask.class);
     }
 
+	 public boolean saveTask(List<JourneyTask> tasks) {
+		 return journeyTaskService.saveBatch(tasks);
+	 }
+
 }

@@ -59,10 +59,6 @@ public class Product implements Serializable {
 	/**所属部门*/
     @ApiModelProperty(value = "所属部门")
     private java.lang.String sysOrgCode;
-	/**标题*/
-	@Excel(name = "标题", width = 15)
-    @ApiModelProperty(value = "标题")
-    private java.lang.String title;
 	/**描述*/
 	@Excel(name = "描述", width = 15)
     @ApiModelProperty(value = "描述")
@@ -71,10 +67,6 @@ public class Product implements Serializable {
 	@Excel(name = "出发地", width = 15)
     @ApiModelProperty(value = "出发地")
     private java.lang.String departure;
-	/**标签*/
-	@Excel(name = "标签", width = 15)
-    @ApiModelProperty(value = "标签")
-    private java.lang.String tags;
 	/**海报*/
 	@Excel(name = "海报", width = 15)
     @ApiModelProperty(value = "海报")

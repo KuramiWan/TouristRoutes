@@ -27,7 +27,11 @@ public class JourneyTaskServiceImpl extends ServiceImpl<JourneyTaskMapper, Journ
     public List<JourneyTask> getTaskLists(String id) {
         LambdaQueryWrapper<JourneyTask> journeyDayLambdaQueryWrapper = new LambdaQueryWrapper<>();
         journeyDayLambdaQueryWrapper.eq(JourneyTask::getJourneyDayId,id);
-        List<JourneyTask> journeyTasks = journeyTaskMapper.selectList(journeyDayLambdaQueryWrapper);
-        return journeyTasks;
+        return journeyTaskMapper.selectList(journeyDayLambdaQueryWrapper);
+    }
+
+    @Override
+    public boolean saveTask(List<JourneyTask> tasks) {
+        return this.saveBatch(tasks);
     }
 }

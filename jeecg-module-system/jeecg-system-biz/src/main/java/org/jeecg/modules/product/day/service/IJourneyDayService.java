@@ -14,4 +14,6 @@ import java.util.List;
  */
 public interface IJourneyDayService extends IService<JourneyDay> {
     List<JourneyDayBo> getDayList(String id);
+
+    boolean saveDay(List<JourneyDayBo> journeyDays);
 }

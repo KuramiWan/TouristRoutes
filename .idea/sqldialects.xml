@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-biz/src/main/java/org/jeecg/modules/product/mapper/xml/ProductMapper.xml" dialect="GenericSQL" />
+  </component>
+</project>

@@ -67,6 +67,7 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @Autowired
 	 private IJourneyTaskService journeyTaskService;
 
+
 	 /**
 	  * 分页列表查询
 	  *
@@ -81,9 +82,9 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @GetMapping(value = "/list")
 	 @Transactional
 	 public Result<List<ProductBo>> queryPageList(Product product,
-												 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-												 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-												 HttpServletRequest req) {
+												  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+												  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+												  HttpServletRequest req) {
 		 QueryWrapper<Product> queryWrapper = QueryGenerator.initQueryWrapper(product, req.getParameterMap());
 		 Page<Product> page = new Page<Product>(pageNo, pageSize);
 		 IPage<Product> pageList = productService.page(page, queryWrapper);
@@ -103,15 +104,24 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 /**
 	  *   添加
 	  *
-	  * @param product
+	  * @param productBo
 	  * @return
 	  */
 	 @AutoLog(value = "旅游产品表-添加")
 	 @ApiOperation(value="旅游产品表-添加", notes="旅游产品表-添加")
 //	 @RequiresPermissions("product:product:add")
 	 @PostMapping(value = "/add")
-	 public Result<String> add(@RequestBody Product product) {
-		 productService.save(product);
+	 public Result<String> add(@RequestBody ProductBo productBo) {
+		 Product product = new Product();
+		 BeanUtils.copyProperties(productBo,productBo);
+		 boolean save = productService.save(product);
+		 if (save){
+			 List<JourneyDayBo> journeyDays = productBo.getJourneyDays();
+			 for (JourneyDayBo journeyDay : journeyDays) {
+				 journeyDay.setId(product.getId());
+			 }
+			 save = journeyDayService.saveDay(journeyDays);
+		 }
 		 return Result.OK("添加成功！");
 	 }
 
@@ -201,5 +211,4 @@ public class ProductController extends JeecgController<Product, IProductService>
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, Product.class);
     }
-
 }

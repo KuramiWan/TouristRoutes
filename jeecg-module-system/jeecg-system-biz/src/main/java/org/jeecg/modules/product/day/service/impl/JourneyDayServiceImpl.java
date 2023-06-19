@@ -5,9 +5,9 @@ import org.jeecg.modules.product.day.bo.JourneyDayBo;
 import org.jeecg.modules.product.day.entity.JourneyDay;
 import org.jeecg.modules.product.day.mapper.JourneyDayMapper;
 import org.jeecg.modules.product.day.service.IJourneyDayService;
+import org.jeecg.modules.product.task.controller.JourneyTaskController;
 import org.jeecg.modules.product.task.entity.JourneyTask;
 import org.jeecg.modules.product.task.service.IJourneyTaskService;
-import org.jeecg.modules.product.task.service.impl.JourneyTaskServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 旅游日程表
@@ -29,6 +30,8 @@ public class JourneyDayServiceImpl extends ServiceImpl<JourneyDayMapper, Journey
     private JourneyDayMapper journeyDayMapper;
     @Autowired
     private IJourneyTaskService journeyTaskService;
+    @Autowired
+    private JourneyTaskController journeyTaskController;
 
     @Override
     public List<JourneyDayBo> getDayList(String id) {
@@ -45,5 +48,23 @@ public class JourneyDayServiceImpl extends ServiceImpl<JourneyDayMapper, Journey
             journeyDayBos.add(journeyDayBo);
         }
         return journeyDayBos;
+    }
+
+    @Override
+    public boolean saveDay(List<JourneyDayBo> journeyDaysBo) {
+        List<JourneyDay> collect = journeyDaysBo.stream().map(journeyDayBo -> {
+                    JourneyDay journeyDay = new JourneyDay();
+                    BeanUtils.copyProperties(journeyDayBo, journeyDay);
+                    return journeyDay;
+                }
+        ).collect(Collectors.toList());
+        collect.forEach(System.out::println);
+        boolean b = saveBatch(collect);
+        List<JourneyTask> tasks = null;
+        for (JourneyDayBo journeyDayBo : journeyDaysBo) {
+            tasks = journeyDayBo.getTasks().stream().peek(journeyTask -> journeyTask.setJourneyDayId(journeyDayBo.getId())).collect(Collectors.toList());
+        }
+        b = journeyTaskService.saveTask(tasks);
+        return b;
     }
 }
