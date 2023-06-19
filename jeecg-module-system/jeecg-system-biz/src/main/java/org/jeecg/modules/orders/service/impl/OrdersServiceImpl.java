@@ -1,8 +1,8 @@
-package org.jeecg.modules.order.service.impl;
+package org.jeecg.modules.orders.service.impl;
 
-import org.jeecg.modules.order.entity.Orders;
-import org.jeecg.modules.order.mapper.OrdersMapper;
-import org.jeecg.modules.order.service.IOrdersService;
+import org.jeecg.modules.orders.entity.Orders;
+import org.jeecg.modules.orders.mapper.OrdersMapper;
+import org.jeecg.modules.orders.service.IOrdersService;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 /**
  * @Description: 订单表
  * @Author: jeecg-boot
- * @Date:   2023-06-14
+ * @Date:   2023-06-19
  * @Version: V1.0
  */
 @Service

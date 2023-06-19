@@ -1,4 +1,4 @@
-package org.jeecg.modules.order.controller;
+package org.jeecg.modules.orders.controller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.order.entity.Orders;
-import org.jeecg.modules.order.service.IOrdersService;
+import org.jeecg.modules.orders.entity.Orders;
+import org.jeecg.modules.orders.service.IOrdersService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,12 +40,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
  /**
  * @Description: 订单表
  * @Author: jeecg-boot
- * @Date:   2023-06-14
+ * @Date:   2023-06-19
  * @Version: V1.0
  */
 @Api(tags="订单表")
 @RestController
-@RequestMapping("/order/orders")
+@RequestMapping("/orders/orders")
 @Slf4j
 public class OrdersController extends JeecgController<Orders, IOrdersService> {
 	@Autowired
