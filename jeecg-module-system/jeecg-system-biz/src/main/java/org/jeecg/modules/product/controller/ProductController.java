@@ -111,14 +111,15 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @ApiOperation(value="旅游产品表-添加", notes="旅游产品表-添加")
 //	 @RequiresPermissions("product:product:add")
 	 @PostMapping(value = "/add")
+	 @Transactional
 	 public Result<String> add(@RequestBody ProductBo productBo) {
 		 Product product = new Product();
-		 BeanUtils.copyProperties(productBo,productBo);
+		 BeanUtils.copyProperties(productBo,product);
 		 boolean save = productService.save(product);
 		 if (save){
 			 List<JourneyDayBo> journeyDays = productBo.getJourneyDays();
 			 for (JourneyDayBo journeyDay : journeyDays) {
-				 journeyDay.setId(product.getId());
+				 journeyDay.setProductId(product.getId());
 			 }
 			 save = journeyDayService.saveDay(journeyDays);
 		 }

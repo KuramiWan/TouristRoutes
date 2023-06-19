@@ -32,6 +32,11 @@ public class JourneyTaskServiceImpl extends ServiceImpl<JourneyTaskMapper, Journ
 
     @Override
     public boolean saveTask(List<JourneyTask> tasks) {
-        return this.saveBatch(tasks);
+        boolean b = true;
+        for (JourneyTask task : tasks) {
+            int insert = journeyTaskMapper.insert(task);
+            b = insert == 1 && b;
+        }
+        return b;
     }
 }

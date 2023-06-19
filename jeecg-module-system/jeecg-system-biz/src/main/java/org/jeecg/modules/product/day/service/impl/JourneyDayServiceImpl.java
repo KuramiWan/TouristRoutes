@@ -1,6 +1,7 @@
 package org.jeecg.modules.product.day.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.jeecg.modules.product.bo.ProductBo;
 import org.jeecg.modules.product.day.bo.JourneyDayBo;
 import org.jeecg.modules.product.day.entity.JourneyDay;
 import org.jeecg.modules.product.day.mapper.JourneyDayMapper;
@@ -52,19 +53,32 @@ public class JourneyDayServiceImpl extends ServiceImpl<JourneyDayMapper, Journey
 
     @Override
     public boolean saveDay(List<JourneyDayBo> journeyDaysBo) {
-        List<JourneyDay> collect = journeyDaysBo.stream().map(journeyDayBo -> {
+        List<JourneyDay> journeyDays = journeyDaysBo.stream().map(journeyDayBo -> {
                     JourneyDay journeyDay = new JourneyDay();
                     BeanUtils.copyProperties(journeyDayBo, journeyDay);
                     return journeyDay;
                 }
         ).collect(Collectors.toList());
-        collect.forEach(System.out::println);
-        boolean b = saveBatch(collect);
-        List<JourneyTask> tasks = null;
-        for (JourneyDayBo journeyDayBo : journeyDaysBo) {
-            tasks = journeyDayBo.getTasks().stream().peek(journeyTask -> journeyTask.setJourneyDayId(journeyDayBo.getId())).collect(Collectors.toList());
+        boolean b = true;
+        for (JourneyDay journeyDay : journeyDays) {
+            int insert = journeyDayMapper.insert(journeyDay);
+            b = insert == 1 && b;
         }
-        b = journeyTaskService.saveTask(tasks);
+        List<JourneyTask> tasks = new ArrayList<>();
+
+
+        for (JourneyDay journeyDay : journeyDays) {
+            journeyDaysBo.forEach(journeyDayBo -> {
+                journeyDayBo.setId(journeyDay.getId());
+            });
+        }
+
+        for (JourneyDayBo journeyDayBo : journeyDaysBo) {
+            tasks = journeyDayBo.getTasks().stream()
+                    .peek(journeyTask -> journeyTask.setJourneyDayId(journeyDayBo.getId()))
+                    .collect(Collectors.toList());
+            b = journeyTaskService.saveTask(tasks);
+        }
         return b;
     }
 }
