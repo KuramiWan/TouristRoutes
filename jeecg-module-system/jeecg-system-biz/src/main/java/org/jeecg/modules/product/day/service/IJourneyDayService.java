@@ -16,4 +16,7 @@ public interface IJourneyDayService extends IService<JourneyDay> {
     List<JourneyDayBo> getDayList(String id);
 
     boolean saveDay(List<JourneyDayBo> journeyDays);
+
+
+    boolean edit(List<JourneyDayBo> journeyDays);
 }

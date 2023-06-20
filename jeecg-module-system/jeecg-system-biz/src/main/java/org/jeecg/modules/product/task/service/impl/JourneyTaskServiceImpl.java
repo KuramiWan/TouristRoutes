@@ -5,6 +5,7 @@ import org.jeecg.modules.product.day.entity.JourneyDay;
 import org.jeecg.modules.product.task.entity.JourneyTask;
 import org.jeecg.modules.product.task.mapper.JourneyTaskMapper;
 import org.jeecg.modules.product.task.service.IJourneyTaskService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +39,17 @@ public class JourneyTaskServiceImpl extends ServiceImpl<JourneyTaskMapper, Journ
             b = insert == 1 && b;
         }
         return b;
+    }
+
+    @Override
+    public boolean editTask(List<JourneyTask> tasks) {
+        boolean isSuccess = true;
+        for (JourneyTask task : tasks) {
+            JourneyTask journeyTask = new JourneyTask();
+            BeanUtils.copyProperties(journeyTask,task);
+            int i = journeyTaskMapper.updateById(task);
+            isSuccess = i == 1 && isSuccess;
+        }
+        return isSuccess;
     }
 }
