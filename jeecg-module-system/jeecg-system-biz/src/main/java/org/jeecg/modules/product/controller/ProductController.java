@@ -188,12 +188,16 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 //@AutoLog(value = "旅游产品表-通过id查询")
 	 @ApiOperation(value="旅游产品表-通过id查询", notes="旅游产品表-通过id查询")
 	 @GetMapping(value = "/queryById")
-	 public Result<Product> queryById(@RequestParam(name="id",required=true) String id) {
+	 public Result<ProductBo> queryById(@RequestParam(name="id",required=true) String id) {
 		 Product product = productService.getById(id);
 		 if(product==null) {
 			 return Result.error("未找到对应数据");
 		 }
-		 return Result.OK(product);
+		 List<JourneyDayBo> byProductId = journeyDayService.getByProductId(id);
+		 ProductBo productBo = new ProductBo();
+		 BeanUtils.copyProperties(product,productBo);
+		 productBo.setJourneyDays(byProductId);
+		 return Result.OK(productBo);
 	 }
 
     /**

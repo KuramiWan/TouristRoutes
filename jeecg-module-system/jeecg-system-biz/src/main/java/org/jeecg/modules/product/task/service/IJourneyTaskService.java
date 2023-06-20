@@ -3,6 +3,7 @@ package org.jeecg.modules.product.task.service;
 import org.jeecg.modules.product.task.entity.JourneyTask;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.persistence.Id;
 import java.util.List;
 
 /**
@@ -18,4 +19,6 @@ public interface IJourneyTaskService extends IService<JourneyTask> {
     boolean saveTask(List<JourneyTask> tasks);
 
     boolean editTask(List<JourneyTask> tasks);
+
+    List<JourneyTask> getTaskByJourneyId(String id);
 }
