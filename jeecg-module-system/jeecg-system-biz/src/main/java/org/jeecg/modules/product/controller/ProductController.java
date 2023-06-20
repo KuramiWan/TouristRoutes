@@ -129,15 +129,20 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 /**
 	  *  编辑
 	  *
-	  * @param product
+	  * @param productBo
 	  * @return
 	  */
 	 @AutoLog(value = "旅游产品表-编辑")
 	 @ApiOperation(value="旅游产品表-编辑", notes="旅游产品表-编辑")
 //	 @RequiresPermissions("product:product:edit")
 	 @RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
-	 public Result<String> edit(@RequestBody Product product) {
+	 public Result<String> edit(@RequestBody ProductBo productBo) {
+		 Product product = new Product();
+		 BeanUtils.copyProperties(productBo,product);
 		 productService.updateById(product);
+		 if (!productBo.getJourneyDays().isEmpty()){
+			 boolean b = journeyDayService.edit(productBo.getJourneyDays());
+		 }
 		 return Result.OK("编辑成功!");
 	 }
 

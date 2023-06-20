@@ -81,4 +81,25 @@ public class JourneyDayServiceImpl extends ServiceImpl<JourneyDayMapper, Journey
         }
         return b;
     }
+
+    @Override
+    public boolean edit(List<JourneyDayBo> journeyDaysBo) {
+        boolean isSuccess = true;
+        for (JourneyDayBo journeyDayBo : journeyDaysBo) {
+            JourneyDay journeyDay = new JourneyDay();
+            BeanUtils.copyProperties(journeyDayBo,journeyDay);
+            int i = journeyDayMapper.updateById(journeyDay);
+            isSuccess = i == 1 && isSuccess;
+        }
+        if (isSuccess){
+            boolean isTaskSuc = true;
+            for (JourneyDayBo journeyDayBo : journeyDaysBo) {
+                if (!journeyDayBo.getTasks().isEmpty()){
+                    isTaskSuc = isTaskSuc && journeyTaskService.editTask(journeyDayBo.getTasks());
+                }
+            }
+            isSuccess = isTaskSuc;
+        }
+        return isSuccess;
+    }
 }

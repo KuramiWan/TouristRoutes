@@ -16,4 +16,6 @@ public interface IJourneyTaskService extends IService<JourneyTask> {
     List<JourneyTask> getTaskLists(String id);
 
     boolean saveTask(List<JourneyTask> tasks);
+
+    boolean editTask(List<JourneyTask> tasks);
 }
