@@ -59,6 +59,10 @@ public class Product implements Serializable {
 	/**所属部门*/
     @ApiModelProperty(value = "所属部门")
     private java.lang.String sysOrgCode;
+    /**标题*/
+    @Excel(name = "标题", width = 15)
+    @ApiModelProperty(value = "标题")
+    private String title;
 	/**描述*/
 	@Excel(name = "描述", width = 15)
     @ApiModelProperty(value = "描述")

@@ -81,7 +81,7 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @ApiOperation(value="旅游产品表-分页列表查询", notes="旅游产品表-分页列表查询")
 	 @GetMapping(value = "/list")
 	 @Transactional
-	 public Result<List<ProductBo>> queryPageList(Product product,
+	 public Result<IPage<ProductBo>> queryPageList(Product product,
 												  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 												  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 												  HttpServletRequest req) {
@@ -98,7 +98,10 @@ public class ProductController extends JeecgController<Product, IProductService>
 			 productBo.setJourneyDays(dayList);
 			 productBos.add(productBo);
 		 }
-		 return Result.OK(productBos);
+		 IPage<ProductBo> productBoPage = new Page<>();
+		 BeanUtils.copyProperties(pageList,productBoPage);
+		 productBoPage.setRecords(productBos);
+		 return Result.OK(productBoPage);
 	 }
 
 	 /**
