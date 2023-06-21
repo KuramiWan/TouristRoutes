@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.tourist.client.entity.Tourist;
@@ -18,6 +20,8 @@ import java.io.Serializable;
  * @version 1.0
  */
 @Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(value="ordersResp对象", description="订单表(详细信息)")
 public class OrdersResp implements Serializable{
 
@@ -94,8 +98,8 @@ public class OrdersResp implements Serializable{
     @ApiModelProperty(value = "客户id")
     private java.lang.String userId;
     /**订单状态*/
-    @Dict(dicCode = "order_status")
     @Excel(name = "订单状态", width = 15, dicCode = "order_status")
+    @Dict(dicCode = "order_status")
     @ApiModelProperty(value = "订单状态")
     private java.lang.Integer orderStatus;
     /**订单金额*/
@@ -103,13 +107,13 @@ public class OrdersResp implements Serializable{
     @ApiModelProperty(value = "订单金额")
     private java.lang.Double orderMoney;
     /**支付方式*/
-    @Dict(dicCode = "pay_method")
     @Excel(name = "支付方式", width = 15, dicCode = "pay_method")
+    @Dict(dicCode = "pay_method")
     @ApiModelProperty(value = "支付方式")
     private java.lang.Integer payMethod;
     /**支付状态*/
-    @Dict(dicCode = "pay_status")
     @Excel(name = "支付状态", width = 15, dicCode = "pay_status")
+    @Dict(dicCode = "pay_method")
     @ApiModelProperty(value = "支付状态")
     private java.lang.Integer payStatus;
     /**支付时间*/
