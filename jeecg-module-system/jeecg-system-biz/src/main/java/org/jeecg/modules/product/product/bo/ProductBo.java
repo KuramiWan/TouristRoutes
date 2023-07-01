@@ -1,4 +1,4 @@
-package org.jeecg.modules.product.bo;
+package org.jeecg.modules.product.product.bo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -71,6 +71,18 @@ public class ProductBo implements Serializable {
 	@Excel(name = "海报", width = 15)
     @ApiModelProperty(value = "海报")
     private String img;
+    /**标签*/
+    @Excel(name = "标签", width = 15)
+    @ApiModelProperty(value = "标签")
+    private List<String> tags;
+    /**日期*/
+    @Excel(name = "日期", width = 15)
+    @ApiModelProperty(value = "日期")
+    private List<String> date;
+    /**封面图*/
+    @Excel(name = "封面图", width = 15)
+    @ApiModelProperty(value = "封面图")
+    private String coverImg;
     /**旅行日程*/
     @Excel(name = "旅行日程", width = 15)
     @ApiModelProperty(value = "旅行日程")
