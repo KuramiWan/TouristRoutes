@@ -52,4 +52,12 @@ public class JourneyTaskServiceImpl extends ServiceImpl<JourneyTaskMapper, Journ
         }
         return isSuccess;
     }
+
+    @Override
+    public List<JourneyTask> getTaskByJourneyId(String id) {
+        LambdaQueryWrapper<JourneyTask> journeyTaskLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        journeyTaskLambdaQueryWrapper.eq(JourneyTask::getJourneyDayId,id);
+        List<JourneyTask> journeyTasks = journeyTaskMapper.selectList(journeyTaskLambdaQueryWrapper);
+        return journeyTasks;
+    }
 }

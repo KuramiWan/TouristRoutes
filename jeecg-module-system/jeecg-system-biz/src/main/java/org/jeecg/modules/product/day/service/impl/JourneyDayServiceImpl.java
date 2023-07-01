@@ -1,7 +1,6 @@
 package org.jeecg.modules.product.day.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.jeecg.modules.product.bo.ProductBo;
 import org.jeecg.modules.product.day.bo.JourneyDayBo;
 import org.jeecg.modules.product.day.entity.JourneyDay;
 import org.jeecg.modules.product.day.mapper.JourneyDayMapper;
@@ -101,5 +100,23 @@ public class JourneyDayServiceImpl extends ServiceImpl<JourneyDayMapper, Journey
             isSuccess = isTaskSuc;
         }
         return isSuccess;
+    }
+
+    @Override
+    public List<JourneyDayBo> getByProductId(String id) {
+        LambdaQueryWrapper<JourneyDay> journeyDayLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        journeyDayLambdaQueryWrapper.eq(JourneyDay::getProductId, id);
+        List<JourneyDay> journeyDays = journeyDayMapper.selectList(journeyDayLambdaQueryWrapper);
+        List<JourneyDayBo> journeyDayBos = new ArrayList<>();
+        for (JourneyDay journeyDay : journeyDays) {
+            List<JourneyTask> journeyTasks = journeyTaskService.getTaskByJourneyId(journeyDay.getId());
+            JourneyDayBo journeyDayBo = new JourneyDayBo();
+            BeanUtils.copyProperties(journeyDay,journeyDayBo);
+            journeyDayBo.setTasks(journeyTasks);
+            journeyDayBos.add(journeyDayBo);
+        }
+        return journeyDayBos;
+
+
     }
 }

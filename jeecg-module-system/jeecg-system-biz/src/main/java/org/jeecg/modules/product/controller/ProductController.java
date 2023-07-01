@@ -20,8 +20,10 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.product.bo.ProductBo;
 import org.jeecg.modules.product.day.bo.JourneyDayBo;
 import org.jeecg.modules.product.day.entity.JourneyDay;
+import org.jeecg.modules.product.day.mapper.JourneyDayMapper;
 import org.jeecg.modules.product.day.service.IJourneyDayService;
 import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.mapper.ProductMapper;
 import org.jeecg.modules.product.service.IProductService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +32,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.product.task.entity.JourneyTask;
+import org.jeecg.modules.product.task.mapper.JourneyTaskMapper;
 import org.jeecg.modules.product.task.service.IJourneyTaskService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -66,6 +69,12 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 private IJourneyDayService journeyDayService;
 	 @Autowired
 	 private IJourneyTaskService journeyTaskService;
+	 @Autowired
+	 private ProductMapper productMapper;
+	 @Autowired
+	 private JourneyDayMapper journeyDayMapper;
+	 @Autowired
+	 private JourneyTaskMapper journeyTaskMapper;
 
 
 	 /**
@@ -165,6 +174,33 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 }
 
 	 /**
+	  *   通过id删除
+	  *
+	  * @param productId
+	  * @return
+	  */
+	 @AutoLog(value = "旅游产品表-通过id删除")
+	 @ApiOperation(value="旅游产品表-通过id删除", notes="旅游产品表-通过id删除")
+//	 @RequiresPermissions("product:product:delete")
+	 @DeleteMapping(value = "/deleteProduct")
+	 public Result<String> deleteProduct(@RequestParam(name="productId",required=true) String productId) {
+		 Product product = productMapper.selectById(productId);
+		 if(product == null){
+		 	return Result.error("删除失败!");
+		 }
+		 List<JourneyDay> journeyDays = journeyDayMapper.selectList(new LambdaQueryWrapper<JourneyDay>().eq(JourneyDay::getProductId, productId));
+		 for (JourneyDay journeyDay : journeyDays) {
+			 journeyTaskMapper.delete(new LambdaQueryWrapper<JourneyTask>()
+					 .eq(JourneyTask::getJourneyDayId,journeyDay.getId()));
+		 }
+		 journeyDayMapper.delete(new LambdaQueryWrapper<JourneyDay>().eq(JourneyDay::getProductId, productId));
+		 productMapper.deleteById(productId);
+
+		 return Result.OK("删除成功!");
+	 }
+
+
+	 /**
 	  *  批量删除
 	  *
 	  * @param ids
@@ -188,12 +224,16 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 //@AutoLog(value = "旅游产品表-通过id查询")
 	 @ApiOperation(value="旅游产品表-通过id查询", notes="旅游产品表-通过id查询")
 	 @GetMapping(value = "/queryById")
-	 public Result<Product> queryById(@RequestParam(name="id",required=true) String id) {
+	 public Result<ProductBo> queryById(@RequestParam(name="id",required=true) String id) {
 		 Product product = productService.getById(id);
 		 if(product==null) {
 			 return Result.error("未找到对应数据");
 		 }
-		 return Result.OK(product);
+		 List<JourneyDayBo> byProductId = journeyDayService.getByProductId(id);
+		 ProductBo productBo = new ProductBo();
+		 BeanUtils.copyProperties(product,productBo);
+		 productBo.setJourneyDays(byProductId);
+		 return Result.OK(productBo);
 	 }
 
     /**

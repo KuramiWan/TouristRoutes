@@ -3,6 +3,7 @@ package org.jeecg.modules.product.day.service;
 import org.jeecg.modules.product.day.bo.JourneyDayBo;
 import org.jeecg.modules.product.day.entity.JourneyDay;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.product.task.entity.JourneyTask;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface IJourneyDayService extends IService<JourneyDay> {
 
 
     boolean edit(List<JourneyDayBo> journeyDays);
+
+    List<JourneyDayBo> getByProductId(String id);
 }
