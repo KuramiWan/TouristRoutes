@@ -72,14 +72,6 @@ public class Product implements Serializable {
 	@Excel(name = "出发地", width = 15)
     @ApiModelProperty(value = "出发地")
     private java.lang.String departure;
-    /**标签*/
-    @Excel(name = "标签", width = 15)
-    @ApiModelProperty(value = "标签")
-    private List<String> tags;
-    /**日期*/
-    @Excel(name = "日期", width = 15)
-    @ApiModelProperty(value = "日期")
-    private List<String> date;
     /**封面图*/
     @Excel(name = "封面图", width = 15)
     @ApiModelProperty(value = "封面图")
