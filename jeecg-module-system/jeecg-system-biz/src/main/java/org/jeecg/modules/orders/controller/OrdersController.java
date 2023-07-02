@@ -40,9 +40,15 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class OrdersController extends JeecgController<Orders, IOrdersService> {
     @Autowired
     private IOrdersService ordersService;
-
     @Autowired
     private IOrdersRespService ordersRespService;
+    @AutoLog(value = "订单表-购买量访问")
+    @ApiOperation(value = "订单表-购买量访问", notes = "订单表-购买量访问")
+    @GetMapping(value = "/productSales")
+    public Result<Integer> productSales(String productId) {
+        Integer count = ordersService.productSales(productId);
+        return Result.OK(count);
+    }
 
     /**
      * 分页列表查询

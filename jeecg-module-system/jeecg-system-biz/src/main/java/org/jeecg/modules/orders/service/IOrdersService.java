@@ -14,5 +14,7 @@ import org.jeecg.modules.orders.resp.OrdersResp;
  * @Version: V1.0
  */
 public interface IOrdersService extends IService<Orders> {
+    // 产品销量
+    Integer productSales(String productId);
 
 }
