@@ -1,8 +1,6 @@
-package org.jeecg.modules.product.service;
+package org.jeecg.modules.product.product.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.product.entity.Product;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

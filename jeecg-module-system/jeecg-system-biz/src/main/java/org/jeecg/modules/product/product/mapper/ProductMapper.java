@@ -1,10 +1,7 @@
-package org.jeecg.modules.product.mapper;
+package org.jeecg.modules.product.product.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-import org.jeecg.modules.product.bo.ProductBo;
-import org.jeecg.modules.product.entity.Product;
+import org.apache.ibatis.annotations.Mapper;
+import org.jeecg.modules.product.product.entity.Product;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -13,5 +10,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Date:   2023-06-14
  * @Version: V1.0
  */
+
 public interface ProductMapper extends BaseMapper<Product> {
 }

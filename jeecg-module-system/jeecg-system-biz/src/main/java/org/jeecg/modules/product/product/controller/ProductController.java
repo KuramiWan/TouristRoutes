@@ -1,58 +1,38 @@
-package org.jeecg.modules.product.controller;
+package org.jeecg.modules.product.product.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.product.bo.ProductBo;
+import org.jeecg.modules.product.date.service.ProductDateService;
+import org.jeecg.modules.product.product.bo.ProductBo;
 import org.jeecg.modules.product.day.bo.JourneyDayBo;
-import org.jeecg.modules.product.day.entity.JourneyDay;
-import org.jeecg.modules.product.day.mapper.JourneyDayMapper;
 import org.jeecg.modules.product.day.service.IJourneyDayService;
-import org.jeecg.modules.product.entity.Product;
-import org.jeecg.modules.product.mapper.ProductMapper;
-import org.jeecg.modules.product.service.IProductService;
+import org.jeecg.modules.product.product.entity.Product;
+import org.jeecg.modules.product.product.service.IProductService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecg.modules.product.task.entity.JourneyTask;
-import org.jeecg.modules.product.task.mapper.JourneyTaskMapper;
+import org.jeecg.modules.product.tags.service.TagService;
 import org.jeecg.modules.product.task.service.IJourneyTaskService;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
- /**
+/**
  * @Description: 旅游产品表
  * @Author: jeecg-boot
  * @Date:   2023-06-14
@@ -70,11 +50,9 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @Autowired
 	 private IJourneyTaskService journeyTaskService;
 	 @Autowired
-	 private ProductMapper productMapper;
+	 private TagService tagService;
 	 @Autowired
-	 private JourneyDayMapper journeyDayMapper;
-	 @Autowired
-	 private JourneyTaskMapper journeyTaskMapper;
+	 private ProductDateService productDateService;
 
 
 	 /**
@@ -126,6 +104,12 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 @Transactional
 	 public Result<String> add(@RequestBody ProductBo productBo) {
 		 Product product = new Product();
+		 String id = product.getId();
+		 boolean b = tagService.addTags(productBo.getTags(), id);
+		 boolean b1 = productDateService.addProductDate(productBo.getDate(), id);
+		 if (!(b && b1)){
+			 return Result.error("添加失败");
+		 }
 		 BeanUtils.copyProperties(productBo,product);
 		 boolean save = productService.save(product);
 		 if (save){
@@ -174,33 +158,6 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 }
 
 	 /**
-	  *   通过id删除
-	  *
-	  * @param productId
-	  * @return
-	  */
-	 @AutoLog(value = "旅游产品表-通过id删除")
-	 @ApiOperation(value="旅游产品表-通过id删除", notes="旅游产品表-通过id删除")
-//	 @RequiresPermissions("product:product:delete")
-	 @DeleteMapping(value = "/deleteProduct")
-	 public Result<String> deleteProduct(@RequestParam(name="productId",required=true) String productId) {
-		 Product product = productMapper.selectById(productId);
-		 if(product == null){
-		 	return Result.error("删除失败!");
-		 }
-		 List<JourneyDay> journeyDays = journeyDayMapper.selectList(new LambdaQueryWrapper<JourneyDay>().eq(JourneyDay::getProductId, productId));
-		 for (JourneyDay journeyDay : journeyDays) {
-			 journeyTaskMapper.delete(new LambdaQueryWrapper<JourneyTask>()
-					 .eq(JourneyTask::getJourneyDayId,journeyDay.getId()));
-		 }
-		 journeyDayMapper.delete(new LambdaQueryWrapper<JourneyDay>().eq(JourneyDay::getProductId, productId));
-		 productMapper.deleteById(productId);
-
-		 return Result.OK("删除成功!");
-	 }
-
-
-	 /**
 	  *  批量删除
 	  *
 	  * @param ids
@@ -233,6 +190,10 @@ public class ProductController extends JeecgController<Product, IProductService>
 		 ProductBo productBo = new ProductBo();
 		 BeanUtils.copyProperties(product,productBo);
 		 productBo.setJourneyDays(byProductId);
+		 List<String> tags = tagService.getTagsByProductId(id);
+		 List<String> date = productDateService.getDateByProductId(id);
+		 productBo.setTags(tags);
+		 productBo.setDate(date);
 		 return Result.OK(productBo);
 	 }
 
