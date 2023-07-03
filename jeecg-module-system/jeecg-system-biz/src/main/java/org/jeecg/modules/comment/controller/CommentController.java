@@ -153,7 +153,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
     * @param request
     * @param comment
     */
-    @RequiresPermissions("comment:comment:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, Comment comment) {
         return super.exportXls(request, comment, Comment.class, "产品评论表");
@@ -166,7 +165,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
     * @param response
     * @return
     */
-    @RequiresPermissions("comment:comment:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, Comment.class);
