@@ -18,20 +18,20 @@ public class ProductDateServiceImpl implements ProductDateService {
     private ProductDateMapper dateMapper;
     @Override
     public List<String> getDateByProductId(String id) {
-        LambdaQueryWrapper<org.jeecg.modules.product.date.pojo.ProductDate> JourneyDateLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        JourneyDateLambdaQueryWrapper.eq(org.jeecg.modules.product.date.pojo.ProductDate::getProductId,id);
-        List<org.jeecg.modules.product.date.pojo.ProductDate> tagList = dateMapper.selectList(JourneyDateLambdaQueryWrapper);
-        return tagList.stream().map(org.jeecg.modules.product.date.pojo.ProductDate::getTag).collect(Collectors.toList());
+        LambdaQueryWrapper<ProductDate> JourneyDateLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        JourneyDateLambdaQueryWrapper.eq(ProductDate::getProductId,id);
+        List<ProductDate> tagList = dateMapper.selectList(JourneyDateLambdaQueryWrapper);
+        return tagList.stream().map(ProductDate::getDate).collect(Collectors.toList());
     }
 
     @Override
     public boolean addProductDate(List<String> dates,String id) {
         ArrayList<org.jeecg.modules.product.date.pojo.ProductDate> ProductDateArrayList = new ArrayList<>();
         boolean insert = true;
-        for (String tag : dates) {
-            org.jeecg.modules.product.date.pojo.ProductDate productDate = new org.jeecg.modules.product.date.pojo.ProductDate();
+        for (String date : dates) {
+            ProductDate productDate = new ProductDate();
             productDate.setId(id);
-            productDate.setTag(tag);
+            productDate.setDate(date);
             insert = dateMapper.insert(productDate) == 1 && insert;
         }
         return insert;
