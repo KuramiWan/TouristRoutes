@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.comment.dto.ProductCommentsDTO;
 import org.jeecg.modules.comment.entity.Comment;
 import org.jeecg.modules.comment.service.ICommentService;
 
@@ -21,6 +22,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.comment.service.ICommentService;
+import org.jeecg.modules.comment.vo.ProductCommentsVO;
+import org.jeecg.modules.product.product.entity.Product;
+import org.jeecg.modules.product.product.service.IProductService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -51,6 +55,27 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class CommentController extends JeecgController<Comment, ICommentService> {
 	@Autowired
 	private ICommentService commentService;
+	@Autowired
+	private IProductService productService;
+
+	 @ApiOperation(value="产品评论表-获取产品评论列表", notes="产品评论表-获取产品评论列表")
+	 @PostMapping(value = "/getProductComments")
+	 public Result<ProductCommentsVO> getProductComments(@RequestBody ProductCommentsDTO productCommentsDTO,
+														 HttpServletRequest req) {
+		 // 条件过滤器，如果有就用，没有就不用
+		 Comment comment = productCommentsDTO.getComment();
+		 QueryWrapper<Comment> queryWrapper = QueryGenerator.initQueryWrapper(comment, req.getParameterMap());
+		 // 判断产品id是否为null
+		 String productId = productCommentsDTO.getProductId();
+		 if (productId ==null) return Result.error("请传入产品id！！！");
+		 // 查询产品
+		 if (productService.getById(productId)==null) return Result.error("抱歉未找到产品！！！");
+		 // 查询产品评论
+		 ProductCommentsVO productComments = commentService.getProductComments(productCommentsDTO,queryWrapper);
+		 if(productComments==null) return Result.error("服务器错误");
+		 return Result.OK("成功拿到产品评论列表",productComments);
+	 }
+
 	
 	/**
 	 * 分页列表查询

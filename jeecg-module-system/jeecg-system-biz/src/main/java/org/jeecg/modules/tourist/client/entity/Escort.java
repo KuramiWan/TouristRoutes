@@ -44,6 +44,10 @@ public class Escort implements Serializable {
 	@Excel(name = "伴游人昵称", width = 15)
     @ApiModelProperty(value = "伴游人昵称")
     private java.lang.String escortNickname;
+    /**伴游人头像*/
+    @Excel(name = "伴游人头像", width = 15)
+    @ApiModelProperty(value = "伴游人头像")
+    private java.lang.String escortAvatar;
 	/**伴游人年龄*/
 	@Excel(name = "伴游人年龄", width = 15)
     @ApiModelProperty(value = "伴游人年龄")

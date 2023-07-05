@@ -54,7 +54,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         // 如果有key
         if (redisUtil.hasKey(key)){
             count = (Integer) redisUtil.get(key);
-//            System.out.println(count+"wwwwwwwwwwwwwwwwwwwwwwwwwww");
             return count;
         }else {
             return null;
@@ -62,13 +61,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     }
     public Integer getOrderCountFromDatabase(String productId) {
         LambdaQueryWrapper<Orders> ordersLambdaQueryWrapper = new LambdaQueryWrapper<Orders>().eq(Orders::getProductId,productId).eq(Orders::getPayStatus,1);
-//        System.out.println("ddddddddddddddddddddddddddddddddddd");
         return ordersMapper.selectCount(ordersLambdaQueryWrapper).intValue();
     }
     public void setOrderCountToCache(String productId, Integer orderCount) {
         String key = "orderCount:" + productId;
         redisUtil.set(key,orderCount,60000);
-//        System.out.println(redisUtil.get(key)+"ccccccccccccccccccccccccccccccccccc");
     }
 
     // 定时业务，每隔2分钟执行一次

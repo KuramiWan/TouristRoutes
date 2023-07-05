@@ -44,6 +44,10 @@ public class Tourist implements Serializable {
 	@Excel(name = "游客昵称", width = 15)
     @ApiModelProperty(value = "游客昵称")
     private java.lang.String touristNickname;
+    /**游客头像*/
+    @Excel(name = "游客头像", width = 15)
+    @ApiModelProperty(value = "游客头像")
+    private java.lang.String touristAvatar;
 	/**游客年龄*/
 	@Excel(name = "游客年龄", width = 15)
     @ApiModelProperty(value = "游客年龄")
