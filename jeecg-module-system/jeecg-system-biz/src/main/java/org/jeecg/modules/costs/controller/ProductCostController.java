@@ -135,6 +135,23 @@ public class ProductCostController extends JeecgController<ProductCost, IProduct
 		return Result.OK(productCost);
 	}
 
+	 /**
+	  * 通过productId查询
+	  *
+	  * @param productId
+	  * @return
+	  */
+//@AutoLog(value = "产品费用说明-通过productId查询")
+	 @ApiOperation(value="产品费用说明-通过productId查询", notes="产品费用说明-通过productId查询")
+	 @GetMapping(value = "/queryByProductId")
+	 public Result<ProductCost> queryByProductId(@RequestParam(name="productId",required=true) String productId) {
+		 ProductCost productCost = productCostService.queryByProductId(productId);
+		 if(productCost==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.OK(productCost);
+	 }
+
     /**
     * 导出excel
     *
