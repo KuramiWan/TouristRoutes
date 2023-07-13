@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.modules.user.contactPerson.dao.ContactPersonDao;
 import org.jeecg.modules.user.contactPerson.entity.ContactPerson;
+import org.jeecg.modules.user.contactPerson.mapper.ContactPersonDao;
 import org.jeecg.modules.user.contactPerson.service.ContactPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * 联系人(ContactPerson)表服务实现类
@@ -22,7 +18,7 @@ import java.util.List;
  * @author makejava
  * @since 2023-07-13 15:25:37
  */
-@Service("contactPersonService")
+@Service
 public class ContactPersonServiceImpl extends ServiceImpl<ContactPersonDao, ContactPerson> implements ContactPersonService {
 
     @Autowired

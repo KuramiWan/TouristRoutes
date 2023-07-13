@@ -1,16 +1,15 @@
 package org.jeecg.modules.user.contactPerson.controller;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.modules.user.contactPerson.entity.ContactPerson;
 import org.jeecg.modules.user.contactPerson.service.ContactPersonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,12 +22,12 @@ import java.util.List;
 @RestController
 @RequestMapping("contactPerson")
 @Slf4j
-@Api
-public class ContactPersonController {
+@Api(tags = "联系人")
+public class ContactPersonController extends JeecgController<ContactPerson, ContactPersonService> {
     /**
      * 服务对象
      */
-    @Resource
+    @Autowired
     private ContactPersonService contactPersonService;
 
     /**

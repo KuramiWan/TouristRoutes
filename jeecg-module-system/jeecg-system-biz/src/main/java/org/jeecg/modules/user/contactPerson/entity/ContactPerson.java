@@ -2,8 +2,6 @@ package org.jeecg.modules.user.contactPerson.entity;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-import java.io.Serializable;
-
 /**
  * 联系人(ContactPerson)表实体类
  *

@@ -1,8 +1,6 @@
-package org.jeecg.modules.user.traveler.relation.entity;
+package org.jeecg.modules.user.relation.entity;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
-import java.io.Serializable;
 
 /**
  * 出行人订单联系id(TravelerOrder)表实体类

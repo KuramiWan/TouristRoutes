@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.user.traveler.entity.Traveler;
 import org.jeecg.modules.user.traveler.service.TravelerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class TravelerController {
     /**
      * 服务对象
      */
-    @Resource
+    @Autowired
     private TravelerService travelerService;
 
     /**

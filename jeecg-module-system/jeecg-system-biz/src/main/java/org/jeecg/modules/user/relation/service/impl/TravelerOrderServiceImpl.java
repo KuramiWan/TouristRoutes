@@ -1,17 +1,15 @@
-package org.jeecg.modules.user.traveler.relation.service.impl;
+package org.jeecg.modules.user.relation.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.jeecg.common.api.vo.Result;
-import org.jeecg.modules.user.traveler.relation.dao.TravelerOrderDao;
-import org.jeecg.modules.user.traveler.relation.entity.TravelerOrder;
-import org.jeecg.modules.user.traveler.relation.service.TravelerOrderService;
+import org.jeecg.modules.user.relation.mapper.TravelerOrderDao;
+import org.jeecg.modules.user.relation.entity.TravelerOrder;
+import org.jeecg.modules.user.relation.service.TravelerOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 出行人订单联系id(TravelerOrder)表服务实现类
@@ -19,7 +17,7 @@ import java.util.Optional;
  * @author makejava
  * @since 2023-07-13 16:12:06
  */
-@Service("travelerOrderService")
+@Service
 public class TravelerOrderServiceImpl extends ServiceImpl<TravelerOrderDao, TravelerOrder> implements TravelerOrderService {
     @Autowired
     private TravelerOrderDao travelerOrderDao;

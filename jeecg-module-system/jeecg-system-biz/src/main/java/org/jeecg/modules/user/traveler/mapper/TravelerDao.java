@@ -1,4 +1,4 @@
-package org.jeecg.modules.user.traveler.dao;
+package org.jeecg.modules.user.traveler.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.jeecg.modules.user.traveler.entity.Traveler;

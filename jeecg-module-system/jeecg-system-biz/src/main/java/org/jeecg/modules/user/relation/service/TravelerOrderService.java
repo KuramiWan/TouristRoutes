@@ -1,7 +1,7 @@
-package org.jeecg.modules.user.traveler.relation.service;
+package org.jeecg.modules.user.relation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.jeecg.modules.user.traveler.relation.entity.TravelerOrder;
+import org.jeecg.modules.user.relation.entity.TravelerOrder;
 
 /**
  * 出行人订单联系id(TravelerOrder)表服务接口

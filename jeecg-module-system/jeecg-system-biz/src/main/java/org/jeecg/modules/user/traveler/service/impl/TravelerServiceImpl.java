@@ -4,15 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.modules.user.traveler.dao.TravelerDao;
 import org.jeecg.modules.user.traveler.entity.Traveler;
 import org.jeecg.modules.user.traveler.service.TravelerService;
+import org.jeecg.modules.user.traveler.mapper.TravelerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * 出行人(Traveler)表服务实现类

@@ -2,8 +2,6 @@ package org.jeecg.modules.user.traveler.entity;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-import java.io.Serializable;
-
 /**
  * 出行人(Traveler)表实体类
  *
