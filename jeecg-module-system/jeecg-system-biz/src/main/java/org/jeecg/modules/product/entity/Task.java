@@ -28,7 +28,7 @@ import lombok.experimental.Accessors;
 @TableName("task")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="task对象", description="某个产品某一天的所有任务")
+@ApiModel(value="task对象", description="产品日程的任务")
 public class Task implements Serializable {
     private static final long serialVersionUID = 1L;
 

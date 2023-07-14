@@ -43,7 +43,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
  * @Date:   2023-07-14
  * @Version: V1.0
  */
-@Api(tags="某个产品某一天的所有任务")
+@Api(tags="产品日程的任务")
 @RestController
 @RequestMapping("/core/task")
 @Slf4j
