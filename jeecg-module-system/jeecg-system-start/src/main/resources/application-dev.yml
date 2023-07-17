@@ -293,3 +293,7 @@ third-app:
       client-secret: ??
       agent-id: ??
 
+wx:
+  client:
+    app-id: wx86f22aacacee1c50
+    app-secret: 1783956499e2f25514b924950f66bbc4

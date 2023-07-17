@@ -24,6 +24,12 @@
 			<artifactId>hibernate-re</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>5.8.20</version>
+		</dependency>
+
 		<!-- 企业微信/钉钉 api -->
 		<dependency>
 			<groupId>org.jeecgframework</groupId>
