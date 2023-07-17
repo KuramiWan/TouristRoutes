@@ -79,6 +79,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         String response = HttpUtil.post(url, map);
         JSONObject json = JSONUtil.parseObj(response);
         String openId = json.getStr("openid");
+        String sessionKey = json.getStr("session_key");
         if (openId == null || openId.length() == 0)
             throw new RuntimeException("临时登录凭证错误");
         QueryWrapper<WxClientUserinfo> clientUserinfoQueryWrapper = new QueryWrapper<WxClientUserinfo>().eq("openid", openId);
@@ -89,21 +90,27 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
             wxClientUserinfo.setOpenid(openId);
             wxClientUserinfo.setAvatar(avatar);
             wxClientUserinfo.setUsername(username);
+            wxClientUserinfo.setSessionKey(sessionKey);
             wxClientUserinfoService.save(wxClientUserinfo);
             return wxClientUserinfo;
         } else { // 之前使用过随心游,则更新用户信息
             clientUserinfoServiceOne.setUsername(username);
             clientUserinfoServiceOne.setAvatar(avatar);
+            clientUserinfoServiceOne.setSessionKey(sessionKey);
             wxClientUserinfoService.updateById(clientUserinfoServiceOne);
             return clientUserinfoServiceOne;
         }
     }
 
-    //
-    public String getUserPhone() {
-      return "";
+    // 用户绑定手机号
+    @GetMapping("/savePhone")
+    public String savePhone(String id, String phone) {
+        QueryWrapper<WxClientUserinfo> clientUserinfoQueryWrapper = new QueryWrapper<WxClientUserinfo>().eq("id", id);
+        WxClientUserinfo clientUserinfoServiceOne = wxClientUserinfoService.getOne(clientUserinfoQueryWrapper);
+        clientUserinfoServiceOne.setPhone(phone);
+        wxClientUserinfoService.updateById(clientUserinfoServiceOne);
+        return "success";
     }
-
 
     /**
      * 分页列表查询
