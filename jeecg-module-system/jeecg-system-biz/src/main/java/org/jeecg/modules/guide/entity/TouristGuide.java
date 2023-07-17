@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +26,7 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("tourist_guide")
+@TableName(value="tourist_guide", autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="tourist_guide对象", description="导游表")
@@ -58,8 +59,9 @@ public class TouristGuide implements Serializable {
     private String employmentTime;
 	/**擅长景点*/
 	@Excel(name = "擅长景点", width = 15)
+    @TableField(typeHandler = JacksonTypeHandler.class)
     @ApiModelProperty(value = "擅长景点")
-    private String greatSpots;
+    private List<String> greatSpots;
 	/**个人介绍*/
 	@Excel(name = "个人介绍", width = 15)
     @ApiModelProperty(value = "个人介绍")
@@ -72,6 +74,18 @@ public class TouristGuide implements Serializable {
 	@Excel(name = "导游头像", width = 15)
     @ApiModelProperty(value = "导游头像")
     private String avatar;
+    /**封面*/
+    @Excel(name = "封面", width = 15)
+    @ApiModelProperty(value = "封面")
+    private String pageImg;
+    /**点赞数量*/
+    @Excel(name = "点赞数量", width = 15)
+    @ApiModelProperty(value = "点赞数量")
+    private String likeNum;
+    /**头衔*/
+    @Excel(name = "头衔", width = 15)
+    @ApiModelProperty(value = "头衔")
+    private String honor;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private String createBy;
