@@ -88,6 +88,8 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
             WxClientUserinfoVo wxClientUserinfoVo = new WxClientUserinfoVo();
             BeanUtils.copyProperties(clientUserinfoServiceOne,wxClientUserinfoVo);
             wxClientUserinfoVo.setToken(token);
+            //redis中添加token
+            redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
 
             return wxClientUserinfoVo;
         }
