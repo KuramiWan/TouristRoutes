@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -57,7 +59,7 @@ public class Comment implements Serializable {
 	/**评论的图片封面*/
 	@Excel(name = "评论的图片封面", width = 15)
     @ApiModelProperty(value = "评论的图片封面")
-    private java.lang.String comImg;
+    private List<String> comImg;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;
