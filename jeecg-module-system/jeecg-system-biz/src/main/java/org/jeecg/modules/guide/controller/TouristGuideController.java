@@ -1,5 +1,6 @@
 package org.jeecg.modules.guide.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.guide.vo.WaterFallGuide;
 import org.jeecg.modules.product.entity.Comment;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -30,6 +32,7 @@ import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +58,26 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     @Autowired
     private ITouristGuideService touristGuideService;
 
+    @ApiOperation(value = "导游表-增加点赞数量", notes = "导游表-增加点赞数量")
+    @PostMapping (value = "/addLikeNum")
+    public Result<Integer> addLikeNum(@RequestBody String guideId) {
+        TouristGuide touristGuide = touristGuideService.getById(guideId);
+        Integer likeNum = touristGuide.getLikeNum();
+        touristGuide.setLikeNum(likeNum+1);
+        boolean b = touristGuideService.updateById(touristGuide);
+        return b ? Result.OK(touristGuide.getLikeNum()):Result.error("点赞失败");
+    }
+
+    @ApiOperation(value = "导游表-减少点赞数量", notes = "导游表-减少点赞数量")
+    @PostMapping(value = "/subLikeNum")
+    public Result<Integer> subLikeNum(@RequestBody String guideId) {
+        TouristGuide touristGuide = touristGuideService.getById(guideId);
+        Integer likeNum = touristGuide.getLikeNum();
+        touristGuide.setLikeNum(likeNum-1);
+        boolean b = touristGuideService.updateById(touristGuide);
+        return b ? Result.OK(touristGuide.getLikeNum()):Result.error("取消失败");
+    }
+
     /**
      * 分页列表查询
      *
@@ -72,7 +95,18 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                    HttpServletRequest req) {
         Page<TouristGuide> page = new Page<>(pageNo,pageSize);
-        IPage<TouristGuide> pageList = touristGuideService.page(page, new LambdaQueryWrapper<>());
+        LambdaQueryWrapper<TouristGuide> queryWrapper =
+                new LambdaQueryWrapper<TouristGuide>().orderByDesc(TouristGuide::getLikeNum);
+        IPage pageList = touristGuideService.page(page, queryWrapper);
+        List<TouristGuide> records = pageList.getRecords();
+        ArrayList<WaterFallGuide> waterFallGuides = new ArrayList<>();
+        records.forEach(
+                record->{
+                    WaterFallGuide waterFallGuide = new WaterFallGuide();
+                    BeanUtils.copyProperties(record,waterFallGuide);
+                    waterFallGuides.add(waterFallGuide);
+                });
+        pageList.setRecords(waterFallGuides);
         return Result.OK(pageList);
     }
 

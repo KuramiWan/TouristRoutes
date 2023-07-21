@@ -44,6 +44,10 @@ public class ServiceComments implements Serializable {
 	@Excel(name = "导游id", width = 15)
     @ApiModelProperty(value = "导游id")
     private String guideId;
+    /**评论用户id*/
+    @Excel(name = "评论用户id", width = 15)
+    @ApiModelProperty(value = "评论用户id")
+    private String userId;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private String createBy;

@@ -57,6 +57,10 @@ public class TouristGuide implements Serializable {
 	@Excel(name = "从业年限", width = 15)
     @ApiModelProperty(value = "从业年限")
     private String employmentTime;
+    /**瀑布摘要*/
+    @Excel(name = "瀑布摘要", width = 15)
+    @ApiModelProperty(value = "瀑布摘要")
+    private String summary;
 	/**擅长景点*/
 	@Excel(name = "擅长景点", width = 15)
     @TableField(typeHandler = JacksonTypeHandler.class)
@@ -81,7 +85,7 @@ public class TouristGuide implements Serializable {
     /**点赞数量*/
     @Excel(name = "点赞数量", width = 15)
     @ApiModelProperty(value = "点赞数量")
-    private String likeNum;
+    private Integer likeNum;
     /**头衔*/
     @Excel(name = "头衔", width = 15)
     @ApiModelProperty(value = "头衔")
