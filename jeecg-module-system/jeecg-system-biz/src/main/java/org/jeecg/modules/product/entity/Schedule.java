@@ -6,10 +6,8 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +25,7 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("schedule")
+@TableName(value = "schedule", autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="schedule对象", description="产品日程")
@@ -54,6 +52,7 @@ public class Schedule implements Serializable {
     private java.lang.String schTitle;
 	/**当天精选图片*/
 	@Excel(name = "当天精选图片", width = 15)
+    @TableField(typeHandler = JacksonTypeHandler.class)
     @ApiModelProperty(value = "当天精选图片")
     private List<String> schImgs;
 	/**日程详情*/
