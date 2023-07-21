@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.guide.mapper.TouristGuideMapper">
-
+    <resultMap type="org.jeecg.modules.guide.entity.TouristGuide" id="TouristGuide">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="sex" column="sex"/>
+        <result property="descent" column="descent"/>
+        <result property="employmentTime" column="employment_time"/>
+        <result property="greatSpots" column="great_spots" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="introduction" column="introduction"/>
+        <result property="qualifications" column="qualifications"/>
+        <result property="avatar" column="avatar"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
 </mapper>
