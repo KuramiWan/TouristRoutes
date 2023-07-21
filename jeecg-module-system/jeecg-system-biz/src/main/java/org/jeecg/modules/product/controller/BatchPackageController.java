@@ -81,7 +81,6 @@ public class BatchPackageController extends JeecgController<BatchPackage, IBatch
 	 */
 	@AutoLog(value = "批次套餐-添加")
 	@ApiOperation(value="批次套餐-添加", notes="批次套餐-添加")
-	@RequiresPermissions("core:batch_package:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody BatchPackage batchPackage) {
 		batchPackageService.save(batchPackage);
@@ -96,7 +95,6 @@ public class BatchPackageController extends JeecgController<BatchPackage, IBatch
 	 */
 	@AutoLog(value = "批次套餐-编辑")
 	@ApiOperation(value="批次套餐-编辑", notes="批次套餐-编辑")
-	@RequiresPermissions("core:batch_package:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody BatchPackage batchPackage) {
 		batchPackageService.updateById(batchPackage);
@@ -111,7 +109,6 @@ public class BatchPackageController extends JeecgController<BatchPackage, IBatch
 	 */
 	@AutoLog(value = "批次套餐-通过id删除")
 	@ApiOperation(value="批次套餐-通过id删除", notes="批次套餐-通过id删除")
-	@RequiresPermissions("core:batch_package:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		batchPackageService.removeById(id);
@@ -126,7 +123,6 @@ public class BatchPackageController extends JeecgController<BatchPackage, IBatch
 	 */
 	@AutoLog(value = "批次套餐-批量删除")
 	@ApiOperation(value="批次套餐-批量删除", notes="批次套餐-批量删除")
-	@RequiresPermissions("core:batch_package:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.batchPackageService.removeByIds(Arrays.asList(ids.split(",")));

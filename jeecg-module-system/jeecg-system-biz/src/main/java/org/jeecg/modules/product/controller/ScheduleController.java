@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -67,9 +69,9 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		QueryWrapper<Schedule> queryWrapper = QueryGenerator.initQueryWrapper(schedule, req.getParameterMap());
+//		QueryWrapper<Schedule> queryWrapper = QueryGenerator.initQueryWrapper(schedule, req.getParameterMap());
 		Page<Schedule> page = new Page<Schedule>(pageNo, pageSize);
-		IPage<Schedule> pageList = scheduleService.page(page, queryWrapper);
+		IPage<Schedule> pageList = scheduleService.page(page,  new LambdaQueryWrapper<>());
 		return Result.OK(pageList);
 	}
 	
@@ -81,7 +83,6 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 	 */
 	@AutoLog(value = "产品日程-添加")
 	@ApiOperation(value="产品日程-添加", notes="产品日程-添加")
-	@RequiresPermissions("core:schedule:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Schedule schedule) {
 		scheduleService.save(schedule);
@@ -96,7 +97,6 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 	 */
 	@AutoLog(value = "产品日程-编辑")
 	@ApiOperation(value="产品日程-编辑", notes="产品日程-编辑")
-	@RequiresPermissions("core:schedule:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Schedule schedule) {
 		scheduleService.updateById(schedule);
@@ -111,7 +111,6 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 	 */
 	@AutoLog(value = "产品日程-通过id删除")
 	@ApiOperation(value="产品日程-通过id删除", notes="产品日程-通过id删除")
-	@RequiresPermissions("core:schedule:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		scheduleService.removeById(id);
@@ -126,7 +125,6 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 	 */
 	@AutoLog(value = "产品日程-批量删除")
 	@ApiOperation(value="产品日程-批量删除", notes="产品日程-批量删除")
-	@RequiresPermissions("core:schedule:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.scheduleService.removeByIds(Arrays.asList(ids.split(",")));

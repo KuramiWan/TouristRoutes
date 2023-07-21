@@ -81,7 +81,6 @@ public class JourneyPackageController extends JeecgController<JourneyPackage, IJ
 	 */
 	@AutoLog(value = "行程套餐-添加")
 	@ApiOperation(value="行程套餐-添加", notes="行程套餐-添加")
-	@RequiresPermissions("core:journey_package:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody JourneyPackage journeyPackage) {
 		journeyPackageService.save(journeyPackage);
@@ -96,7 +95,6 @@ public class JourneyPackageController extends JeecgController<JourneyPackage, IJ
 	 */
 	@AutoLog(value = "行程套餐-编辑")
 	@ApiOperation(value="行程套餐-编辑", notes="行程套餐-编辑")
-	@RequiresPermissions("core:journey_package:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody JourneyPackage journeyPackage) {
 		journeyPackageService.updateById(journeyPackage);
@@ -111,7 +109,6 @@ public class JourneyPackageController extends JeecgController<JourneyPackage, IJ
 	 */
 	@AutoLog(value = "行程套餐-通过id删除")
 	@ApiOperation(value="行程套餐-通过id删除", notes="行程套餐-通过id删除")
-	@RequiresPermissions("core:journey_package:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		journeyPackageService.removeById(id);
@@ -126,7 +123,6 @@ public class JourneyPackageController extends JeecgController<JourneyPackage, IJ
 	 */
 	@AutoLog(value = "行程套餐-批量删除")
 	@ApiOperation(value="行程套餐-批量删除", notes="行程套餐-批量删除")
-	@RequiresPermissions("core:journey_package:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.journeyPackageService.removeByIds(Arrays.asList(ids.split(",")));
