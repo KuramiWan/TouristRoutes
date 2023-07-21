@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.jeecg.modules.utils.json.CommonIntegerTypeHandler;
+import org.jeecg.modules.utils.json.CommonStringTypeHandler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecg.common.aspect.annotation.Dict;
@@ -78,13 +79,16 @@ public class OfficialStrategy implements Serializable {
 	/**地点标题*/
 	@Excel(name = "地点标题", width = 15)
     @ApiModelProperty(value = "地点标题")
-    private String locationTitle;
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> locationTitle;
 	/**地点介绍*/
 	@Excel(name = "地点介绍", width = 15)
     @ApiModelProperty(value = "地点介绍")
-    private String locationDesc;
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> locationDesc;
 	/**地点推荐游玩小时数*/
 	@Excel(name = "地点推荐游玩小时数", width = 15)
     @ApiModelProperty(value = "地点推荐游玩小时数")
-    private Integer locationHour;
+    @TableField(typeHandler = CommonIntegerTypeHandler.class)
+    private List<Integer> locationHour;
 }
