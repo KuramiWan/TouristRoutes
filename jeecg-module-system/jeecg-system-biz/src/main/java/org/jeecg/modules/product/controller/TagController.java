@@ -81,7 +81,6 @@ public class TagController extends JeecgController<Tag, ITagService> {
 	 */
 	@AutoLog(value = "产品标签表-添加")
 	@ApiOperation(value="产品标签表-添加", notes="产品标签表-添加")
-	@RequiresPermissions("core:tag:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Tag tag) {
 		tagService.save(tag);
@@ -96,7 +95,6 @@ public class TagController extends JeecgController<Tag, ITagService> {
 	 */
 	@AutoLog(value = "产品标签表-编辑")
 	@ApiOperation(value="产品标签表-编辑", notes="产品标签表-编辑")
-	@RequiresPermissions("core:tag:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Tag tag) {
 		tagService.updateById(tag);
@@ -111,7 +109,6 @@ public class TagController extends JeecgController<Tag, ITagService> {
 	 */
 	@AutoLog(value = "产品标签表-通过id删除")
 	@ApiOperation(value="产品标签表-通过id删除", notes="产品标签表-通过id删除")
-	@RequiresPermissions("core:tag:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		tagService.removeById(id);
@@ -126,7 +123,6 @@ public class TagController extends JeecgController<Tag, ITagService> {
 	 */
 	@AutoLog(value = "产品标签表-批量删除")
 	@ApiOperation(value="产品标签表-批量删除", notes="产品标签表-批量删除")
-	@RequiresPermissions("core:tag:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.tagService.removeByIds(Arrays.asList(ids.split(",")));

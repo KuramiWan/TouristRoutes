@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -65,7 +67,7 @@ public class Task implements Serializable {
 	/**任务精选图片*/
 	@Excel(name = "任务精选图片", width = 15)
     @ApiModelProperty(value = "任务精选图片")
-    private java.lang.String taskImgs;
+    private List<String> taskImgs;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;

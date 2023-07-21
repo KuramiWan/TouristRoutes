@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -67,9 +69,9 @@ public class TaskController extends JeecgController<Task, ITaskService> {
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
+//		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
 		Page<Task> page = new Page<Task>(pageNo, pageSize);
-		IPage<Task> pageList = taskService.page(page, queryWrapper);
+		IPage<Task> pageList = taskService.page(page, new LambdaQueryWrapper<>());
 		return Result.OK(pageList);
 	}
 	
@@ -81,7 +83,6 @@ public class TaskController extends JeecgController<Task, ITaskService> {
 	 */
 	@AutoLog(value = "某个产品某一天的所有任务-添加")
 	@ApiOperation(value="某个产品某一天的所有任务-添加", notes="某个产品某一天的所有任务-添加")
-	@RequiresPermissions("core:task:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Task task) {
 		taskService.save(task);
@@ -96,7 +97,6 @@ public class TaskController extends JeecgController<Task, ITaskService> {
 	 */
 	@AutoLog(value = "某个产品某一天的所有任务-编辑")
 	@ApiOperation(value="某个产品某一天的所有任务-编辑", notes="某个产品某一天的所有任务-编辑")
-	@RequiresPermissions("core:task:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Task task) {
 		taskService.updateById(task);
@@ -111,7 +111,6 @@ public class TaskController extends JeecgController<Task, ITaskService> {
 	 */
 	@AutoLog(value = "某个产品某一天的所有任务-通过id删除")
 	@ApiOperation(value="某个产品某一天的所有任务-通过id删除", notes="某个产品某一天的所有任务-通过id删除")
-	@RequiresPermissions("core:task:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		taskService.removeById(id);
@@ -126,7 +125,6 @@ public class TaskController extends JeecgController<Task, ITaskService> {
 	 */
 	@AutoLog(value = "某个产品某一天的所有任务-批量删除")
 	@ApiOperation(value="某个产品某一天的所有任务-批量删除", notes="某个产品某一天的所有任务-批量删除")
-	@RequiresPermissions("core:task:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.taskService.removeByIds(Arrays.asList(ids.split(",")));

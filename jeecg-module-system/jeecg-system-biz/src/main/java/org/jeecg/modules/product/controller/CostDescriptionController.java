@@ -81,7 +81,6 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 	 */
 	@AutoLog(value = "费用说明-添加")
 	@ApiOperation(value="费用说明-添加", notes="费用说明-添加")
-	@RequiresPermissions("core:cost_description:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody CostDescription costDescription) {
 		costDescriptionService.save(costDescription);
@@ -96,7 +95,6 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 	 */
 	@AutoLog(value = "费用说明-编辑")
 	@ApiOperation(value="费用说明-编辑", notes="费用说明-编辑")
-	@RequiresPermissions("core:cost_description:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody CostDescription costDescription) {
 		costDescriptionService.updateById(costDescription);
@@ -111,7 +109,6 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 	 */
 	@AutoLog(value = "费用说明-通过id删除")
 	@ApiOperation(value="费用说明-通过id删除", notes="费用说明-通过id删除")
-	@RequiresPermissions("core:cost_description:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		costDescriptionService.removeById(id);
@@ -126,7 +123,6 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 	 */
 	@AutoLog(value = "费用说明-批量删除")
 	@ApiOperation(value="费用说明-批量删除", notes="费用说明-批量删除")
-	@RequiresPermissions("core:cost_description:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.costDescriptionService.removeByIds(Arrays.asList(ids.split(",")));
