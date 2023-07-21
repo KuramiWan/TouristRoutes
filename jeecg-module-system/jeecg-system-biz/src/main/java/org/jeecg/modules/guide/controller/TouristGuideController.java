@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.product.entity.Comment;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -53,8 +54,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class TouristGuideController extends JeecgController<TouristGuide, ITouristGuideService> {
     @Autowired
     private ITouristGuideService touristGuideService;
-    @Autowired
-    private TouristGuideMapper touristGuideMapper;
 
     /**
      * 分页列表查询
@@ -72,12 +71,9 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
                                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                    HttpServletRequest req) {
-        IPage<TouristGuide> page = new Page<>(pageNo, pageSize);
-        List<TouristGuide> collectPageList = touristGuideMapper.selectList(new LambdaQueryWrapper<TouristGuide>())
-                .stream().skip((long) (pageNo - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
-        page.setRecords(collectPageList);
-        page.setTotal(collectPageList.size());
-        return Result.OK(page);
+        Page<TouristGuide> page = new Page<>(pageNo,pageSize);
+        IPage<TouristGuide> pageList = touristGuideService.page(page, new LambdaQueryWrapper<>());
+        return Result.OK(pageList);
     }
 
     /**
