@@ -72,6 +72,14 @@ public class OfficialStrategy implements Serializable {
 	@Excel(name = "攻略标签", width = 15)
     @ApiModelProperty(value = "攻略标签")
     private String tag;
+    /**几天*/
+    @Excel(name = "几天", width = 15)
+    @ApiModelProperty(value = "几天")
+    private Integer days;
+    /**观光点数量*/
+    @Excel(name = "观光点数量", width = 15)
+    @ApiModelProperty(value = "观光点数量")
+    private Integer locationCount;
 	/**地点标题*/
 	@Excel(name = "地点标题", width = 15)
     @ApiModelProperty(value = "地点标题")
