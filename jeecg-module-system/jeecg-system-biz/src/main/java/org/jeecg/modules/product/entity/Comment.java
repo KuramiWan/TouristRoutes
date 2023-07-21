@@ -6,10 +6,8 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +25,7 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("comment")
+@TableName(value = "comment", autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="comment对象", description="产品评论")
@@ -59,6 +57,7 @@ public class Comment implements Serializable {
 	/**评论的图片封面*/
 	@Excel(name = "评论的图片封面", width = 15)
     @ApiModelProperty(value = "评论的图片封面")
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> comImg;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
