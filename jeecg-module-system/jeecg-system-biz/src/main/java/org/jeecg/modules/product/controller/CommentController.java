@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.swagger.models.auth.In;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -66,12 +67,13 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	@ApiOperation(value="产品评论-分页列表查询", notes="产品评论-分页列表查询")
 	@GetMapping(value = "/list")
 	public Result<IPage<Comment>> queryPageList(Comment comment,
+								   @RequestParam(name="proId") String proId,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 //		QueryWrapper<Comment> queryWrapper = QueryGenerator.initQueryWrapper(comment, req.getParameterMap());
 		Page<Comment> page = new Page<Comment>(pageNo, pageSize);
-		IPage<Comment> pageList = commentService.page(page, new LambdaQueryWrapper<>());
+		IPage<Comment> pageList = commentService.page(page, new LambdaQueryWrapper<Comment>().eq(Comment::getProId,proId));
 		return Result.OK(pageList);
 	}
 	
