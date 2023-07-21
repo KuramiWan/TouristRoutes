@@ -81,7 +81,6 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 */
 	@AutoLog(value = "产品表-添加")
 	@ApiOperation(value="产品表-添加", notes="产品表-添加")
-	@RequiresPermissions("core:product:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Product product) {
 		productService.save(product);
@@ -96,7 +95,6 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 */
 	@AutoLog(value = "产品表-编辑")
 	@ApiOperation(value="产品表-编辑", notes="产品表-编辑")
-	@RequiresPermissions("core:product:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Product product) {
 		productService.updateById(product);
@@ -111,7 +109,6 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 */
 	@AutoLog(value = "产品表-通过id删除")
 	@ApiOperation(value="产品表-通过id删除", notes="产品表-通过id删除")
-	@RequiresPermissions("core:product:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		productService.removeById(id);
@@ -126,7 +123,6 @@ public class ProductController extends JeecgController<Product, IProductService>
 	 */
 	@AutoLog(value = "产品表-批量删除")
 	@ApiOperation(value="产品表-批量删除", notes="产品表-批量删除")
-	@RequiresPermissions("core:product:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.productService.removeByIds(Arrays.asList(ids.split(",")));

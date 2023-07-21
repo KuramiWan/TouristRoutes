@@ -98,8 +98,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/sys/getQrcodeToken/**", "anon"); //监听扫码
         filterChainDefinitionMap.put("/sys/checkAuth", "anon"); //授权接口排除
 
-        filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/getOpenId", "anon");
-        filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/savePhone", "anon");
+        filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/getOpenId", "anon"); // wx小程序client端登录
 
         //产品测试
         filterChainDefinitionMap.put("/product/product/**","anon");
