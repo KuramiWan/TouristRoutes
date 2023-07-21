@@ -56,10 +56,6 @@ public class OfficialStrategy implements Serializable {
 	/**所属部门*/
     @ApiModelProperty(value = "所属部门")
     private String sysOrgCode;
-	/**产品id*/
-	@Excel(name = "产品id", width = 15)
-    @ApiModelProperty(value = "产品id")
-    private String productId;
 	/**攻略标题*/
 	@Excel(name = "攻略标题", width = 15)
     @ApiModelProperty(value = "攻略标题")
@@ -91,4 +87,9 @@ public class OfficialStrategy implements Serializable {
     @ApiModelProperty(value = "地点推荐游玩小时数")
     @TableField(typeHandler = CommonIntegerTypeHandler.class)
     private List<Integer> locationHour;
+    /**地点名称*/
+    @Excel(name = "地点名称", width = 15)
+    @ApiModelProperty(value = "地点名称")
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> locationAddress;
 }
