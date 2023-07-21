@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("official_strategy")
+@TableName(value = "official_strategy", autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="official_strategy对象", description="官方攻略")
