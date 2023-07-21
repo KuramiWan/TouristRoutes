@@ -1,5 +1,6 @@
 package org.jeecg.modules.product.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.product.entity.Comment;
+import org.jeecg.modules.product.mapper.CommentMapper;
 import org.jeecg.modules.product.service.ICommentService;
+import org.jeecg.modules.product.vo.CommentDetail;
+import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.mapper.WxClientUserinfoMapper;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +59,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class CommentController extends JeecgController<Comment, ICommentService> {
 	@Autowired
 	private ICommentService commentService;
+
+	@Autowired
+	private WxClientUserinfoMapper wxClientUserinfoMapper;
 	
 	/**
 	 * 分页列表查询
@@ -66,15 +75,37 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	//@AutoLog(value = "产品评论-分页列表查询")
 	@ApiOperation(value="产品评论-分页列表查询", notes="产品评论-分页列表查询")
 	@GetMapping(value = "/list")
-	public Result<IPage<Comment>> queryPageList(Comment comment,
-								   @RequestParam(name="proId") String proId,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
+	public Result<IPage<Comment>> queryPageList(@RequestParam(name="proId") String proId,
+													  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+													  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+													  HttpServletRequest req) {
 //		QueryWrapper<Comment> queryWrapper = QueryGenerator.initQueryWrapper(comment, req.getParameterMap());
 		Page<Comment> page = new Page<Comment>(pageNo, pageSize);
-		IPage<Comment> pageList = commentService.page(page, new LambdaQueryWrapper<Comment>().eq(Comment::getProId,proId));
-		return Result.OK(pageList);
+		IPage pageList = commentService.page(page, new LambdaQueryWrapper<Comment>().eq(Comment::getProId,proId));
+		List<Comment> records = pageList.getRecords();
+		if (proId==null || proId =="" || proId == "0"){
+			return Result.OK(pageList);
+		}
+		else {
+			ArrayList<CommentDetail> commentDetails = new ArrayList<>();;
+			records.forEach(record->{
+				CommentDetail commentDetail = new CommentDetail();
+				WxClientUserinfo user = wxClientUserinfoMapper.selectById(record.getUserId());
+				String fisName = user.getUsername().substring(0, 1);
+				commentDetail.setAvatar(user.getAvatar())
+						.setComImg(record.getComImg())
+						.setComments(record.getComContent())
+						.setDate(record.getComDate())
+						.setId(record.getId())
+						.setUsername(fisName);
+				commentDetails.add(commentDetail);
+			});
+			pageList.setRecords(commentDetails);
+			return Result.OK(pageList);
+		}
+
+
+
 	}
 	
 	/**
