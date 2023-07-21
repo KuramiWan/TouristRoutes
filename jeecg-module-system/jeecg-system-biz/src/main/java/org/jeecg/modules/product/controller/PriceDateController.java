@@ -81,7 +81,6 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	 */
 	@AutoLog(value = "每天的产品价格表-添加")
 	@ApiOperation(value="每天的产品价格表-添加", notes="每天的产品价格表-添加")
-	@RequiresPermissions("core:price_date:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody PriceDate priceDate) {
 		priceDateService.save(priceDate);
@@ -96,7 +95,6 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	 */
 	@AutoLog(value = "每天的产品价格表-编辑")
 	@ApiOperation(value="每天的产品价格表-编辑", notes="每天的产品价格表-编辑")
-	@RequiresPermissions("core:price_date:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody PriceDate priceDate) {
 		priceDateService.updateById(priceDate);
@@ -111,7 +109,6 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	 */
 	@AutoLog(value = "每天的产品价格表-通过id删除")
 	@ApiOperation(value="每天的产品价格表-通过id删除", notes="每天的产品价格表-通过id删除")
-	@RequiresPermissions("core:price_date:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		priceDateService.removeById(id);
@@ -126,7 +123,6 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	 */
 	@AutoLog(value = "每天的产品价格表-批量删除")
 	@ApiOperation(value="每天的产品价格表-批量删除", notes="每天的产品价格表-批量删除")
-	@RequiresPermissions("core:price_date:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.priceDateService.removeByIds(Arrays.asList(ids.split(",")));

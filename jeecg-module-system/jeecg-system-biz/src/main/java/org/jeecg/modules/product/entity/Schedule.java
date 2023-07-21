@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -53,7 +55,7 @@ public class Schedule implements Serializable {
 	/**当天精选图片*/
 	@Excel(name = "当天精选图片", width = 15)
     @ApiModelProperty(value = "当天精选图片")
-    private java.lang.String schImgs;
+    private List<String> schImgs;
 	/**日程详情*/
 	@Excel(name = "日程详情", width = 15)
     @ApiModelProperty(value = "日程详情")

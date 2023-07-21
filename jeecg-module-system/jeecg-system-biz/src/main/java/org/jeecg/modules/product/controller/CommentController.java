@@ -83,7 +83,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	 */
 	@AutoLog(value = "产品评论-添加")
 	@ApiOperation(value="产品评论-添加", notes="产品评论-添加")
-	@RequiresPermissions("core:comment:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Comment comment) {
 		commentService.save(comment);
@@ -98,7 +97,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	 */
 	@AutoLog(value = "产品评论-编辑")
 	@ApiOperation(value="产品评论-编辑", notes="产品评论-编辑")
-	@RequiresPermissions("core:comment:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody Comment comment) {
 		commentService.updateById(comment);
@@ -113,7 +111,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	 */
 	@AutoLog(value = "产品评论-通过id删除")
 	@ApiOperation(value="产品评论-通过id删除", notes="产品评论-通过id删除")
-	@RequiresPermissions("core:comment:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		commentService.removeById(id);
@@ -128,7 +125,6 @@ public class CommentController extends JeecgController<Comment, ICommentService>
 	 */
 	@AutoLog(value = "产品评论-批量删除")
 	@ApiOperation(value="产品评论-批量删除", notes="产品评论-批量删除")
-	@RequiresPermissions("core:comment:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.commentService.removeByIds(Arrays.asList(ids.split(",")));

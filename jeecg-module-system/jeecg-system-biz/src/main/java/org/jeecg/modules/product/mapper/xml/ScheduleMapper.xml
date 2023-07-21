@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.demo.core.mapper.ScheduleMapper">
-
+    <resultMap type="org.jeecg.modules.product.entity.Task" id="Task">
+        <id property="id" column="id"/>
+        <result property="proId" column="pro_id"/>
+        <result property="schDate" column="sch_date"/>
+        <result property="schTitle" column="sch_title"/>
+        <result property="schImgs" column="sch_imgs" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="schContent" column="sch_content"/>
+        <result property="schAddress" column="sch_address"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
 </mapper>
