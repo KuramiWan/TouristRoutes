@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -145,6 +147,23 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 		}
 		return Result.OK(costDescription);
 	}
+
+	 /**
+	  * 通过id查询
+	  *
+	  * @param proId
+	  * @return
+	  */
+	 //@AutoLog(value = "费用说明-通过proId查询")
+	 @ApiOperation(value="费用说明-通过proId查询", notes="费用说明-通过proId查询")
+	 @GetMapping(value = "/queryByProId")
+	 public Result<CostDescription> queryByProId(@RequestParam(name="proId",required=true) String proId) {
+		 CostDescription costDescription = costDescriptionService.getOne(new LambdaQueryWrapper<CostDescription>().eq(CostDescription::getProId,proId));
+		 if(costDescription==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.OK(costDescription);
+	 }
 
     /**
     * 导出excel
