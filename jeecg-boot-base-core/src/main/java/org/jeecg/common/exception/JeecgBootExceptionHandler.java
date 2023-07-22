@@ -6,6 +6,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.enums.SentinelErrorInfoEnum;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.http.HttpStatus;
@@ -65,9 +66,14 @@ public class JeecgBootExceptionHandler {
 	@ExceptionHandler(DuplicateKeyException.class)
 	public Result<?> handleDuplicateKeyException(DuplicateKeyException e){
 		log.error(e.getMessage(), e);
-		return Result.error("数据库中已存在该记录");
+		return Result.error("数据库中已存在该记录，"+e.getMessage());
 	}
 
+	@ExceptionHandler(DataRetrievalFailureException.class)
+	public Result<?> handleDataRetrievalFailureException(DataRetrievalFailureException e){
+		log.error(e.getMessage(), e);
+		return Result.error("数据库中找不到该记录，"+e.getMessage());
+	}
 	@ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
 	public Result<?> handleAuthorizationException(AuthorizationException e){
 		log.error(e.getMessage(), e);
