@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -19,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.mapper.ProductMapper;
 import org.jeecg.modules.product.service.IProductService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -50,7 +53,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class ProductController extends JeecgController<Product, IProductService> {
 	@Autowired
 	private IProductService productService;
-	
+
+	@Autowired
+	private ProductMapper productMapper;
 	/**
 	 * 分页列表查询
 	 *
@@ -145,6 +150,25 @@ public class ProductController extends JeecgController<Product, IProductService>
 		}
 		return Result.OK(product);
 	}
+
+
+	 /**
+	  * 通过proName查询
+	  *
+	  * @param id
+	  * @return
+	  */
+	 //@AutoLog(value = "产品表-通过proName查询")
+	 @ApiOperation(value="产品表-通过proName查询", notes="产品表-通过proName查询")
+	 @GetMapping(value = "/queryByProName")
+	 public Result<List<Product>> queryByProName(@RequestParam(name="proName",required=true) String proName) {
+		 List<Product> products = productMapper.selectList(new LambdaQueryWrapper<Product>().like(Product::getProTitle, proName));
+		 if(products==null || products.size() <=0) {
+			 return Result.error("未找到对应数据");
+		 }
+
+		 return Result.OK(products);
+	 }
 
     /**
     * 导出excel
