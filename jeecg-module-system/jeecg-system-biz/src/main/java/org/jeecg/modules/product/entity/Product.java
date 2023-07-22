@@ -52,6 +52,18 @@ public class Product implements Serializable {
 	@Excel(name = "产品介绍", width = 15)
     @ApiModelProperty(value = "产品介绍")
     private java.lang.String proIntroduction;
+    /**成团人数*/
+    @Excel(name = "成团人数", width = 15)
+    @ApiModelProperty(value = "成团人数")
+    private java.lang.Integer proMan;
+    /**封面标题*/
+    @Excel(name = "封面标题", width = 15)
+    @ApiModelProperty(value = "封面标题")
+    private java.lang.String proPageTitle;
+    /**起始点*/
+    @Excel(name = "起始点", width = 15)
+    @ApiModelProperty(value = "起始点")
+    private java.lang.String origin;
     /**产品时长*/
     @Excel(name = "产品时长", width = 15)
     @ApiModelProperty(value = "产品时长")
