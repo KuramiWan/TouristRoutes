@@ -57,7 +57,11 @@ public class PriceDate implements Serializable {
 	/**当天是否人满*/
 	@Excel(name = "当天是否人满", width = 15)
     @ApiModelProperty(value = "当天是否人满")
-    private java.lang.String pdFull;
+    private java.lang.Integer pdFull;
+    /**当天最多可报名人数*/
+    @Excel(name = "当天最多可报名人数", width = 15)
+    @ApiModelProperty(value = "当天最多可报名人数")
+    private java.lang.Integer pdMaxMan;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;
