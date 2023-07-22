@@ -9,7 +9,6 @@ import java.util.List;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.jeecg.modules.utils.json.CommonIntegerTypeHandler;
 import org.jeecg.modules.utils.json.CommonStringTypeHandler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
@@ -20,17 +19,17 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @Description: 官方攻略
+ * @Description: 游友攻略
  * @Author: jeecg-boot
- * @Date: 2023-07-21
+ * @Date: 2023-07-22
  * @Version: V1.0
  */
 @Data
-@TableName(value = "official_strategy", autoResultMap = true)
+@TableName(value = "friend_strategy",autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "official_strategy对象", description = "官方攻略")
-public class OfficialStrategy implements Serializable {
+@ApiModel(value = "friend_strategy对象", description = "游友攻略")
+public class FriendStrategy implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -69,67 +68,46 @@ public class OfficialStrategy implements Serializable {
     @ApiModelProperty(value = "所属部门")
     private String sysOrgCode;
     /**
+     * 攻略用户id
+     */
+    @Excel(name = "攻略用户id", width = 15)
+    @ApiModelProperty(value = "攻略用户id")
+    private String userid;
+    /**
      * 攻略标题
      */
     @Excel(name = "攻略标题", width = 15)
     @ApiModelProperty(value = "攻略标题")
     private String title;
     /**
+     * 攻略内容
+     */
+    @Excel(name = "攻略内容", width = 15)
+    @ApiModelProperty(value = "攻略内容")
+    private String content;
+    /**
      * 攻略图片
      */
     @Excel(name = "攻略图片", width = 15)
     @ApiModelProperty(value = "攻略图片")
-    private String img;
-    /**
-     * 攻略浏览量
-     */
-    @Excel(name = "攻略浏览量", width = 15)
-    @ApiModelProperty(value = "攻略浏览量")
-    private Integer views;
-    /**
-     * 攻略标签
-     */
-    @Excel(name = "攻略标签", width = 15)
-    @ApiModelProperty(value = "攻略标签")
-    private String tag;
-    /**
-     * 几天
-     */
-    @Excel(name = "几天", width = 15)
-    @ApiModelProperty(value = "几天")
-    private Integer days;
-    /**
-     * 观光点数量
-     */
-    @Excel(name = "观光点数量", width = 15)
-    @ApiModelProperty(value = "观光点数量")
-    private Integer locationCount;
-    /**
-     * 地点标题
-     */
-    @Excel(name = "地点标题", width = 15)
-    @ApiModelProperty(value = "地点标题")
     @TableField(typeHandler = CommonStringTypeHandler.class)
-    private List<String> locationTitle;
+    private List<String> img;
     /**
-     * 地点介绍
+     * 转发数
      */
-    @Excel(name = "地点介绍", width = 15)
-    @ApiModelProperty(value = "地点介绍")
-    @TableField(typeHandler = CommonStringTypeHandler.class)
-    private List<String> locationDesc;
+    @Excel(name = "转发数", width = 15)
+    @ApiModelProperty(value = "转发数")
+    private Integer forwardCount;
     /**
-     * 地点推荐游玩小时数
+     * 点赞数
      */
-    @Excel(name = "地点推荐游玩小时数", width = 15)
-    @ApiModelProperty(value = "地点推荐游玩小时数")
-    @TableField(typeHandler = CommonIntegerTypeHandler.class)
-    private List<Integer> locationHour;
+    @Excel(name = "点赞数", width = 15)
+    @ApiModelProperty(value = "点赞数")
+    private Integer likeCount;
     /**
-     * 地点名称
+     * 发布位置
      */
-    @Excel(name = "地点名称", width = 15)
-    @ApiModelProperty(value = "地点名称")
-    @TableField(typeHandler = CommonStringTypeHandler.class)
-    private List<String> locationAddress;
+    @Excel(name = "发布位置", width = 15)
+    @ApiModelProperty(value = "发布位置")
+    private String position;
 }
