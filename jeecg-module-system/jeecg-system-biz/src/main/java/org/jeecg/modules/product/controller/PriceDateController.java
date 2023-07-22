@@ -1,14 +1,15 @@
 package org.jeecg.modules.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -19,7 +20,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.product.entity.PriceDate;
+import org.jeecg.modules.product.mapper.PriceDateMapper;
 import org.jeecg.modules.product.service.IPriceDateService;
+import org.jeecg.modules.product.vo.DateDetail;
+import org.jeecg.modules.product.vo.PriceDateList;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -50,6 +54,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class PriceDateController extends JeecgController<PriceDate, IPriceDateService> {
 	@Autowired
 	private IPriceDateService priceDateService;
+
+	@Autowired
+	private PriceDateMapper priceDateMapper;
 	
 	/**
 	 * 分页列表查询
@@ -114,7 +121,7 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 		priceDateService.removeById(id);
 		return Result.OK("删除成功!");
 	}
-	
+
 	/**
 	 *  批量删除
 	 *
@@ -145,6 +152,57 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 		}
 		return Result.OK(priceDate);
 	}
+
+
+	 /**
+	  * 通过proId批量查询
+	  *
+	  * @param proId
+	  * @return
+	  */
+	 //@AutoLog(value = "每天的产品价格表-通过proId批量查询")
+	 @ApiOperation(value="每天的产品价格表-通过proId批量查询", notes="每天的产品价格表-通过proId批量查询")
+	 @GetMapping(value = "/queryByProIds")
+	 public Result<List<PriceDateList>> queryByProIds(@RequestParam(name="proId",required=true) String proId) {
+		 List<PriceDate> priceDates = priceDateMapper.selectList(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId));
+		 if(priceDates==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 List<PriceDateList> priceDateLists = new ArrayList<PriceDateList>();
+
+		 priceDates.forEach(priceDate -> {
+			 PriceDateList priceDateList = new PriceDateList();
+			 DateDetail dateDetail = new DateDetail();
+			 Integer pdMaxMan = priceDate.getPdMaxMan();
+			 Integer pdEnrollment = priceDate.getPdEnrollment();
+			 Date pdDate = priceDate.getPdDate();
+			 if(pdMaxMan == pdEnrollment){
+				 priceDateList.setPdFull("已满");
+			 }else {
+			 	priceDateList.setPdFull("可报名");
+			 }
+			 SimpleDateFormat week = new SimpleDateFormat("EEEE");
+			 SimpleDateFormat ruler1 = new SimpleDateFormat("yyyy-MM");
+			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
+			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
+			 String yearM = ruler1.format(pdDate);
+			 String year = ruler2.format(pdDate);
+			 String weekOne = week.format(pdDate);
+			 String day = ruler3.format(pdDate);
+			 dateDetail.setDate(yearM)
+					 .setYear(year)
+					 .setDay(day)
+					 .setWeek(weekOne);
+
+			 priceDateList.setProId(priceDate.getProId())
+					 .setPdEnrollment(priceDate.getPdEnrollment())
+					 .setPdMaxMan(priceDate.getPdMaxMan())
+					 .setPdPrice(priceDate.getPdPrice())
+					 .setDateDetail(dateDetail);
+			 priceDateLists.add(priceDateList);
+		 });
+		 return Result.OK(priceDateLists);
+	 }
 
     /**
     * 导出excel

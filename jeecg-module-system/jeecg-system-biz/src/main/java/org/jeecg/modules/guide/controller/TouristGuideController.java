@@ -15,7 +15,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.guide.dto.UserAndLeader;
 import org.jeecg.modules.guide.entity.TouristGuide;
+import org.jeecg.modules.guide.entity.UserLeaderLike;
 import org.jeecg.modules.guide.mapper.TouristGuideMapper;
 import org.jeecg.modules.guide.service.ITouristGuideService;
 
@@ -24,6 +26,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.guide.service.IUserLeaderLikeService;
 import org.jeecg.modules.guide.vo.WaterFallGuide;
 import org.jeecg.modules.product.entity.Comment;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -34,6 +37,9 @@ import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -57,25 +63,48 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class TouristGuideController extends JeecgController<TouristGuide, ITouristGuideService> {
     @Autowired
     private ITouristGuideService touristGuideService;
+    @Autowired
+    private IUserLeaderLikeService userLeaderLikeService;
 
     @ApiOperation(value = "导游表-增加点赞数量", notes = "导游表-增加点赞数量")
     @PostMapping (value = "/addLikeNum")
-    public Result<Integer> addLikeNum(@RequestBody String guideId) {
-        TouristGuide touristGuide = touristGuideService.getById(guideId);
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> addLikeNum(@RequestBody UserAndLeader userAndLeader) throws Exception {
+        TouristGuide touristGuide = touristGuideService.getById(userAndLeader.getGuideId());
         Integer likeNum = touristGuide.getLikeNum();
         touristGuide.setLikeNum(likeNum+1);
-        boolean b = touristGuideService.updateById(touristGuide);
-        return b ? Result.OK(touristGuide.getLikeNum()):Result.error("点赞失败");
+        // 加入到用户点赞导游表中
+        UserLeaderLike userLeaderLike =
+                new UserLeaderLike()
+                        .setLeaderId(userAndLeader.getGuideId())
+                        .setUserId(userAndLeader.getUserId());
+        LambdaQueryWrapper<UserLeaderLike> queryWrapper =
+                new LambdaQueryWrapper<UserLeaderLike>()
+                        .eq(UserLeaderLike::getUserId,userAndLeader.getUserId())
+                        .eq(UserLeaderLike::getLeaderId,userAndLeader.getGuideId());
+        long count = userLeaderLikeService.count(queryWrapper);
+        touristGuideService.updateById(touristGuide);
+        userLeaderLikeService.save(userLeaderLike);
+        if(count>=1) throw new DuplicateKeyException("点赞失败");
+        return Result.OK(touristGuide.getLikeNum());
     }
 
     @ApiOperation(value = "导游表-减少点赞数量", notes = "导游表-减少点赞数量")
     @PostMapping(value = "/subLikeNum")
-    public Result<Integer> subLikeNum(@RequestBody String guideId) {
-        TouristGuide touristGuide = touristGuideService.getById(guideId);
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> subLikeNum(@RequestBody UserAndLeader userAndLeader) throws Exception {
+        TouristGuide touristGuide = touristGuideService.getById(userAndLeader.getGuideId());
         Integer likeNum = touristGuide.getLikeNum();
         touristGuide.setLikeNum(likeNum-1);
-        boolean b = touristGuideService.updateById(touristGuide);
-        return b ? Result.OK(touristGuide.getLikeNum()):Result.error("取消失败");
+        //从点赞表中删除这条记录
+        LambdaQueryWrapper<UserLeaderLike> queryWrapper =
+                new LambdaQueryWrapper<UserLeaderLike>()
+                        .eq(UserLeaderLike::getUserId,userAndLeader.getUserId())
+                        .eq(UserLeaderLike::getLeaderId,userAndLeader.getGuideId());
+        boolean update = touristGuideService.updateById(touristGuide);
+        boolean remove = userLeaderLikeService.remove(queryWrapper);
+        if(!(update && remove)) throw new DataRetrievalFailureException("取消失败");
+        return Result.OK(touristGuide.getLikeNum());
     }
 
     /**
@@ -91,6 +120,7 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     @ApiOperation(value = "导游表-分页列表查询", notes = "导游表-分页列表查询")
     @GetMapping(value = "/list")
     public Result<IPage<TouristGuide>> getPageList(TouristGuide touristGuide,
+                                                   @RequestParam(name = "userId",required = false) String userId,
                                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                    HttpServletRequest req) {
@@ -104,6 +134,12 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
                 record->{
                     WaterFallGuide waterFallGuide = new WaterFallGuide();
                     BeanUtils.copyProperties(record,waterFallGuide);
+                    LambdaQueryWrapper<UserLeaderLike> starQueryWrapper =
+                            new LambdaQueryWrapper<UserLeaderLike>()
+                                    .eq(UserLeaderLike::getUserId,userId)
+                                    .eq(UserLeaderLike::getLeaderId,record.getId());
+                    long count = userLeaderLikeService.count(starQueryWrapper);
+                    waterFallGuide.setValue(count);
                     waterFallGuides.add(waterFallGuide);
                 });
         pageList.setRecords(waterFallGuides);

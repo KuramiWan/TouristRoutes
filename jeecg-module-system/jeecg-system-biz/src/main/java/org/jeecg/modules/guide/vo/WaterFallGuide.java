@@ -17,5 +17,6 @@ public class WaterFallGuide {
     private String pageImg;
     private Integer likeNum;
     private String honor;
+    private Long value;
 
 }

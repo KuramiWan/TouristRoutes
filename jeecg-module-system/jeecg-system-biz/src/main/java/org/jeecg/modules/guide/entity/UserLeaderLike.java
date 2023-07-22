@@ -1,4 +1,4 @@
-package org.jeecg.modules.product.entity;
+package org.jeecg.modules.guide.entity;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -19,55 +19,31 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @Description: 产品表
+ * @Description: 用户点赞导游
  * @Author: jeecg-boot
- * @Date:   2023-07-14
+ * @Date:   2023-07-22
  * @Version: V1.0
  */
 @Data
-@TableName("product")
+@TableName("user_leader_like")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="product对象", description="产品表")
-public class Product implements Serializable {
+@ApiModel(value="user_leader_like对象", description="用户点赞导游")
+public class UserLeaderLike implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private java.lang.String id;
-	/**产品标题*/
-	@Excel(name = "产品标题", width = 15)
-    @ApiModelProperty(value = "产品标题")
-    private java.lang.String proTitle;
-    /**产品封面*/
-    @Excel(name = "产品封面", width = 15)
-    @ApiModelProperty(value = "产品封面")
-    private java.lang.String proPageImg;
-	/**产品估价*/
-	@Excel(name = "产品估价", width = 15)
-    @ApiModelProperty(value = "产品估价")
-    private java.lang.Double proEvaluate;
-	/**产品介绍*/
-	@Excel(name = "产品介绍", width = 15)
-    @ApiModelProperty(value = "产品介绍")
-    private java.lang.String proIntroduction;
-    /**成团人数*/
-    @Excel(name = "成团人数", width = 15)
-    @ApiModelProperty(value = "成团人数")
-    private java.lang.Integer proMan;
-    /**封面标题*/
-    @Excel(name = "封面标题", width = 15)
-    @ApiModelProperty(value = "封面标题")
-    private java.lang.String proPageTitle;
-    /**起始点*/
-    @Excel(name = "起始点", width = 15)
-    @ApiModelProperty(value = "起始点")
-    private java.lang.String origin;
-    /**产品时长*/
-    @Excel(name = "产品时长", width = 15)
-    @ApiModelProperty(value = "产品时长")
-    private java.lang.String proDate;
+	/**用户id*/
+	@Excel(name = "用户id", width = 15)
+    @ApiModelProperty(value = "用户id")
+    private java.lang.String userId;
+	/**导游id*/
+	@Excel(name = "导游id", width = 15)
+    @ApiModelProperty(value = "导游id")
+    private java.lang.String leaderId;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;
