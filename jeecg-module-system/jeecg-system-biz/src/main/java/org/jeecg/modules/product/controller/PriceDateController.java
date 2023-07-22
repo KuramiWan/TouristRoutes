@@ -182,7 +182,7 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 			 	priceDateList.setPdFull("可报名");
 			 }
 			 SimpleDateFormat week = new SimpleDateFormat("EEEE");
-			 SimpleDateFormat ruler1 = new SimpleDateFormat("yyyy-MM");
+			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
 			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
 			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
 			 String yearM = ruler1.format(pdDate);
