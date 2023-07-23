@@ -181,7 +181,8 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 			 }else {
 			 	priceDateList.setPdFull("可报名");
 			 }
-			 SimpleDateFormat week = new SimpleDateFormat("EEEE");
+			 // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
+			 SimpleDateFormat week = new SimpleDateFormat("EEEE",Locale.SIMPLIFIED_CHINESE);
 			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
 			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
 			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
