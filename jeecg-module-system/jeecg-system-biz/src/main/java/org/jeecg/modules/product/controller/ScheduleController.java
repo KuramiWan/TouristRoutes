@@ -148,6 +148,24 @@ public class ScheduleController extends JeecgController<Schedule, IScheduleServi
 		return Result.OK(schedule);
 	}
 
+	 /**
+	  * 通过proId查询
+	  *
+	  * @param proId
+	  * @return
+	  */
+	 @AutoLog(value = "产品日程-通过proId查询所有行程")
+	 @ApiOperation(value="产品日程-通过proId查询所有行程", notes="产品日程-通过proId查询所有行程")
+	 @GetMapping(value = "/queryListByProId")
+	 public Result<List<Schedule>> queryListByProId(@RequestParam(name="proId",required=true) String proId) {
+		 List<Schedule> list = scheduleService.list(new LambdaQueryWrapper<Schedule>().eq(Schedule::getProId, proId));
+
+		 if(list.size()<= 0) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.OK(list);
+	 }
+
     /**
     * 导出excel
     *
