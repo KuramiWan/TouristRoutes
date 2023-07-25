@@ -94,6 +94,7 @@ public class ProductController extends JeecgController<Product, IProductService>
 					.setProMan(product.getProMan())
 					.setProPageTitle(product.getProPageTitle())
 					.setSellNumber(0)
+					.setProPageImg(product.getProPageImg())
 					.setSpots(size);
 			productLists.add(productList);
 		} );

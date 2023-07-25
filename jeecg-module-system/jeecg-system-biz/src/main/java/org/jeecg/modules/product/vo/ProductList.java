@@ -20,4 +20,5 @@ public class ProductList {
     private Integer sellNumber;
     private Double proEvaluate;
     private Integer spots;
+    private String proPageImg;
 }
