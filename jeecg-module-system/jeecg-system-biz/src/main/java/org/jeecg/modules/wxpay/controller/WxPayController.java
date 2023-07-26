@@ -25,6 +25,7 @@ import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecg.modules.wxpay.entity.WxPayConfig;
 import org.jeecg.modules.wxpay.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,13 @@ public class WxPayController {
     private IWxClientUserinfoService wxClientUserinfoService;
 
     @PostMapping("/getOrder")
-    public Result<Map<String, String>> getOrder(HttpServletRequest http, @RequestParam(name = "productId") String productId, @RequestParam(name = "openid") String openid) throws Exception {
+    @Transactional
+    public Result<Map<String, String>> getOrder(HttpServletRequest http) throws Exception {
+        String productId = http.getParameter("productId");
+        String openid = http.getHeader("openid");
+        log.info("productId================================" + productId);
+        log.info("openid================================" + openid);
+
         // 查询该openid的用户信息
         LambdaQueryWrapper<WxClientUserinfo> queryUserWrapper = new LambdaQueryWrapper<>();
         queryUserWrapper.eq(WxClientUserinfo::getOpenid, openid);

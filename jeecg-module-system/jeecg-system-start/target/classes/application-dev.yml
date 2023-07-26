@@ -295,15 +295,5 @@ third-app:
 
 wx:
   client:
-    app-id: wx86f22aacacee1c50
-    app-secret: 1783956499e2f25514b924950f66bbc4
-
-
-#关联的公众号appid
-weixin:
-  pay:
-    app-id: wx86f22aacacee1c50
-  #商户号
-    partner: 1649387434
-  #商户key
-    partnerkey: 96a7d88a80290d602a2b6bfd5d179599
+    app-id: wx1008779fb8e3422a
+    app-secret: ea390ab57b8bf200291d5ab9d66d94b5
