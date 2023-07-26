@@ -115,4 +115,8 @@ public class OrdersUnpaid implements Serializable {
 	@Excel(name = "游侠币抵扣金额", width = 15)
     @ApiModelProperty(value = "游侠币抵扣金额")
     private Double youxiabi;
+    /**订单状态*/
+    @Excel(name = "订单状态", width = 15)
+    @ApiModelProperty(value = "订单状态")
+    private Integer status;
 }
