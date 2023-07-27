@@ -1,29 +1,15 @@
 package org.jeecg.modules.user.userinfo.controller;
 
+import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import io.swagger.util.Json;
-import net.sf.json.util.JSONUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.util.PasswordUtil;
-import org.jeecg.common.util.RedisUtil;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.system.entity.SysUser;
-import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 
@@ -33,25 +19,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
  * @Description: 微信客户端用户信息表
@@ -76,7 +51,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
 
     // 获取用户的openid，并将已有的信息返回给小程序
     @GetMapping("/getOpenId")
-    public Result<WxClientUserinfoVo> getOpenId(String code, String username, String avatar) {
+    public Result<WxClientUserinfoVo> getOpenId(String code, String username, String avatar) throws IOException {
         //请求微信接口获取openid
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         HashMap map = new HashMap();
@@ -103,7 +78,6 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         iWxClientUserinfoService.updateById(clientUserinfoServiceOne);
         return "success";
     }
-
     /**
      * 分页列表查询
      *

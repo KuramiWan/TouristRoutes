@@ -138,6 +138,7 @@
 			<artifactId>pegdown</artifactId>
 			<version>${pegdown.version}</version>
 		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -245,6 +246,11 @@
 				<version>${jeecgboot.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-configuration-processor</artifactId>
+				<optional>true</optional>
+			</dependency>
 			<!-- 七牛云SDK -->
 			<dependency>
 				<groupId>com.qiniu</groupId>
