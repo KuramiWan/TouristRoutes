@@ -98,7 +98,15 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/sys/getQrcodeToken/**", "anon"); //监听扫码
         filterChainDefinitionMap.put("/sys/checkAuth", "anon"); //授权接口排除
 
+        //==========================================wx小程序-client======================================================
         filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/getOpenId", "anon"); // wx小程序client端登录
+        filterChainDefinitionMap.put("/wxpay/userpay/wxPayCallback", "anon"); // wx小程序client端支付成功接收微信官方反馈
+        filterChainDefinitionMap.put("/strategy/friendStrategy/list", "anon"); // 首页攻略瀑布（游友攻略）
+        filterChainDefinitionMap.put("/core/product/list", "anon"); // 商城
+        filterChainDefinitionMap.put("/strategy/officialStrategy/list", "anon"); // 旅游攻略
+        filterChainDefinitionMap.put("/guide/touristGuide/list", "anon"); // 领队导游
+        //==============================================================================================================
+
 
         //产品测试
         filterChainDefinitionMap.put("/product/product/**","anon");
