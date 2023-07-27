@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oss.OssBootUtil;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 
@@ -18,11 +20,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.user.userinfo.vo.UploadRequest;
 import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +55,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
 
     // 获取用户的openid，并将已有的信息返回给小程序
     @GetMapping("/getOpenId")
-    public Result<WxClientUserinfoVo> getOpenId(String code, String username, String avatar) throws IOException {
+    public Result<WxClientUserinfoVo> getOpenId(String code, String username) throws IOException {
         //请求微信接口获取openid
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         HashMap map = new HashMap();
@@ -65,7 +69,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         String sessionKey = json.getStr("session_key");
         if (openId == null || openId.length() == 0)
             throw new RuntimeException("临时登录凭证错误");
-        WxClientUserinfoVo wxClientUserinfoVo = iWxClientUserinfoService.login(openId, username, avatar, sessionKey);
+        WxClientUserinfoVo wxClientUserinfoVo = iWxClientUserinfoService.login(openId, username, sessionKey);
         return Result.ok(wxClientUserinfoVo);
     }
 
@@ -77,6 +81,29 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         clientUserinfoServiceOne.setPhone(phone);
         iWxClientUserinfoService.updateById(clientUserinfoServiceOne);
         return "success";
+    }
+
+    @RequestMapping("/uploadImg")
+    public Result<String> uploadImg(@RequestBody UploadRequest uploadRequest) {
+        try {
+            String base64Data = uploadRequest.getBase64Data();
+            // 将Base64数据转换为字节数组
+            byte[] imageData = Base64.getDecoder().decode(base64Data);
+            String fileDir = "suixinyou-wx-client/pages/user/用户头像/"; // 文件保存目录，根据实际情况调整
+            String fileUrl = OssBootUtil.upload(uploadRequest.getOpenid(),imageData, fileDir);
+            if (fileUrl != null) {
+                LambdaQueryWrapper<WxClientUserinfo> queryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, uploadRequest.getOpenid());
+                WxClientUserinfo target = iWxClientUserinfoService.getOne(queryWrapper);
+                target.setAvatar(fileUrl);
+                iWxClientUserinfoService.update(target,queryWrapper);
+                return Result.ok(fileUrl);
+            } else {
+                return Result.error("上传失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("上传失败");
+        }
     }
     /**
      * 分页列表查询

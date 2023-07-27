@@ -11,5 +11,5 @@ import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
  * @Version: V1.0
  */
 public interface IWxClientUserinfoService extends IService<WxClientUserinfo> {
-    WxClientUserinfoVo login(String openid, String username, String avatar, String sessionKey);
+    WxClientUserinfoVo login(String openid, String username, String sessionKey);
 }

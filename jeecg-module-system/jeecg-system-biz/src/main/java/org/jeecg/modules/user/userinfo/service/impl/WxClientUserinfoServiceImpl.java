@@ -41,7 +41,7 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
     private RedisUtil redisUtil;
 
     @Override
-    public WxClientUserinfoVo login(String openId, String username, String avatar, String sessionKey) {
+    public WxClientUserinfoVo login(String openId, String username, String sessionKey) {
         //根据openid生成一个token发放给用户
         String token = JwtUtil.sign(openId, openId);
         QueryWrapper<WxClientUserinfo> clientUserinfoQueryWrapper = new QueryWrapper<WxClientUserinfo>().eq("openid", openId);
@@ -65,7 +65,6 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
             // 然后添加到wx_client_user表中
             WxClientUserinfo wxClientUserinfo = new WxClientUserinfo();
             wxClientUserinfo.setOpenid(openId);
-            wxClientUserinfo.setAvatar(avatar);
             wxClientUserinfo.setUsername(username);
             wxClientUserinfo.setSessionKey(sessionKey);
             wxClientUserinfoMapper.insert(wxClientUserinfo);
@@ -80,7 +79,6 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
             return wxClientUserinfoVo;
         } else { // 之前使用过随心游,则更新用户信息
             clientUserinfoServiceOne.setUsername(username);
-            clientUserinfoServiceOne.setAvatar(avatar);
             clientUserinfoServiceOne.setSessionKey(sessionKey);
             wxClientUserinfoMapper.updateById(clientUserinfoServiceOne);
 
