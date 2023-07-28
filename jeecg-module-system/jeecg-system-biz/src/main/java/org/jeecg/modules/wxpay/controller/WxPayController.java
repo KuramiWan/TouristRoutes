@@ -24,6 +24,7 @@ import org.jeecg.modules.user.userinfo.mapper.WxClientUserinfoMapper;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecg.modules.wxpay.entity.WxPayConfig;
 import org.jeecg.modules.wxpay.util.IpUtil;
+import org.jeewx.api.wxstore.order.model.OrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -64,9 +65,10 @@ public class WxPayController {
 
     @PostMapping("/getOrder")
     @Transactional
-    public Result<Map<String, String>> getOrder(HttpServletRequest http) throws Exception {
+    public Result<Map<String, String>> getOrder(HttpServletRequest http, @RequestBody OrdersUnpaid ordersInfo) throws Exception {
         String productId = http.getParameter("productId");
         String openid = http.getHeader("openid");
+        log.info("ordersInfo===========================" + ordersInfo);
         //log.info("productId================================" + productId);
         //log.info("openid================================" + openid);
 
