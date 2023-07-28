@@ -1,16 +1,26 @@
 package org.jeecg.modules.user.userinfo.service.impl;
 
+import cn.hutool.core.convert.Convert;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.RedisUtil;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.orders.entity.OrdersUnpaid;
+import org.jeecg.modules.orders.service.IOrdersPaidService;
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.mapper.WxClientUserinfoMapper;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
+import org.jeecg.modules.user.userinfo.vo.OrderList;
 import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +30,9 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Description: 微信客户端用户信息表
@@ -35,6 +47,15 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
 
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private IOrdersPaidService ordersPaidService;
+
+    @Autowired
+    private IOrdersUnpaidService ordersUnpaidService;
+
+    @Autowired
+    private IProductService productService;
 
     @Lazy
     @Resource
@@ -91,5 +112,35 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
 
             return wxClientUserinfoVo;
         }
+    }
+
+    @Override
+    public IPage<OrderList> unPaid(String userid, IPage<OrdersUnpaid> page) {
+        IPage<OrdersUnpaid> ordersUnpaidIPage = ordersUnpaidService.page(page, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getUserId, userid).eq(OrdersUnpaid::getStatus, 0).orderByDesc(OrdersUnpaid::getCreateTime));
+        List<OrderList> orderLists = new ArrayList<>();
+        ordersUnpaidIPage.getRecords().forEach(record->{
+            OrderList orderList = new OrderList();
+            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
+            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPayingMoney()).setStatus(Collections.singletonMap("待支付", 0)).setDateStarted(record.getDateStarted());
+            orderLists.add(orderList);
+        });
+        IPage<OrderList> orderListIPage = new Page<>(page.getCurrent(), page.getSize());
+        orderListIPage.setRecords(orderLists).setTotal(ordersUnpaidIPage.getTotal());
+        return orderListIPage;
+    }
+
+    @Override
+    public IPage<OrderList> unGo(String userid,IPage<OrdersUnpaid> page) {
+        return null;
+    }
+
+    @Override
+    public IPage<OrderList> unEvaluate(String userid, IPage<OrdersUnpaid> page) {
+        return null;
+    }
+
+    @Override
+    public IPage<OrderList> refund(String userid, IPage<OrdersUnpaid> page) {
+        return null;
     }
 }
