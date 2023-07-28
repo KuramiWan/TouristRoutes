@@ -1,6 +1,7 @@
 package org.jeecg.modules.user.userinfo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -17,7 +18,7 @@ public interface IWxClientUserinfoService extends IService<WxClientUserinfo> {
     WxClientUserinfoVo login(String openid, String username, String sessionKey);
 
     IPage<OrderList> unPaid(String userid, IPage<OrdersUnpaid> page);
-    IPage<OrderList> unGo(String userid, IPage<OrdersUnpaid> page);
-    IPage<OrderList> unEvaluate(String userid, IPage<OrdersUnpaid> page);
+    IPage<OrderList> unGo(String userid,IPage<OrdersPaid> paidPage);
+    IPage<OrderList> unEvaluate(String userid, IPage<OrdersPaid> paidPage);
     IPage<OrderList> refund(String userid, IPage<OrdersUnpaid> page);
 }

@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oss.OssBootUtil;
+import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.orders.service.IOrdersUnpaidService;
@@ -63,15 +64,50 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
 
     @ApiOperation(value = "微信客户端用户信息表-获取用户全部订单信息", notes = "微信客户端用户信息表-获取用户全部订单信息")
     @GetMapping(value = "/orderList")
-    public Result<IPage<OrderList>> orderList(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        WxClientUserinfo user = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid));
-        String userid = user.getId();
-        Page<OrdersUnpaid> ordersUnpaidPage = new Page<>();
+    public Result<List<IPage<OrderList>>> orderList(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        // 获取未支付订单列表
+        Page<OrdersUnpaid> unpaidPage = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unpaidPageList = iWxClientUserinfoService.unPaid(userid, unpaidPage);
+        // 获取待出行订单列表
+        Page<OrdersPaid> unGoPage = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unGoPageList = iWxClientUserinfoService.unGo(userid, unGoPage);
+        // 获取待评价订单列表
+        Page<OrdersPaid> unEvaluate = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unEvaluateList = iWxClientUserinfoService.unEvaluate(userid, unEvaluate);
+
+        List<IPage<OrderList>> page = new ArrayList<>();
+        page.add(unpaidPageList);page.add(unGoPageList);page.add(unEvaluateList);
+        return Result.OK(page);
+    }
+
+    @ApiOperation(value = "微信客户端用户信息表-获取用户未付款订单信息", notes = "微信客户端用户信息表-获取用户未付款订单信息")
+    @GetMapping(value = "/unPaidOrderList")
+    public Result<IPage<OrderList>> unPaid(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersUnpaid> ordersUnpaidPage = new Page<>(pageNo,pageSize);
         // 获取未支付订单列表
         IPage<OrderList> orderListIPage = iWxClientUserinfoService.unPaid(userid, ordersUnpaidPage);
         return Result.OK(orderListIPage);
     }
-
+    @ApiOperation(value = "微信客户端用户信息表-获取用户待出行订单信息", notes = "微信客户端用户信息表-获取用户待出行订单信息")
+    @GetMapping(value = "/unGoOrderList")
+    public Result<IPage<OrderList>> unGo(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersPaid> ordersPaidPage = new Page<>(pageNo,pageSize);
+        // 获取待出行订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unGo(userid, ordersPaidPage);
+        return Result.OK(orderListIPage);
+    }
+    @ApiOperation(value = "微信客户端用户信息表-获取用户待评价订单信息", notes = "微信客户端用户信息表-获取用户待评价订单信息")
+    @GetMapping(value = "/unEvaluateOrderList")
+    public Result<IPage<OrderList>> unEvaluate(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersPaid> ordersPaidPage = new Page<>(pageNo,pageSize);
+        // 获取待评价订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unEvaluate(userid, ordersPaidPage);
+        return Result.OK(orderListIPage);
+    }
 
 
 

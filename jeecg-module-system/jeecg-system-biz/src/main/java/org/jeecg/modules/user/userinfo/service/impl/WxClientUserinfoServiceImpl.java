@@ -10,6 +10,7 @@ import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.RedisUtil;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.orders.service.IOrdersUnpaidService;
@@ -130,13 +131,34 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
     }
 
     @Override
-    public IPage<OrderList> unGo(String userid,IPage<OrdersUnpaid> page) {
-        return null;
+    public IPage<OrderList> unGo(String userid,IPage<OrdersPaid> paidPage) {
+        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).eq(OrdersPaid::getStatus, 0).orderByDesc(OrdersPaid::getCreateTime));
+        List<OrderList> orderLists = new ArrayList<>();
+        ordersPaidIPage.getRecords().forEach(record->{
+            OrderList orderList = new OrderList();
+            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
+            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待出行", 0)).setDateStarted(record.getDateStarted());
+            orderLists.add(orderList);
+        });
+        IPage<OrderList> orderListIPage = new Page<>(paidPage.getCurrent(), paidPage.getSize());
+        orderListIPage.setRecords(orderLists).setTotal(ordersPaidIPage.getTotal());
+        return orderListIPage;
+
     }
 
     @Override
-    public IPage<OrderList> unEvaluate(String userid, IPage<OrdersUnpaid> page) {
-        return null;
+    public IPage<OrderList> unEvaluate(String userid, IPage<OrdersPaid> paidPage) {
+        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).eq(OrdersPaid::getStatus, 1).orderByDesc(OrdersPaid::getCreateTime));
+        List<OrderList> orderLists = new ArrayList<>();
+        ordersPaidIPage.getRecords().forEach(record->{
+            OrderList orderList = new OrderList();
+            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
+            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待评价", 1)).setDateStarted(record.getDateStarted());
+            orderLists.add(orderList);
+        });
+        IPage<OrderList> orderListIPage = new Page<>(paidPage.getCurrent(), paidPage.getSize());
+        orderListIPage.setRecords(orderLists).setTotal(ordersPaidIPage.getTotal());
+        return orderListIPage;
     }
 
     @Override
