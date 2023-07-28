@@ -125,7 +125,7 @@ public class OrdersUnpaid implements Serializable {
     @Excel(name = "出行人id(数组)", width = 15)
     @ApiModelProperty(value = "出行人id(数组)")
     @TableField(typeHandler = CommonStringTypeHandler.class)
-    private List<String> travellerId;
+    private List<String> travelerId;
     /**
      * 成人个数
      */
