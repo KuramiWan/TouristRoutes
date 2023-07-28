@@ -2,6 +2,8 @@ package org.jeecg.modules.user.userinfo.controller;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +14,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oss.OssBootUtil;
+import org.jeecg.modules.orders.entity.OrdersUnpaid;
+import org.jeecg.modules.orders.service.IOrdersPaidService;
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 
@@ -20,6 +27,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.user.userinfo.vo.OrderList;
 import org.jeecg.modules.user.userinfo.vo.UploadRequest;
 import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -52,6 +60,21 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
 
     @Autowired
     private IWxClientUserinfoService iWxClientUserinfoService;
+
+    @ApiOperation(value = "微信客户端用户信息表-获取用户全部订单信息", notes = "微信客户端用户信息表-获取用户全部订单信息")
+    @GetMapping(value = "/orderList")
+    public Result<IPage<OrderList>> orderList(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        WxClientUserinfo user = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid));
+        String userid = user.getId();
+        Page<OrdersUnpaid> ordersUnpaidPage = new Page<>();
+        // 获取未支付订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unPaid(userid, ordersUnpaidPage);
+        return Result.OK(orderListIPage);
+    }
+
+
+
+
 
     // 获取用户的openid，并将已有的信息返回给小程序
     @GetMapping("/getOpenId")
