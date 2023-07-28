@@ -121,8 +121,11 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
         List<OrderList> orderLists = new ArrayList<>();
         ordersUnpaidIPage.getRecords().forEach(record->{
             OrderList orderList = new OrderList();
-            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
-            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPayingMoney()).setStatus(Collections.singletonMap("待支付", 0)).setDateStarted(record.getDateStarted());
+            HashMap<String, String> productMap = new HashMap<>();
+            Product product = productService.getById(record.getProductId());
+            productMap.put("img", product.getProPageImg());
+            productMap.put("title", product.getProPageTitle());
+            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPayingMoney()).setStatus(Collections.singletonMap("待支付", 0)).setDateStarted(record.getDateStarted());
             orderLists.add(orderList);
         });
         IPage<OrderList> orderListIPage = new Page<>(page.getCurrent(), page.getSize());
@@ -136,8 +139,11 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
         List<OrderList> orderLists = new ArrayList<>();
         ordersPaidIPage.getRecords().forEach(record->{
             OrderList orderList = new OrderList();
-            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
-            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待出行", 0)).setDateStarted(record.getDateStarted());
+            HashMap<String, String> productMap = new HashMap<>();
+            Product product = productService.getById(record.getProductId());
+            productMap.put("img", product.getProPageImg());
+            productMap.put("title", product.getProPageTitle());
+            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待出行", 0)).setDateStarted(record.getDateStarted());
             orderLists.add(orderList);
         });
         IPage<OrderList> orderListIPage = new Page<>(paidPage.getCurrent(), paidPage.getSize());
@@ -152,8 +158,11 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
         List<OrderList> orderLists = new ArrayList<>();
         ordersPaidIPage.getRecords().forEach(record->{
             OrderList orderList = new OrderList();
-            Map<String, String> product = Stream.of(productService.getById(record.getProductId())).collect(Collectors.toMap(Product::getProPageImg, Product::getProPageTitle));
-            orderList.setProduct(product).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待评价", 1)).setDateStarted(record.getDateStarted());
+            HashMap<String, String> productMap = new HashMap<>();
+            Product product = productService.getById(record.getProductId());
+            productMap.put("img", product.getProPageImg());
+            productMap.put("title", product.getProPageTitle());
+            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待评价", 1)).setDateStarted(record.getDateStarted());
             orderLists.add(orderList);
         });
         IPage<OrderList> orderListIPage = new Page<>(paidPage.getCurrent(), paidPage.getSize());
