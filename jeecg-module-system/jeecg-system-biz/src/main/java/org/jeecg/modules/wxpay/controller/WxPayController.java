@@ -25,6 +25,7 @@ import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecg.modules.wxpay.entity.WxPayConfig;
 import org.jeecg.modules.wxpay.util.IpUtil;
 import org.jeewx.api.wxstore.order.model.OrderInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -83,8 +84,8 @@ public class WxPayController {
 
         // 根据产品id和openid生成未付款订单
         OrdersUnpaid ordersUnpaid = new OrdersUnpaid();
+        BeanUtils.copyProperties(ordersInfo, ordersUnpaid);
         ordersUnpaid.setProductId(productId).setUserId(wxClientUserinfo.getId()).setStatus(0);
-        ordersUnpaid.setPayingMoney(price);
         // 插入并返回该订单的id
         String orderId = "";
         boolean save = ordersUnpaidService.save(ordersUnpaid);
@@ -97,7 +98,7 @@ public class WxPayController {
         WXPay wxPay = new WXPay(wxPayConfig);
         HashMap<String, String> map = new HashMap<>();
         map.put("body", "随心游产品支付测试"); // 产品描述
-        map.put("total_fee", "1"); // 产品价格（单位：分）
+        map.put("total_fee", String.valueOf(ordersUnpaid.getPayingMoney() * 100)); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
         map.put("notify_url", "http://you.xiuxiu365.cn:27000/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
         map.put("trade_type", "JSAPI"); // 交易类型
