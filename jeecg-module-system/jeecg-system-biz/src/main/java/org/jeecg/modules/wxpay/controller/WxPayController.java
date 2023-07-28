@@ -67,8 +67,8 @@ public class WxPayController {
     public Result<Map<String, String>> getOrder(HttpServletRequest http) throws Exception {
         String productId = http.getParameter("productId");
         String openid = http.getHeader("openid");
-        log.info("productId================================" + productId);
-        log.info("openid================================" + openid);
+        //log.info("productId================================" + productId);
+        //log.info("openid================================" + openid);
 
         // 查询该openid的用户信息
         LambdaQueryWrapper<WxClientUserinfo> queryUserWrapper = new LambdaQueryWrapper<>();
@@ -97,7 +97,7 @@ public class WxPayController {
         map.put("body", "随心游产品支付测试"); // 产品描述
         map.put("total_fee", "1"); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
-        map.put("notify_url", "http://47.113.231.108:8080/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
+        map.put("notify_url", "http://you.xiuxiu365.cn:27000/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
         map.put("trade_type", "JSAPI"); // 交易类型
         map.put("openid", openid); // 用户标识
         map.put("spbill_create_ip", IpUtil.getIpAddress(http)); // 终端IP
@@ -152,7 +152,7 @@ public class WxPayController {
     }
 
     // 用户支付成功，微信服务器会调用的方法，来通知微信服务器业务完成
-    @GetMapping("/wxPayCallback")
+    @PostMapping("/wxPayCallback")
     public String wechatPayCallback(HttpServletRequest request, HttpServletResponse response) {
         try {
             InputStream is = request.getInputStream();
