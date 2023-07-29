@@ -100,12 +100,17 @@ public class ProductController extends JeecgController<Product, IProductService>
             ProductList productList = new ProductList();
             List<Schedule> list = scheduleService.list(new LambdaQueryWrapper<Schedule>().eq(Schedule::getProId, product.getId()));
             int size = list.size();
+
+            //查出该产品有多少购买量
+            LambdaQueryWrapper<OrdersPaid> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(OrdersPaid::getProductId, product.getId());
+            int count = ordersPaidService.list(wrapper).size();
             productList.setId(product.getId())
                     .setOrigin(product.getOrigin())
                     .setProEvaluate(product.getProEvaluate())
                     .setProMan(product.getProMan())
                     .setProPageTitle(product.getProPageTitle())
-                    .setSellNumber(0)
+                    .setSellNumber(count)
                     .setProPageImg(product.getProPageImg())
                     .setSpots(size);
             productLists.add(productList);
