@@ -1,29 +1,25 @@
 package org.jeecg.modules.user.userinfo.controller;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.annotation.Resource;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import io.swagger.util.Json;
-import net.sf.json.util.JSONUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.util.PasswordUtil;
-import org.jeecg.common.util.RedisUtil;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.system.entity.SysUser;
-import org.jeecg.modules.system.service.ISysUserService;
+import org.jeecg.common.util.oss.OssBootUtil;
+import org.jeecg.modules.orders.entity.OrdersPaid;
+import org.jeecg.modules.orders.entity.OrdersUnpaid;
+import org.jeecg.modules.orders.service.IOrdersPaidService;
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 
@@ -32,26 +28,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.user.userinfo.vo.OrderList;
+import org.jeecg.modules.user.userinfo.vo.UploadRequest;
 import org.jeecg.modules.user.userinfo.vo.WxClientUserinfoVo;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
  * @Description: 微信客户端用户信息表
@@ -74,9 +62,59 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
     @Autowired
     private IWxClientUserinfoService iWxClientUserinfoService;
 
+    @ApiOperation(value = "微信客户端用户信息表-获取用户全部订单信息", notes = "微信客户端用户信息表-获取用户全部订单信息")
+    @GetMapping(value = "/orderList")
+    public Result<List<IPage<OrderList>>> orderList(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        // 获取未支付订单列表
+        Page<OrdersUnpaid> unpaidPage = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unpaidPageList = iWxClientUserinfoService.unPaid(userid, unpaidPage);
+        // 获取待出行订单列表
+        Page<OrdersPaid> unGoPage = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unGoPageList = iWxClientUserinfoService.unGo(userid, unGoPage);
+        // 获取待评价订单列表
+        Page<OrdersPaid> unEvaluate = new Page<>(pageNo,pageSize);
+        IPage<OrderList> unEvaluateList = iWxClientUserinfoService.unEvaluate(userid, unEvaluate);
+
+        List<IPage<OrderList>> page = new ArrayList<>();
+        page.add(unpaidPageList);page.add(unGoPageList);page.add(unEvaluateList);
+        return Result.OK(page);
+    }
+
+    @ApiOperation(value = "微信客户端用户信息表-获取用户未付款订单信息", notes = "微信客户端用户信息表-获取用户未付款订单信息")
+    @GetMapping(value = "/unPaidOrderList")
+    public Result<IPage<OrderList>> unPaid(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersUnpaid> ordersUnpaidPage = new Page<>(pageNo,pageSize);
+        // 获取未支付订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unPaid(userid, ordersUnpaidPage);
+        return Result.OK(orderListIPage);
+    }
+    @ApiOperation(value = "微信客户端用户信息表-获取用户待出行订单信息", notes = "微信客户端用户信息表-获取用户待出行订单信息")
+    @GetMapping(value = "/unGoOrderList")
+    public Result<IPage<OrderList>> unGo(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersPaid> ordersPaidPage = new Page<>(pageNo,pageSize);
+        // 获取待出行订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unGo(userid, ordersPaidPage);
+        return Result.OK(orderListIPage);
+    }
+    @ApiOperation(value = "微信客户端用户信息表-获取用户待评价订单信息", notes = "微信客户端用户信息表-获取用户待评价订单信息")
+    @GetMapping(value = "/unEvaluateOrderList")
+    public Result<IPage<OrderList>> unEvaluate(@RequestHeader("openid") String openid, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        String userid = iWxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<OrdersPaid> ordersPaidPage = new Page<>(pageNo,pageSize);
+        // 获取待评价订单列表
+        IPage<OrderList> orderListIPage = iWxClientUserinfoService.unEvaluate(userid, ordersPaidPage);
+        return Result.OK(orderListIPage);
+    }
+
+
+
+
     // 获取用户的openid，并将已有的信息返回给小程序
     @GetMapping("/getOpenId")
-    public Result<WxClientUserinfoVo> getOpenId(String code, String username, String avatar) {
+    public Result<WxClientUserinfoVo> getOpenId(String code, String username) throws IOException {
         //请求微信接口获取openid
         String url = "https://api.weixin.qq.com/sns/jscode2session";
         HashMap map = new HashMap();
@@ -90,7 +128,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         String sessionKey = json.getStr("session_key");
         if (openId == null || openId.length() == 0)
             throw new RuntimeException("临时登录凭证错误");
-        WxClientUserinfoVo wxClientUserinfoVo = iWxClientUserinfoService.login(openId, username, avatar, sessionKey);
+        WxClientUserinfoVo wxClientUserinfoVo = iWxClientUserinfoService.login(openId, username, sessionKey);
         return Result.ok(wxClientUserinfoVo);
     }
 
@@ -104,6 +142,28 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         return "success";
     }
 
+    @RequestMapping("/uploadImg")
+    public Result<String> uploadImg(@RequestBody UploadRequest uploadRequest) {
+        try {
+            String base64Data = uploadRequest.getBase64Data();
+            // 将Base64数据转换为字节数组
+            byte[] imageData = Base64.getDecoder().decode(base64Data);
+            String fileDir = "suixinyou-wx-client/pages/user/用户头像/"; // 文件保存目录，根据实际情况调整
+            String fileUrl = OssBootUtil.upload(uploadRequest.getOpenid(),imageData, fileDir);
+            if (fileUrl != null) {
+                LambdaQueryWrapper<WxClientUserinfo> queryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, uploadRequest.getOpenid());
+                WxClientUserinfo target = iWxClientUserinfoService.getOne(queryWrapper);
+                target.setAvatar(fileUrl);
+                iWxClientUserinfoService.update(target,queryWrapper);
+                return Result.ok(fileUrl);
+            } else {
+                return Result.error("上传失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("上传失败");
+        }
+    }
     /**
      * 分页列表查询
      *

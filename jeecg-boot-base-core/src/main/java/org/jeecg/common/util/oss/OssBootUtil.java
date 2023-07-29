@@ -17,6 +17,7 @@ import org.jeecg.common.util.oConvertUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -207,6 +208,37 @@ public class OssBootUtil {
                 log.info("------OSS文件上传成功------" + fileUrl);
             }
         } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return filePath;
+    }
+
+    public static String upload(String openid, byte[] file, String fileDir) {
+        String filePath = null;
+        initOss(endPoint, accessKeyId, accessKeySecret);
+        StringBuilder fileUrl = new StringBuilder();
+        try {
+            String suffix = ".jpeg";
+            String fileName = openid + suffix;
+            if (!fileDir.endsWith(SymbolConstant.SINGLE_SLASH)) {
+                fileDir = fileDir.concat(SymbolConstant.SINGLE_SLASH);
+            }
+            fileDir = StrAttackFilter.filter(fileDir);
+            fileUrl = fileUrl.append(fileDir + fileName);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(file);
+            if (oConvertUtils.isNotEmpty(staticDomain) && staticDomain.toLowerCase().startsWith(CommonConstant.STR_HTTP)) {
+                filePath = staticDomain + SymbolConstant.SINGLE_SLASH + fileUrl;
+            } else {
+                filePath = "https://" + bucketName + "." + endPoint + SymbolConstant.SINGLE_SLASH + fileUrl;
+            }
+            PutObjectResult result = ossClient.putObject(bucketName, fileUrl.toString(), inputStream);
+            // 设置权限(公开读)
+            ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+            if (result != null) {
+                log.info("------OSS文件上传成功------" + fileUrl);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

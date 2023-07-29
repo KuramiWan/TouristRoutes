@@ -1,6 +1,7 @@
 package org.jeecg.modules.user.traveler.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -8,9 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.user.traveler.entity.Traveler;
 import org.jeecg.modules.user.traveler.service.TravelerService;
+import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,6 +35,9 @@ public class TravelerController {
      */
     @Autowired
     private TravelerService travelerService;
+
+    @Autowired
+    private IWxClientUserinfoService wxClientUserinfoService;
 
     /**
      * 分页查询所有数据
@@ -55,6 +63,25 @@ public class TravelerController {
     }
 
     /**
+     * 通过用户id查询该用户的出行人信息
+     */
+    @GetMapping("selectListByUserId")
+    public Result<List<Traveler>> selectListByUserId(HttpServletRequest req) {
+        //根据openid查出用户id
+        String openid = req.getHeader("openid");
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        wxClientUserinfoLambdaQueryWrapper.eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
+        String userId = userinfo.getId();
+
+        LambdaQueryWrapper<Traveler> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Traveler::getUserId, userId);
+        List<Traveler> list = travelerService.list(wrapper);
+
+        return Result.ok(list);
+    }
+
+    /**
      * 新增数据
      *
      * @param traveler 实体对象
@@ -62,6 +89,23 @@ public class TravelerController {
      */
     @PostMapping("add")
     public Result insert(@RequestBody Traveler traveler) {
+        return Result.ok(this.travelerService.save(traveler));
+    }
+
+    /**
+     * 某个用户新增出行人信息
+     *
+     * @param traveler 实体对象
+     * @return 新增结果
+     */
+    @PostMapping("addTravel")
+    public Result addTravel(@RequestBody Traveler traveler, HttpServletRequest req) {
+        //根据openid查出用户id
+        String openid = req.getHeader("openid");
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        wxClientUserinfoLambdaQueryWrapper.eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
+        traveler.setUserId(userinfo.getId());
         return Result.ok(this.travelerService.save(traveler));
     }
 
