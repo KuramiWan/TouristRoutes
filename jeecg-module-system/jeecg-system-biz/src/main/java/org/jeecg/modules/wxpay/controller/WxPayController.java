@@ -235,10 +235,25 @@ public class WxPayController {
                 OrdersUnpaid ordersUnpaid = ordersUnpaidService.getOne(unpaidLambdaQueryWrapper);
                 String productId = ordersUnpaid.getProductId();
                 String userid = ordersUnpaid.getUserId();
+                Date dateStarted = ordersUnpaid.getDateStarted();
+                Date dateClosed = ordersUnpaid.getDateClosed();
+                Integer adultCount = ordersUnpaid.getAdultCount();
+                Integer childrenCount = ordersUnpaid.getChildrenCount();
+                String note = ordersUnpaid.getNote();
 
                 // 在已支付订单表里面添加一条记录
                 OrdersPaid ordersPaid = new OrdersPaid();
-                ordersPaid.setTransactionId(transactionId).setUserId(userid).setProductId(productId).setPaidMoney(Double.valueOf(cashFee)).setPaidMethod("微信支付").setCreateTime(date);
+                ordersPaid.setTransactionId(transactionId)
+                        .setUserId(userid)
+                        .setProductId(productId)
+                        .setPaidMoney(Double.valueOf(cashFee))
+                        .setPaidMethod("微信支付")
+                        .setDateStarted(dateStarted)
+                        .setDateClosed(dateClosed)
+                        .setAdultCount(adultCount)
+                        .setChildrenCount(childrenCount)
+                        .setNote(note)
+                        .setCreateTime(date);
                 ordersPaidService.save(ordersPaid);
 
                 // 通知微信官方接口，业务完成
