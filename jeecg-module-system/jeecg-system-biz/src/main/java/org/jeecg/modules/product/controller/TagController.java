@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -145,6 +147,20 @@ public class TagController extends JeecgController<Tag, ITagService> {
 		}
 		return Result.OK(tag);
 	}
+
+	 /**
+	  * 通过产品id查询
+	  *
+	  * @param productId
+	  * @return
+	  */
+	 //@AutoLog(value = "产品标签表-通过id查询")
+	 @ApiOperation(value="产品标签表-通过产品id查询", notes="产品标签表-通过产品id查询")
+	 @GetMapping(value = "/queryByProId")
+	 public Result<List<Tag>> queryByProId(@RequestParam(name="productId",required=true) String productId) {
+		 LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
+		 return Result.OK(tagService.list(queryWrapper.eq(Tag::getProId, productId)));
+	 }
 
     /**
     * 导出excel
