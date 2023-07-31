@@ -94,6 +94,24 @@ public class Product implements Serializable {
     @ApiModelProperty(value = "产品售卖数量")
     private int soldNumber;
     /**
+     * 位于地点
+     */
+    @Excel(name = "位于地点", width = 15)
+    @ApiModelProperty(value = "位于地点")
+    private String local;
+    /**
+     * 详细地点(小标题)
+     */
+    @Excel(name = "详细地点(小标题)", width = 15)
+    @ApiModelProperty(value = "详细地点(小标题)")
+    private String localDetail;
+    /**
+     * 推荐指数
+     */
+    @Excel(name = "推荐指数", width = 15)
+    @ApiModelProperty(value = "推荐指数")
+    private int recNum;
+    /**
      * 创建人
      */
     @ApiModelProperty(value = "创建人")
