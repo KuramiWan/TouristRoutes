@@ -52,6 +52,12 @@ public class Product implements Serializable {
     @ApiModelProperty(value = "产品封面")
     private java.lang.String proPageImg;
     /**
+     * 产品海报
+     */
+    @Excel(name = "产品海报", width = 15)
+    @ApiModelProperty(value = "产品海报")
+    private java.lang.String posters;
+    /**
      * 产品估价
      */
     @Excel(name = "产品估价", width = 15)
