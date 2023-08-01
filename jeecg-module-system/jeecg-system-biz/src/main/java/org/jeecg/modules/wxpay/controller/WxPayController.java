@@ -256,6 +256,11 @@ public class WxPayController {
                         .setCreateTime(date);
                 ordersPaidService.save(ordersPaid);
 
+                //该产品的购买数量+1
+                Product product = productService.getById(productId);
+                product.setSoldNumber(product.getSoldNumber()+1);
+                productService.updateById(product);
+
                 // 通知微信官方接口，业务完成
                 log.info("微信支付回调成功订单号: {}", notifyMap);
                 xmlBack = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";

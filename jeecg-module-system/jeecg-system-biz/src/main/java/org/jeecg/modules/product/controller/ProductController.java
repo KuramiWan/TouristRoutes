@@ -119,6 +119,30 @@ public class ProductController extends JeecgController<Product, IProductService>
         return Result.OK(pageList);
     }
 
+
+
+
+    /**
+     * 产品表-分页列表查询产品(出售数量降序查询)
+     *
+     * @param
+     * @param pageNo
+     * @param pageSize
+     * @param
+     * @return
+     */
+    //@AutoLog(value = "产品表-分页列表查询产品(出售数量降序查询))
+    @ApiOperation(value = "产品表-分页列表查询产品(出售数量降序查询)", notes = "产品表-分页列表查询产品(出售数量降序查询)")
+    @GetMapping(value = "/productList")
+    public Result<IPage<Product>> queryProductPageList(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+//		QueryWrapper<Product> queryWrapper = QueryGenerator.initQueryWrapper(product, req.getParameterMap());
+        Page<Product> page = new Page<Product>(pageNo, pageSize);
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+        return Result.OK(pageList);
+    }
+
     /**
      * 添加
      *
@@ -202,13 +226,16 @@ public class ProductController extends JeecgController<Product, IProductService>
     //@AutoLog(value = "产品表-通过proName查询")
     @ApiOperation(value = "产品表-通过proName查询", notes = "产品表-通过proName查询")
     @GetMapping(value = "/queryByProName")
-    public Result<List<Product>> queryByProName(@RequestParam(name = "proName", required = true) String proName) {
-        List<Product> products = productMapper.selectList(new LambdaQueryWrapper<Product>().like(Product::getProTitle, proName));
-        if (products == null || products.size() <= 0) {
+    public Result<IPage<Product>> queryByProName(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                @RequestParam(name = "proName", required = true) String proName) {
+        Page<Product> page = new Page<Product>(pageNo, pageSize);
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().like(Product::getLocalDetail,proName).orderByDesc(Product::getSoldNumber));
+        if (pageList == null || pageList.getSize() <= 0) {
             return Result.error("未找到对应数据");
         }
 
-        return Result.OK(products);
+        return Result.OK(pageList);
     }
 
     /**
