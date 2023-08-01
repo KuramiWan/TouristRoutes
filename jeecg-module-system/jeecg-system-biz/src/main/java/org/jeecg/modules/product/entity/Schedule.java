@@ -59,10 +59,26 @@ public class Schedule implements Serializable {
 	@Excel(name = "日程详情", width = 15)
     @ApiModelProperty(value = "日程详情")
     private java.lang.String schContent;
+    /**早餐*/
+    @Excel(name = "早餐", width = 15)
+    @ApiModelProperty(value = "早餐")
+    private java.lang.String breakfast;
+    /**午餐*/
+    @Excel(name = "午餐", width = 15)
+    @ApiModelProperty(value = "午餐")
+    private java.lang.String lunch;
+    /**晚餐*/
+    @Excel(name = "晚餐", width = 15)
+    @ApiModelProperty(value = "晚餐")
+    private java.lang.String dinner;
 	/**日程地点*/
 	@Excel(name = "日程地点", width = 15)
     @ApiModelProperty(value = "日程地点")
     private java.lang.String schAddress;
+    /**酒店*/
+    @Excel(name = "酒店", width = 15)
+    @ApiModelProperty(value = "酒店")
+    private java.lang.String hotel;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;
