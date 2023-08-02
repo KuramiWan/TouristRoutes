@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
@@ -30,6 +31,7 @@ import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.product.service.ITaskService;
 import org.jeecg.modules.product.vo.ProductList;
+import org.jeecg.modules.product.vo.ProductVo;
 import org.jeecg.modules.product.vo.PurchaseCountVo;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
@@ -208,8 +210,8 @@ public class ProductController extends JeecgController<Product, IProductService>
     //@AutoLog(value = "产品表-通过id查询")
     @ApiOperation(value = "产品表-通过id查询", notes = "产品表-通过id查询")
     @GetMapping(value = "/queryById")
-    public Result<Product> queryById(@RequestParam(name = "id", required = true) String id) {
-        Product product = productService.getById(id);
+    public Result<ProductVo> queryById(@RequestParam(name = "id", required = true) String id) {
+        ProductVo product = productService.queryById(id);
         if (product == null) {
             return Result.error("未找到对应数据");
         }
