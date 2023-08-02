@@ -1,4 +1,4 @@
-package org.jeecg.modules.user.userinfo.entity;
+package org.jeecg.modules.follow.entity;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -19,23 +19,31 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @Description: 微信客户端用户信息表
+ * @Description: 关注人表
  * @Author: jeecg-boot
- * @Date:   2023-07-17
+ * @Date:   2023-08-02
  * @Version: V1.0
  */
 @Data
-@TableName("wx_client_userinfo")
+@TableName("follow")
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="wx_client_userinfo对象", description="微信客户端用户信息表")
-public class WxClientUserinfo implements Serializable {
+@ApiModel(value="follow对象", description="关注人表")
+public class Follow implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private String id;
+	/**用户id*/
+	@Excel(name = "用户id", width = 15)
+    @ApiModelProperty(value = "用户id")
+    private String userId;
+	/**关注人id*/
+	@Excel(name = "关注人id", width = 15)
+    @ApiModelProperty(value = "关注人id")
+    private String followId;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private String createBy;
@@ -52,35 +60,4 @@ public class WxClientUserinfo implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
     private Date updateTime;
-	/**所属部门*/
-    @ApiModelProperty(value = "所属部门")
-    private String sysOrgCode;
-	/**微信小程序用户唯一标识*/
-	@Excel(name = "微信小程序用户唯一标识", width = 15)
-    @ApiModelProperty(value = "微信小程序用户唯一标识")
-    private String openid;
-	/**用户昵称*/
-	@Excel(name = "用户昵称", width = 15)
-    @ApiModelProperty(value = "用户昵称")
-    private String username;
-	/**用户头像url*/
-	@Excel(name = "用户头像url", width = 15)
-    @ApiModelProperty(value = "用户头像url")
-    private String avatar;
-	/**手机号*/
-	@Excel(name = "手机号", width = 15)
-    @ApiModelProperty(value = "手机号")
-    private String phone;
-    /**个性签名*/
-    @Excel(name = "个性签名", width = 15)
-    @ApiModelProperty(value = "个性签名")
-    private String signature;
-    /**积分*/
-    @Excel(name = "积分", width = 15)
-    @ApiModelProperty(value = "积分")
-    private Integer credit;
-	/**会话密钥*/
-	@Excel(name = "会话密钥", width = 15)
-    @ApiModelProperty(value = "会话密钥")
-    private String sessionKey;
 }

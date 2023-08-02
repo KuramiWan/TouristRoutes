@@ -52,12 +52,10 @@ public class Task implements Serializable {
 	@Excel(name = "任务详情", width = 15)
     @ApiModelProperty(value = "任务详情")
     private java.lang.String taskContent;
-	/**任务时间*/
-	@Excel(name = "任务时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    /**任务时间*/
+    @Excel(name = "任务时间", width = 15)
     @ApiModelProperty(value = "任务时间")
-    private java.util.Date taskDate;
+    private java.lang.String taskDate;
 	/**任务地点*/
 	@Excel(name = "任务地点", width = 15)
     @ApiModelProperty(value = "任务地点")

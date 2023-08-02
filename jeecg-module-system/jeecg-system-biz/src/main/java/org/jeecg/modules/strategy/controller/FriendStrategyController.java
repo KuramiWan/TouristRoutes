@@ -146,6 +146,24 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     }
 
     /**
+     * 通过userId查询获赞数
+     *
+     * @param userId
+     * @return
+     */
+    //@AutoLog(value = "游友攻略-通过id查询")
+    @ApiOperation(value = "游友攻略-通过userId查询获赞数", notes = "游友攻略-通过userId查询获赞数")
+    @GetMapping(value = "/queryLikeByUserId")
+    public Result<Integer> queryLikeById(@RequestParam(name = "userId", required = true) String userId) {
+        FriendStrategy friendStrategy = friendStrategyService.getOne(new LambdaQueryWrapper<FriendStrategy>().eq(FriendStrategy::getUserid,userId));
+        Integer likeCount = friendStrategy.getLikeCount();
+        if (likeCount == null) {
+            return Result.error("未找到对应数据");
+        }
+        return Result.OK(likeCount);
+    }
+
+    /**
      * 导出excel
      *
      * @param request
