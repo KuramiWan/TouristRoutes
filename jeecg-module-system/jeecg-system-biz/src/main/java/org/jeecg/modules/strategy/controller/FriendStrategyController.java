@@ -64,7 +64,10 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     //@AutoLog(value = "游友攻略-分页列表查询")
     @ApiOperation(value = "游友攻略-分页列表查询", notes = "游友攻略-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<IPage<FriendStrategyVo>> queryPageList(@RequestParam(name = "id", defaultValue = "") String id, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+    public Result<IPage<FriendStrategyVo>> queryPageList(
+            @RequestParam(name = "id", defaultValue = "") String id,
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(id, pageNo, pageSize);
         return Result.OK(strategyVoPage);
     }
