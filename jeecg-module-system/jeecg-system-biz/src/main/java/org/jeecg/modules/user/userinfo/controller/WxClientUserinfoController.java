@@ -259,6 +259,24 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         return Result.OK(wxClientUserinfo);
     }
 
+
+    /**
+     * 通过open_id查询
+     *
+     * @param open_id
+     * @return
+     */
+    //@AutoLog(value = "微信客户端用户信息表-通过id查询")
+    @ApiOperation(value = "微信客户端用户信息表-通过id查询", notes = "微信客户端用户信息表-通过id查询")
+    @GetMapping(value = "/queryById")
+    public Result<WxClientUserinfo> queryById(@RequestParam(name = "id", required = true) String id) {
+        WxClientUserinfo wxClientUserinfo = iWxClientUserinfoService.getById(id);
+        if (wxClientUserinfo == null) {
+            return Result.error("未找到对应数据");
+        }
+        return Result.OK(wxClientUserinfo);
+    }
+
     /**
      * 导出excel
      *
