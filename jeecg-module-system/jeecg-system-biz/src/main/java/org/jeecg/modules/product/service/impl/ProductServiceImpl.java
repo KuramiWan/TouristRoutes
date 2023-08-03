@@ -11,6 +11,7 @@ import org.jeecg.modules.product.vo.ScheduleProVo;
 import org.jeecg.modules.product.vo.ScheduleVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -55,7 +56,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     public Page<ProductVo> getProductList(Page<Product> page) {
         Page<Product> productList = productMapper.selectPage(page, new LambdaQueryWrapper<Product>());
         List<ProductVo> collect = productList.getRecords().stream().map(this::fillProduct).collect(Collectors.toList());
-        return new Page<ProductVo>().setRecords(collect);
+        Page<ProductVo> productVoPage = new Page<>();
+        BeanUtils.copyProperties(productList,productVoPage);
+        return productVoPage.setRecords(collect);
     }
     @Transactional
     public ProductVo fillProduct(Product product){
