@@ -2,6 +2,7 @@ package org.jeecg.modules.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.product.entity.*;
 import org.jeecg.modules.product.mapper.*;
 import org.jeecg.modules.product.service.IProductService;
@@ -46,10 +47,22 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     @Transactional
     public ProductVo queryById(String id) {
         Product product = productMapper.selectById(id);
+        return fillProduct(product);
+    }
+
+    @Override
+    @Transactional
+    public Page<ProductVo> getProductList(Page<Product> page) {
+        Page<Product> productList = productMapper.selectPage(page, new LambdaQueryWrapper<Product>());
+        List<ProductVo> collect = productList.getRecords().stream().map(this::fillProduct).collect(Collectors.toList());
+        return new Page<ProductVo>().setRecords(collect);
+    }
+    @Transactional
+    public ProductVo fillProduct(Product product){
         ProductVo target = new ProductVo();
         BeanUtils.copyProperties(product, target);
         LambdaQueryWrapper<Schedule> scheduleLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        scheduleLambdaQueryWrapper.eq(Schedule::getProId, id);
+        scheduleLambdaQueryWrapper.eq(Schedule::getProId, product.getId());
         List<Schedule> schedules = scheduleMapper.selectList(scheduleLambdaQueryWrapper);
         List<ScheduleProVo> ScheduleVos = schedules.stream().map(schedule -> {
             LambdaQueryWrapper<Task> taskLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -63,20 +76,19 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         target.setSchedules(ScheduleVos);
 
         LambdaQueryWrapper<PriceDate> priceDateLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        priceDateLambdaQueryWrapper.eq(PriceDate::getProId, id);
+        priceDateLambdaQueryWrapper.eq(PriceDate::getProId, product.getId());
         List<PriceDate> priceDates = priceDateMapper.selectList(priceDateLambdaQueryWrapper);
         target.setPrice_date(priceDates);
 
         LambdaQueryWrapper<BatchPackage> batchPackageLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        batchPackageLambdaQueryWrapper.eq(BatchPackage::getProId, id);
+        batchPackageLambdaQueryWrapper.eq(BatchPackage::getProId, product.getId());
         List<BatchPackage> batchPackages = batchPackageMapper.selectList(batchPackageLambdaQueryWrapper);
         target.setBatch_package(batchPackages);
 
         LambdaQueryWrapper<JourneyPackage> journeyPackageLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        journeyPackageLambdaQueryWrapper.eq(JourneyPackage::getProId, id);
+        journeyPackageLambdaQueryWrapper.eq(JourneyPackage::getProId, product.getId());
         List<JourneyPackage> journeyPackages = journeyPackageMapper.selectList(journeyPackageLambdaQueryWrapper);
         target.setJourney(journeyPackages);
-
         return target;
     }
 
