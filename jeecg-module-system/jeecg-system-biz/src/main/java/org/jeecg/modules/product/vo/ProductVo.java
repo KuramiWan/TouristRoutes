@@ -24,7 +24,7 @@ public class ProductVo {
     private String local;
     private String local_detail;
     private String rec_num;
-    private List<Schedule> schedules;
+    private List<ScheduleProVo> schedules;
     private List<PriceDate> price_date;
     private List<BatchPackage> batch_package;
     private List<JourneyPackage> journey;

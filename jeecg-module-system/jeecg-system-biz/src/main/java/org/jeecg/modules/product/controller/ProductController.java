@@ -211,6 +211,9 @@ public class ProductController extends JeecgController<Product, IProductService>
     @ApiOperation(value = "产品表-通过id查询", notes = "产品表-通过id查询")
     @GetMapping(value = "/queryById")
     public Result<ProductVo> queryById(@RequestParam(name = "id", required = true) String id) {
+        if (id == null) {
+            return Result.error("未传入id");
+        }
         ProductVo product = productService.queryById(id);
         if (product == null) {
             return Result.error("未找到对应数据");

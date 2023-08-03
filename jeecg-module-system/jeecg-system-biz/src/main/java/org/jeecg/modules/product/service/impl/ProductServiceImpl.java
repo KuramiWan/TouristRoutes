@@ -6,6 +6,7 @@ import org.jeecg.modules.product.entity.*;
 import org.jeecg.modules.product.mapper.*;
 import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.product.vo.ProductVo;
+import org.jeecg.modules.product.vo.ScheduleProVo;
 import org.jeecg.modules.product.vo.ScheduleVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +51,16 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         LambdaQueryWrapper<Schedule> scheduleLambdaQueryWrapper = new LambdaQueryWrapper<>();
         scheduleLambdaQueryWrapper.eq(Schedule::getProId, id);
         List<Schedule> schedules = scheduleMapper.selectList(scheduleLambdaQueryWrapper);
-        List<ScheduleVo> ScheduleVos = schedules.stream().map(schedule -> {
+        List<ScheduleProVo> ScheduleVos = schedules.stream().map(schedule -> {
             LambdaQueryWrapper<Task> taskLambdaQueryWrapper = new LambdaQueryWrapper<>();
             taskLambdaQueryWrapper.eq(Task::getSchId, schedule.getId());
-            ScheduleVo scheduleVo = new ScheduleVo();
+            ScheduleProVo scheduleVo = new ScheduleProVo();
             BeanUtils.copyProperties(schedule, scheduleVo);
             List<Task> tasks = taskMapper.selectList(taskLambdaQueryWrapper);
             scheduleVo.setTasks(tasks);
             return scheduleVo;
         }).collect(Collectors.toList());
-        target.setSchedules(schedules);
+        target.setSchedules(ScheduleVos);
 
         LambdaQueryWrapper<PriceDate> priceDateLambdaQueryWrapper = new LambdaQueryWrapper<>();
         priceDateLambdaQueryWrapper.eq(PriceDate::getProId, id);
