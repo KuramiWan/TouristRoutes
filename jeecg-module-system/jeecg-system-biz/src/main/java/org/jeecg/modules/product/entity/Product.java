@@ -92,7 +92,7 @@ public class Product implements Serializable {
      */
     @Excel(name = "产品时长", width = 15)
     @ApiModelProperty(value = "产品时长")
-    private java.lang.String proDate;
+    private java.lang.Integer proDate;
     /**
      * 产品售卖数量
      */
