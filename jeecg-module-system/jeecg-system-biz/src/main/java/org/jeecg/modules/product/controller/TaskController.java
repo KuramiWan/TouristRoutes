@@ -1,25 +1,26 @@
 package org.jeecg.modules.product.controller;
 
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.jeecg.common.api.vo.Result;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.common.util.oss.OssBootUtil;
+import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.entity.Schedule;
 import org.jeecg.modules.product.entity.Task;
 import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.product.service.ITaskService;
+import org.jeecg.modules.product.vo.ProductUpload;
 import org.jeecg.modules.product.vo.ScheduleVo;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,35 @@ public class TaskController extends JeecgController<Task, ITaskService> {
         taskService.removeById(map.get("id"));
         return Result.OK("删除成功!");
     }
+
+    @AutoLog(value = "某个产品某一天的所有任务-上传图床返回url")
+    @ApiOperation(value = "某个产品某一天的所有任务-上传图床返回url", notes = "某个产品某一天的所有任务-上传图床返回url")
+    @PostMapping(value = "/uploadTaskImg")
+    public Result<List<String>> uploadTaskImg(@RequestBody Map<String, String> map) {
+        ArrayList<String> list = new ArrayList<>();
+        String base64Img = map.get("base64Img");
+        //上传图床并更新数据库中的图片字段
+        list.add(uploadImg(base64Img));
+        return Result.OK(list);
+    }
+
+    public String uploadImg(String base64Img) {
+        try {
+            // 将Base64数据转换为字节数组
+            byte[] pageImg = Base64.getDecoder().decode(base64Img);
+            String fileDir1 = "suixinyou-wx-client/pages-product/产品日程/产品任务/"; // 文件保存目录，根据实际情况调整
+            String fileUrl1 = OssBootUtil.upload(new Date().toString(), pageImg, fileDir1);
+
+            if (fileUrl1 == null) return "上传失败";
+
+            return fileUrl1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "上传失败";
+        }
+    }
+
 
     /**
      * 批量删除
