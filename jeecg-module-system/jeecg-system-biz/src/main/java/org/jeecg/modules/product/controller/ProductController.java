@@ -224,7 +224,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             if (fileUrl2 != null) {
                 LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
                 Product target2 = productService.getOne(queryWrapper);
-                target2.setProPageImg(fileUrl2);
+                target2.setPosters(fileUrl2);
                 productService.update(target2,queryWrapper);
                 //return Result.ok(fileUrl2);
             }
