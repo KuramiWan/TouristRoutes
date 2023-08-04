@@ -1,9 +1,6 @@
 package org.jeecg.modules.product.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -22,6 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.common.util.oss.OssBootUtil;
 import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.product.entity.Product;
@@ -31,10 +30,12 @@ import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.product.service.ITaskService;
 import org.jeecg.modules.product.vo.ProductList;
+import org.jeecg.modules.product.vo.ProductUpload;
 import org.jeecg.modules.product.vo.ProductVo;
 import org.jeecg.modules.product.vo.PurchaseCountVo;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
+import org.jeecg.modules.user.userinfo.vo.UploadRequest;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -170,6 +171,65 @@ public class ProductController extends JeecgController<Product, IProductService>
     public Result<String> edit(@RequestBody Product product) {
         productService.updateById(product);
         return Result.OK("编辑成功!");
+    }
+
+    @AutoLog(value = "产品表-添加或修改")
+    @ApiOperation(value = "产品表-添加或修改",notes = "产品表-添加或修改")
+    @PostMapping(value = "/saveOrUpdate")
+    public Result<String> saveOrUpdate(@RequestBody Product product){
+        //更新条件构造器
+        UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",product.getId());
+        //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
+        productService.saveOrUpdate(product,updateWrapper);
+        //先判断是否有更新图片
+        //上传图床并更新数据库中的图片字段
+        if(product.getProPageImg() != null || product.getPosters() != null){
+            ProductUpload productUpload = new ProductUpload();
+            productUpload.setProductid(product.getId());
+            productUpload.setBase64PageImg(product.getProPageImg());
+            productUpload.setBase64Posters(product.getPosters());
+            uploadImg(productUpload);
+        }
+        return Result.OK("增添或修改成功");
+    }
+
+    public Result<String> uploadImg(ProductUpload productUpload) {
+        try {
+            //封面
+            String base64PageImg = productUpload.getBase64PageImg();
+            // 将Base64数据转换为字节数组
+            byte[] pageImg = Base64.getDecoder().decode(base64PageImg);
+            String fileDir1 = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
+            String fileUrl1 = OssBootUtil.upload(productUpload.getProductid(),pageImg, fileDir1);
+
+            //海报
+            String base64Posters = productUpload.getBase64Posters();
+            byte[] posters = Base64.getDecoder().decode(base64Posters);
+            String fileDir2 = "suixinyou-wx-client/pages-product/产品海报/"; // 文件保存目录，根据实际情况调整
+            String fileUrl2 = OssBootUtil.upload(productUpload.getProductid(),posters, fileDir2);
+
+            if(fileUrl1 == null && fileUrl2 == null)return Result.error("上传失败");
+
+            if (fileUrl1 != null) {
+                LambdaQueryWrapper<Product> queryWrapper1 = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
+                Product target1 = productService.getOne(queryWrapper1);
+                target1.setProPageImg(fileUrl1);
+                productService.update(target1,queryWrapper1);
+                //return Result.ok(fileUrl1);
+            }
+            if (fileUrl2 != null) {
+                LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
+                Product target2 = productService.getOne(queryWrapper);
+                target2.setProPageImg(fileUrl2);
+                productService.update(target2,queryWrapper);
+                //return Result.ok(fileUrl2);
+            }
+            return Result.OK("上传成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("上传失败");
+        }
     }
 
     /**
