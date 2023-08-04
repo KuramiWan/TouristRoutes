@@ -184,7 +184,10 @@ public class ProductController extends JeecgController<Product, IProductService>
         productService.saveOrUpdate(product,updateWrapper);
         //先判断是否有更新图片
         //上传图床并更新数据库中的图片字段
-        if(product.getProPageImg() != null || product.getPosters() != null){
+        if(
+            (product.getProPageImg() != null && product.getProPageImg() != "") ||
+            (product.getPosters() != null && product.getPosters() != "")
+        ){
             ProductUpload productUpload = new ProductUpload();
             productUpload.setProductid(product.getId());
             productUpload.setBase64PageImg(product.getProPageImg());
