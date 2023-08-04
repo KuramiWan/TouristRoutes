@@ -1,6 +1,7 @@
 package org.jeecg.modules.strategy.controller;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -94,6 +95,9 @@ public class UserStrategyLikeController extends JeecgController<UserStrategyLike
             queryWrapper.last("limit 3");
         }
         List<UserStrategyLike> allList = userStrategyLikeService.list(queryWrapper);
+
+        // 对查询结果再取倒序
+        Collections.reverse(allList);
 
         return Result.OK(allList);
     }
