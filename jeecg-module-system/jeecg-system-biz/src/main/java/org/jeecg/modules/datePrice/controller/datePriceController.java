@@ -51,7 +51,7 @@ public class datePriceController {
     /**
      *   修改
      *
-     * @param datePrices
+     * @param priceDates
      * @return
      */
     @AutoLog(value = "后台查询日程价格表-修改")
@@ -59,7 +59,18 @@ public class datePriceController {
     @PostMapping(value = "/updatePriceAndDate")
     public Result<String> updatePriceAndDate(@RequestBody List<PriceDate> priceDates) {
         for (PriceDate priceDate : priceDates) {
-            priceDateService.updateById(priceDate);
+            if(priceDate.getPdEnrollment()<= priceDate.getPdMaxMan()){
+                if (priceDate.getPdEnrollment().equals(priceDate.getPdMaxMan())){
+                    priceDate.setPdFull(1);
+                }else {
+                    priceDate.setPdFull(0);
+                }
+
+                priceDateService.updateById(priceDate);
+            }else{
+                return Result.error("保存失败！");
+            }
+
         }
         return Result.OK("保存成功！");
     }
@@ -67,7 +78,7 @@ public class datePriceController {
     /**
      *   通过id删除
      *
-     * @param id
+     * @param body
      * @return
      */
     @AutoLog(value = "后台查询日程价格表-通过id删除")
