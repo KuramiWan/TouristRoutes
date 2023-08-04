@@ -187,6 +187,22 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
     }
 
     /**
+     * 条件列表查询
+     *
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "微信客户端用户信息表-分页列表查询")
+    @ApiOperation(value = "微信客户端用户信息表-分页列表查询", notes = "微信客户端用户信息表-分页列表查询")
+    @GetMapping(value = "/queryList")
+    public Result<List<WxClientUserinfo>> queryList(WxClientUserinfo wxClientUserinfo,
+                                                         HttpServletRequest req) {
+        QueryWrapper<WxClientUserinfo> queryWrapper = QueryGenerator.initQueryWrapper(wxClientUserinfo, req.getParameterMap());
+        List<WxClientUserinfo> list = iWxClientUserinfoService.list(queryWrapper);
+        return Result.OK(list);
+    }
+
+    /**
      * 添加
      *
      * @param wxClientUserinfo
@@ -260,22 +276,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
     }
 
 
-    /**
-     * 通过open_id查询
-     *
-     * @param open_id
-     * @return
-     */
-    //@AutoLog(value = "微信客户端用户信息表-通过id查询")
-    @ApiOperation(value = "微信客户端用户信息表-通过id查询", notes = "微信客户端用户信息表-通过id查询")
-    @GetMapping(value = "/queryById")
-    public Result<WxClientUserinfo> queryById(@RequestParam(name = "id", required = true) String id) {
-        WxClientUserinfo wxClientUserinfo = iWxClientUserinfoService.getById(id);
-        if (wxClientUserinfo == null) {
-            return Result.error("未找到对应数据");
-        }
-        return Result.OK(wxClientUserinfo);
-    }
+
 
     /**
      * 导出excel
