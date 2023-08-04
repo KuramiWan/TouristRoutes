@@ -1,7 +1,7 @@
 package org.jeecg.modules.strategy.controller;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -38,133 +40,159 @@ import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
- /**
+/**
  * @Description: 旅友攻略点赞表
  * @Author: jeecg-boot
- * @Date:   2023-08-02
+ * @Date: 2023-08-02
  * @Version: V1.0
  */
-@Api(tags="旅友攻略点赞表")
+@Api(tags = "旅友攻略点赞表")
 @RestController
 @RequestMapping("/strategy/userStrategyLike")
 @Slf4j
 public class UserStrategyLikeController extends JeecgController<UserStrategyLike, IUserStrategyLikeService> {
-	@Autowired
-	private IUserStrategyLikeService userStrategyLikeService;
-	
-	/**
-	 * 分页列表查询
-	 *
-	 * @param userStrategyLike
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
-	//@AutoLog(value = "旅友攻略点赞表-分页列表查询")
-	@ApiOperation(value="旅友攻略点赞表-分页列表查询", notes="旅友攻略点赞表-分页列表查询")
-	@GetMapping(value = "/list")
-	public Result<IPage<UserStrategyLike>> queryPageList(UserStrategyLike userStrategyLike,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<UserStrategyLike> queryWrapper = QueryGenerator.initQueryWrapper(userStrategyLike, req.getParameterMap());
-		Page<UserStrategyLike> page = new Page<UserStrategyLike>(pageNo, pageSize);
-		IPage<UserStrategyLike> pageList = userStrategyLikeService.page(page, queryWrapper);
-		return Result.OK(pageList);
-	}
-	
-	/**
-	 *   添加
-	 *
-	 * @param userStrategyLike
-	 * @return
-	 */
-	@AutoLog(value = "旅友攻略点赞表-添加")
-	@ApiOperation(value="旅友攻略点赞表-添加", notes="旅友攻略点赞表-添加")
-	@PostMapping(value = "/add")
-	public Result<String> add(@RequestBody UserStrategyLike userStrategyLike) {
-		userStrategyLikeService.save(userStrategyLike);
-		return Result.OK("添加成功！");
-	}
-	
-	/**
-	 *  编辑
-	 *
-	 * @param userStrategyLike
-	 * @return
-	 */
-	@AutoLog(value = "旅友攻略点赞表-编辑")
-	@ApiOperation(value="旅友攻略点赞表-编辑", notes="旅友攻略点赞表-编辑")
-	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
-	public Result<String> edit(@RequestBody UserStrategyLike userStrategyLike) {
-		userStrategyLikeService.updateById(userStrategyLike);
-		return Result.OK("编辑成功!");
-	}
-	
-	/**
-	 *   通过id删除
-	 *
-	 * @param id
-	 * @return
-	 */
-	@AutoLog(value = "旅友攻略点赞表-通过id删除")
-	@ApiOperation(value="旅友攻略点赞表-通过id删除", notes="旅友攻略点赞表-通过id删除")
-	@DeleteMapping(value = "/delete")
-	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		userStrategyLikeService.removeById(id);
-		return Result.OK("删除成功!");
-	}
-	
-	/**
-	 *  批量删除
-	 *
-	 * @param ids
-	 * @return
-	 */
-	@AutoLog(value = "旅友攻略点赞表-批量删除")
-	@ApiOperation(value="旅友攻略点赞表-批量删除", notes="旅友攻略点赞表-批量删除")
-	@DeleteMapping(value = "/deleteBatch")
-	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		this.userStrategyLikeService.removeByIds(Arrays.asList(ids.split(",")));
-		return Result.OK("批量删除成功!");
-	}
-	
-	/**
-	 * 通过id查询
-	 *
-	 * @param id
-	 * @return
-	 */
-	//@AutoLog(value = "旅友攻略点赞表-通过id查询")
-	@ApiOperation(value="旅友攻略点赞表-通过id查询", notes="旅友攻略点赞表-通过id查询")
-	@GetMapping(value = "/queryById")
-	public Result<UserStrategyLike> queryById(@RequestParam(name="id",required=true) String id) {
-		UserStrategyLike userStrategyLike = userStrategyLikeService.getById(id);
-		if(userStrategyLike==null) {
-			return Result.error("未找到对应数据");
-		}
-		return Result.OK(userStrategyLike);
-	}
+    @Autowired
+    private IUserStrategyLikeService userStrategyLikeService;
 
     /**
-    * 导出excel
-    *
-    * @param request
-    * @param userStrategyLike
-    */
+     * 分页列表查询
+     *
+     * @param userStrategyLike
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "旅友攻略点赞表-分页列表查询")
+    @ApiOperation(value = "旅友攻略点赞表-分页列表查询", notes = "旅友攻略点赞表-分页列表查询")
+    @GetMapping(value = "/list")
+    public Result<IPage<UserStrategyLike>> queryPageList(UserStrategyLike userStrategyLike,
+                                                         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                         HttpServletRequest req) {
+        QueryWrapper<UserStrategyLike> queryWrapper = QueryGenerator.initQueryWrapper(userStrategyLike, req.getParameterMap());
+        Page<UserStrategyLike> page = new Page<UserStrategyLike>(pageNo, pageSize);
+        IPage<UserStrategyLike> pageList = userStrategyLikeService.page(page, queryWrapper);
+        return Result.OK(pageList);
+    }
+
+    /**
+     * 列表查询
+     *
+     * @param userStrategyLike
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "旅友攻略点赞表-列表查询")
+    @ApiOperation(value = "旅友攻略点赞表-列表查询", notes = "旅友攻略点赞表-列表查询")
+    @GetMapping(value = "/allList")
+    public Result<List<UserStrategyLike>> queryPageList(UserStrategyLike userStrategyLike, HttpServletRequest req) {
+        QueryWrapper<UserStrategyLike> queryWrapper = QueryGenerator.initQueryWrapper(userStrategyLike, req.getParameterMap());
+        //只通过strategyId来进行条件查询
+        if (req.getParameterValues("strategyId") != null && req.getParameterValues("userId") == null) {
+            queryWrapper.eq("status", 1);
+            queryWrapper.orderByDesc("update_time");
+            queryWrapper.last("limit 3");
+        }
+        List<UserStrategyLike> allList = userStrategyLikeService.list(queryWrapper);
+
+        // 对查询结果再取倒序
+        Collections.reverse(allList);
+
+        return Result.OK(allList);
+    }
+
+    /**
+     * 添加
+     *
+     * @param userStrategyLike
+     * @return
+     */
+    @AutoLog(value = "旅友攻略点赞表-添加")
+    @ApiOperation(value = "旅友攻略点赞表-添加", notes = "旅友攻略点赞表-添加")
+    @PostMapping(value = "/add")
+    public Result<String> add(@RequestBody UserStrategyLike userStrategyLike) {
+        userStrategyLikeService.save(userStrategyLike);
+        return Result.OK("添加成功！");
+    }
+
+    /**
+     * 编辑
+     *
+     * @param userStrategyLike
+     * @return
+     */
+    @AutoLog(value = "旅友攻略点赞表-编辑")
+    @ApiOperation(value = "旅友攻略点赞表-编辑", notes = "旅友攻略点赞表-编辑")
+    @RequestMapping(value = "/edit", method = {RequestMethod.PUT, RequestMethod.POST})
+    public Result<String> edit(@RequestBody UserStrategyLike userStrategyLike) {
+        userStrategyLikeService.updateById(userStrategyLike);
+        return Result.OK("编辑成功!");
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    @AutoLog(value = "旅友攻略点赞表-通过id删除")
+    @ApiOperation(value = "旅友攻略点赞表-通过id删除", notes = "旅友攻略点赞表-通过id删除")
+    @DeleteMapping(value = "/delete")
+    public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
+        userStrategyLikeService.removeById(id);
+        return Result.OK("删除成功!");
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    @AutoLog(value = "旅友攻略点赞表-批量删除")
+    @ApiOperation(value = "旅友攻略点赞表-批量删除", notes = "旅友攻略点赞表-批量删除")
+    @DeleteMapping(value = "/deleteBatch")
+    public Result<String> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
+        this.userStrategyLikeService.removeByIds(Arrays.asList(ids.split(",")));
+        return Result.OK("批量删除成功!");
+    }
+
+    /**
+     * 通过id查询
+     *
+     * @param id
+     * @return
+     */
+    //@AutoLog(value = "旅友攻略点赞表-通过id查询")
+    @ApiOperation(value = "旅友攻略点赞表-通过id查询", notes = "旅友攻略点赞表-通过id查询")
+    @GetMapping(value = "/queryById")
+    public Result<UserStrategyLike> queryById(@RequestParam(name = "id", required = true) String id) {
+        UserStrategyLike userStrategyLike = userStrategyLikeService.getById(id);
+        if (userStrategyLike == null) {
+            return Result.error("未找到对应数据");
+        }
+        return Result.OK(userStrategyLike);
+    }
+
+    /**
+     * 导出excel
+     *
+     * @param request
+     * @param userStrategyLike
+     */
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, UserStrategyLike userStrategyLike) {
         return super.exportXls(request, userStrategyLike, UserStrategyLike.class, "旅友攻略点赞表");
     }
 
     /**
-      * 通过excel导入数据
-    *
-    * @param request
-    * @param response
-    * @return
-    */
+     * 通过excel导入数据
+     *
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, UserStrategyLike.class);

@@ -187,6 +187,22 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
     }
 
     /**
+     * 条件列表查询
+     *
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "微信客户端用户信息表-分页列表查询")
+    @ApiOperation(value = "微信客户端用户信息表-分页列表查询", notes = "微信客户端用户信息表-分页列表查询")
+    @GetMapping(value = "/queryList")
+    public Result<List<WxClientUserinfo>> queryList(WxClientUserinfo wxClientUserinfo,
+                                                         HttpServletRequest req) {
+        QueryWrapper<WxClientUserinfo> queryWrapper = QueryGenerator.initQueryWrapper(wxClientUserinfo, req.getParameterMap());
+        List<WxClientUserinfo> list = iWxClientUserinfoService.list(queryWrapper);
+        return Result.OK(list);
+    }
+
+    /**
      * 添加
      *
      * @param wxClientUserinfo
@@ -258,6 +274,9 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         }
         return Result.OK(wxClientUserinfo);
     }
+
+
+
 
     /**
      * 导出excel
