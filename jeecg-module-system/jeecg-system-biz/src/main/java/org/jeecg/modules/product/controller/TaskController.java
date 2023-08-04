@@ -4,6 +4,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,14 +100,14 @@ public class TaskController extends JeecgController<Task, ITaskService> {
     /**
      * 通过id删除
      *
-     * @param id
+     * @param map
      * @return
      */
     @AutoLog(value = "某个产品某一天的所有任务-通过id删除")
     @ApiOperation(value = "某个产品某一天的所有任务-通过id删除", notes = "某个产品某一天的所有任务-通过id删除")
     @DeleteMapping(value = "/delete")
-    public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
-        taskService.removeById(id);
+    public Result<String> delete(@RequestBody Map<String, String> map) {
+        taskService.removeById(map.get("id"));
         return Result.OK("删除成功!");
     }
 
