@@ -16,8 +16,10 @@ import org.jeecg.modules.orders.mapper.OrdersPaidMapper;
 import org.jeecg.modules.orders.mapper.OrdersUnpaidMapper;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.mapper.ProductMapper;
+import org.jeecg.modules.product.service.IPriceDateService;
 import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.mapper.WxClientUserinfoMapper;
@@ -60,6 +62,9 @@ public class WxPayController {
 
     @Autowired
     private IOrdersPaidService ordersPaidService;
+
+    @Autowired
+    private IPriceDateService priceDateService;
 
     @Autowired
     private IWxClientUserinfoService wxClientUserinfoService;
@@ -256,10 +261,22 @@ public class WxPayController {
                         .setCreateTime(date);
                 ordersPaidService.save(ordersPaid);
 
-                //该产品的购买数量+1
+                // 该产品的购买数量+1
                 Product product = productService.getById(productId);
-                product.setSoldNumber(product.getSoldNumber()+1);
+                product.setSoldNumber(product.getSoldNumber() + 1);
                 productService.updateById(product);
+
+                // 该产品在这个日期(产品id + 购买日期唯一确定)的购买数量+1
+                PriceDate priceDate = priceDateService.getOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, productId).eq(PriceDate::getPdDate, ordersPaid.getDateStarted()));
+                Integer pdEnrollment = priceDate.getPdEnrollment(); // 当前人数
+                Integer pdMaxMan = priceDate.getPdMaxMan(); // 最大人数
+                if (pdEnrollment < pdMaxMan) {
+                    priceDate.setPdEnrollment(pdEnrollment + 1);
+                    if (pdEnrollment + 1 == pdMaxMan) {
+                        priceDate.setPdFull(1);
+                    }
+                }
+                priceDateService.updateById(priceDate);
 
                 // 通知微信官方接口，业务完成
                 log.info("微信支付回调成功订单号: {}", notifyMap);
