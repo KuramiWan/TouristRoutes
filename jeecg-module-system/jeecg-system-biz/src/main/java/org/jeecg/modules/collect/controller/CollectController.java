@@ -1,17 +1,14 @@
 package org.jeecg.modules.collect.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.collect.entity.Collect;
 import org.jeecg.modules.collect.service.ICollectService;
 
@@ -20,24 +17,25 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
+import org.jeecg.modules.collect.vo.OtherStrategys.OffStrategyVo;
+import org.jeecg.modules.collect.vo.Strategys;
+import org.jeecg.modules.strategy.comment.service.IOfficialStrategyCommentService;
+import org.jeecg.modules.strategy.comment.vo.OfficialStrategyCommentVo;
+import org.jeecg.modules.strategy.entity.FriendStrategy;
+import org.jeecg.modules.strategy.entity.OfficialStrategy;
+import org.jeecg.modules.strategy.service.IFriendStrategyService;
+import org.jeecg.modules.strategy.service.IOfficialStrategyService;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.strategy.vo.FriendStrategyVo;
+import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
- /**
+/**
  * @Description: 收藏表
  * @Author: jeecg-boot
  * @Date:   2023-08-02
@@ -50,7 +48,19 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class CollectController extends JeecgController<Collect, ICollectService> {
 	@Autowired
 	private ICollectService collectService;
-	
+
+	@Autowired
+	private IFriendStrategyService friendStrategyService;
+
+	@Autowired
+	private IOfficialStrategyService officialStrategyService;
+
+	@Autowired
+	private IWxClientUserinfoService wxClientUserinfoService;
+
+	@Autowired
+	private IOfficialStrategyCommentService officialStrategyCommentService;
+
 	/**
 	 * 分页列表查询
 	 *
@@ -72,6 +82,48 @@ public class CollectController extends JeecgController<Collect, ICollectService>
 		IPage<Collect> pageList = collectService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
+
+	 /**
+	  * 列表查询所有收藏攻略
+	  *
+	  * @param userId
+	  * @return
+	  */
+	 //@AutoLog(value = "收藏表-分页列表查询")
+	 @ApiOperation(value="收藏表-列表查询所有收藏攻略", notes="收藏表-列表查询所有收藏攻略")
+	 @GetMapping(value = "/queryAllByUserId")
+	 public Result<Strategys> queryAllByUserId(@RequestParam(name = "userId",required = true) String userId,
+											   @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+											   @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+		 List<Collect> collects = collectService.list(new LambdaQueryWrapper<Collect>().eq(Collect::getUserId, userId));
+		 List<OffStrategyVo> officialStrategyList = new ArrayList<>();
+		 List<IPage<FriendStrategyVo>> friendStrategyList = new ArrayList<>();
+		 Strategys strategys = new Strategys();
+		 for (Collect collect : collects) {
+			 OfficialStrategy officialStrategy = officialStrategyService.getOne(new LambdaQueryWrapper<OfficialStrategy>()
+					 .eq(OfficialStrategy::getId, collect.getStrategyId()));
+			 OffStrategyVo offStrategyVo = new OffStrategyVo();
+			offStrategyVo.setOfficialStrategy(officialStrategy);
+
+			 FriendStrategy friendStrategy = friendStrategyService.getOne(new LambdaQueryWrapper<FriendStrategy>()
+					 .eq(FriendStrategy::getId, collect.getStrategyId()));
+
+			 if(officialStrategy != null){
+				 Page<OfficialStrategyCommentVo> OffCommentVoPage = officialStrategyCommentService.queryListPage(officialStrategy.getId(), pageNo, pageSize);
+			 	offStrategyVo.setAuthor("随心游");
+			 	offStrategyVo.setOfficialStrategyCommentVo(OffCommentVoPage);
+			 	officialStrategyList.add(offStrategyVo);
+			 }else {
+				 Page<FriendStrategyVo> FriStrategyVoPage = friendStrategyService.queryFriendStrategyInfo(friendStrategy.getId(), pageNo, pageSize);
+			 	friendStrategyList.add(FriStrategyVoPage);
+			 }
+		 }
+		 int number = officialStrategyList.size() + friendStrategyList.size();
+		 strategys.setFriendStrategies(friendStrategyList);
+		 strategys.setOfficialStrategies(officialStrategyList);
+		 strategys.setNumber(number);
+		 return Result.OK(strategys);
+	 }
 	
 	/**
 	 *   添加
