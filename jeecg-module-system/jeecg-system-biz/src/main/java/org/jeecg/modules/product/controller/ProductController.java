@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -25,6 +26,7 @@ import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.entity.Schedule;
+import org.jeecg.modules.product.entity.TemporaryUpload;
 import org.jeecg.modules.product.mapper.ProductMapper;
 import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.product.service.IScheduleService;
@@ -176,62 +178,108 @@ public class ProductController extends JeecgController<Product, IProductService>
     @AutoLog(value = "产品表-添加或修改")
     @ApiOperation(value = "产品表-添加或修改",notes = "产品表-添加或修改")
     @PostMapping(value = "/saveOrUpdate")
-    public Result<String> saveOrUpdate(@RequestBody Product product){
+    public Result<List<String>> saveOrUpdate(@RequestBody Product product){
         //更新条件构造器
         UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",product.getId());
         //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
         productService.saveOrUpdate(product,updateWrapper);
+
+        //判断是否更新图片
+        String pageImgHeader = product.getProPageImg().substring(0,5);
+        String postersHeader = product.getPosters().substring(0,5);
+
+        //测试
+//        System.out.println("pageImgHeader:"+pageImgHeader);
+//        System.out.println("posters:"+postersHeader);
+//        System.out.println(pageImgHeader.equals("https"));
+//        System.out.println(postersHeader.equals("https"));
+
+
         //先判断是否有更新图片
         //上传图床并更新数据库中的图片字段
-        if(
-            (product.getProPageImg() != null && product.getProPageImg() != "") ||
-            (product.getPosters() != null && product.getPosters() != "")
-        ){
+
+        //最终返回的集合里面[0]是产品封面的url,[1]是产品海报的url
+
+        List<String> urlList = new ArrayList<>();
+
+        if(product.getProPageImg() != null && product.getProPageImg() != "" && !pageImgHeader.equals("https")) {
             ProductUpload productUpload = new ProductUpload();
             productUpload.setProductid(product.getId());
-            productUpload.setBase64PageImg(product.getProPageImg());
-            productUpload.setBase64Posters(product.getPosters());
-            uploadImg(productUpload);
+            productUpload.setBase64Data(product.getProPageImg());
+            String fileDir = "suixinyou-wx-client/pages-product/产品封面/";
+            String url = uploadImg(productUpload,fileDir);
+            //若修改过图片则返回图片地址
+            urlList.add(url);
+        }else{
+            urlList.add(product.getProPageImg());
         }
-        return Result.OK("增添或修改成功");
+        if(product.getPosters() != null && product.getPosters() != "" && !postersHeader.equals("https")) {
+            ProductUpload productUpload = new ProductUpload();
+            productUpload.setProductid(product.getId());
+            productUpload.setBase64Data(product.getPosters());
+            String fileDir = "suixinyou-wx-client/pages-product/产品海报/";
+            String url = uploadImg(productUpload,fileDir);
+            //若修改过图片则返回图片地址
+            urlList.add(url);
+        }else{
+            urlList.add(product.getPosters());
+        }
+        return Result.OK(urlList);
     }
 
-    public Result<String> uploadImg(ProductUpload productUpload) {
+
+    public String uploadImg(ProductUpload productUpload,String fileDir) {
         try {
-            //封面
-            String base64PageImg = productUpload.getBase64PageImg();
+            String base64Img = productUpload.getBase64Data();
             // 将Base64数据转换为字节数组
-            byte[] pageImg = Base64.getDecoder().decode(base64PageImg);
-            String fileDir1 = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
-            String fileUrl1 = OssBootUtil.upload(productUpload.getProductid(),pageImg, fileDir1);
+            byte[] img = Base64.getDecoder().decode(base64Img);
+            //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
+            String fileUrl = OssBootUtil.upload(productUpload.getProductid(),img, fileDir);
 
-            //海报
-            String base64Posters = productUpload.getBase64Posters();
-            byte[] posters = Base64.getDecoder().decode(base64Posters);
-            String fileDir2 = "suixinyou-wx-client/pages-product/产品海报/"; // 文件保存目录，根据实际情况调整
-            String fileUrl2 = OssBootUtil.upload(productUpload.getProductid(),posters, fileDir2);
-
-            if(fileUrl1 == null && fileUrl2 == null)return Result.error("上传失败");
-
-            if (fileUrl1 != null) {
-                LambdaQueryWrapper<Product> queryWrapper1 = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
-                Product target1 = productService.getOne(queryWrapper1);
-                target1.setProPageImg(fileUrl1);
-                productService.update(target1,queryWrapper1);
-                //return Result.ok(fileUrl1);
-            }
-            if (fileUrl2 != null) {
+            if (fileUrl != null) {
                 LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
-                Product target2 = productService.getOne(queryWrapper);
-                target2.setPosters(fileUrl2);
-                productService.update(target2,queryWrapper);
-                //return Result.ok(fileUrl2);
+                Product target = productService.getOne(queryWrapper);
+                target.setProPageImg(fileUrl);
+                productService.update(target,queryWrapper);
+                return fileUrl;
             }
-            return Result.OK("上传成功");
+            return "上传图片失败";
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("上传失败");
+            return "上传图片失败";
+        }
+    }
+
+
+    @AutoLog(value = "产品表-添加或修改(临时接口)")
+    @ApiOperation(value = "产品表-添加或修改(临时接口)",notes = "产品表-添加或修改(临时接口)")
+    @PostMapping(value = "/temporarySaveOrUpdate")
+    public Result<List<String>> temporarySaveOrUpdate(@RequestBody Product product){
+        //更新条件构造器
+        UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",product.getId());
+        //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
+        productService.saveOrUpdate(product,updateWrapper);
+        return Result.OK("增添或更新成功");
+    }
+    @AutoLog(value = "产品表-上传图片(临时接口)返回url")
+    @ApiOperation(value = "产品表-上传图片(临时接口)返回url",notes = "产品表-上传图片(临时接口)返回url")
+    @PostMapping(value = "/temporaryUploadImg")
+    public Result<List<String>> temporaryUploadImg(@RequestBody TemporaryUpload temporaryUpload) {
+        try {
+            String base64Img = temporaryUpload.getBase64Data();
+            // 将Base64数据转换为字节数组
+            byte[] img = Base64.getDecoder().decode(base64Img);
+            //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
+            String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品海报/" : "suixinyou-wx-client/pages-product/产品封面/";
+            String fileUrl = OssBootUtil.upload(System.currentTimeMillis()+"",img, fileDir);
+            List<String> list = new ArrayList<>();
+            list.add(fileUrl);
+            return Result.OK(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.OK("上传图片失败");
         }
     }
 
