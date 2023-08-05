@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -227,6 +228,7 @@ public class ProductController extends JeecgController<Product, IProductService>
         return Result.OK(urlList);
     }
 
+
     public String uploadImg(ProductUpload productUpload,String fileDir) {
         try {
             String base64Img = productUpload.getBase64Data();
@@ -249,8 +251,20 @@ public class ProductController extends JeecgController<Product, IProductService>
         }
     }
 
-    @AutoLog(value = "产品表-上传图片返回url")
-    @ApiOperation(value = "产品表-上传图片返回url",notes = "产品表-上传图片返回url")
+
+    @AutoLog(value = "产品表-添加或修改(临时接口)")
+    @ApiOperation(value = "产品表-添加或修改(临时接口)",notes = "产品表-添加或修改(临时接口)")
+    @PostMapping(value = "/temporarySaveOrUpdate")
+    public Result<List<String>> temporarySaveOrUpdate(@RequestBody Product product){
+        //更新条件构造器
+        UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",product.getId());
+        //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
+        productService.saveOrUpdate(product,updateWrapper);
+        return Result.OK("增添或更新成功");
+    }
+    @AutoLog(value = "产品表-上传图片(临时接口)返回url")
+    @ApiOperation(value = "产品表-上传图片(临时接口)返回url",notes = "产品表-上传图片(临时接口)返回url")
     @PostMapping(value = "/temporaryUploadImg")
     public String temporaryUploadImg(TemporaryUpload temporaryUpload) {
         try {
@@ -258,17 +272,9 @@ public class ProductController extends JeecgController<Product, IProductService>
             // 将Base64数据转换为字节数组
             byte[] img = Base64.getDecoder().decode(base64Img);
             //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
-            String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品封面/" : "suixinyou-wx-client/pages-product/产品海报/";
-            String fileUrl = OssBootUtil.upload(temporaryUpload.getProductid(),img, fileDir);
-
-            if (fileUrl != null) {
-                LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, temporaryUpload.getProductid());
-                Product target = productService.getOne(queryWrapper);
-                target.setProPageImg(fileUrl);
-                productService.update(target,queryWrapper);
-                return fileUrl;
-            }
-            return "上传图片失败";
+            String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品海报/" : "suixinyou-wx-client/pages-product/产品封面/";
+            String fileUrl = OssBootUtil.upload(System.currentTimeMillis()+"",img, fileDir);
+            return fileUrl;
         } catch (Exception e) {
             e.printStackTrace();
             return "上传图片失败";
