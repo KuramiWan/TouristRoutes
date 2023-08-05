@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ProductUpload {
-    String base64PageImg;
-    String base64Posters;
+    String base64Data;
     String productid;
 }
