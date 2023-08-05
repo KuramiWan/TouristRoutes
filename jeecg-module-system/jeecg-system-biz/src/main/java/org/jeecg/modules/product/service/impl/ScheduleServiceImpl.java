@@ -63,7 +63,10 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         if (scheduleProVo.getTasks() != null && scheduleProVo.getTasks().size() > 0) {
             // 删除任务
             List<String> taskIds = scheduleProVo.getTasks().stream().map(Task::getId).collect(Collectors.toList());
-            taskMapper.deleteBatchIds(taskIds);
+            System.out.println("taskIds====================" + taskIds);
+            if (taskIds.size() > 0) {
+                taskMapper.deleteBatchIds(taskIds);
+            }
         }
 
         return true;
