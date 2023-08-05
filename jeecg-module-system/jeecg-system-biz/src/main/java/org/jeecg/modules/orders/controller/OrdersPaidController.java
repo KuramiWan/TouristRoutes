@@ -1,5 +1,6 @@
 package org.jeecg.modules.orders.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -20,6 +23,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.orders.vo.OrderProducts;
+import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.service.IProductService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -50,6 +56,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPaidService> {
 	@Autowired
 	private IOrdersPaidService ordersPaidService;
+
+	@Autowired
+	private IProductService productService;
 	
 	/**
 	 * 分页列表查询
@@ -81,7 +90,6 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
 	 */
 	@AutoLog(value = "已付款的订单表-添加")
 	@ApiOperation(value="已付款的订单表-添加", notes="已付款的订单表-添加")
-	@RequiresPermissions("orders:orders_paid:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody OrdersPaid ordersPaid) {
 		ordersPaidService.save(ordersPaid);
@@ -149,6 +157,32 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
 		}
 		return Result.OK(ordersPaid);
 	}
+
+	 /**
+	  * 通过userId查询
+	  *
+	  * @param userId
+	  * @return
+	  */
+	 //@AutoLog(value = "已付款的订单表与产品信息-通过userId查询")
+	 @ApiOperation(value="已付款的订单表与产品信息-通过userId查询", notes="已付款的订单表与产品信息-通过userId查询")
+	 @GetMapping(value = "/queryListByUserId")
+	 public Result<List<OrderProducts>> queryListByUserId(@RequestParam(name="userId",required=true) String userId) {
+		 List<OrdersPaid> ordersPaidList = ordersPaidService.list(new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userId));
+		 List<OrderProducts> orderProductsList = new ArrayList<>();
+		 if(ordersPaidList==null || ordersPaidList.size() == 0) {
+			 return Result.error("未找到对应数据");
+		 }
+		 for (OrdersPaid ordersPaid : ordersPaidList) {
+			 OrderProducts orderProducts = new OrderProducts();
+			 Product product = productService.getById(ordersPaid.getProductId());
+			 orderProducts.setProduct(product);
+			 orderProducts.setDateStarted(ordersPaid.getDateStarted());
+			 orderProducts.setOrderId(ordersPaid.getId());
+			 orderProductsList.add(orderProducts);
+		 }
+		 return Result.OK(orderProductsList);
+	 }
 
     /**
     * 导出excel
