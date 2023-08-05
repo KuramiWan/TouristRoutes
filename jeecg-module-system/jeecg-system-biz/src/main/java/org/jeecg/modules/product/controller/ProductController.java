@@ -144,7 +144,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.getProductList(page);
+        IPage pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
         return Result.OK(pageList);
     }
 
