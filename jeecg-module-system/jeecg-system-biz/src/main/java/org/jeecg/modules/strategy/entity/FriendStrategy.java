@@ -2,6 +2,7 @@ package org.jeecg.modules.strategy.entity;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -110,4 +111,11 @@ public class FriendStrategy implements Serializable {
     @Excel(name = "发布位置", width = 15)
     @ApiModelProperty(value = "发布位置")
     private String position;
+    /**
+     * 浏览量
+     */
+    @Excel(name = "浏览量", width = 15)
+    @ApiModelProperty(value = "浏览量")
+    private BigInteger viewNum;
+
 }
