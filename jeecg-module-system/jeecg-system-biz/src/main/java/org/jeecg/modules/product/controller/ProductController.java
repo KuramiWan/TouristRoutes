@@ -266,7 +266,7 @@ public class ProductController extends JeecgController<Product, IProductService>
     @AutoLog(value = "产品表-上传图片(临时接口)返回url")
     @ApiOperation(value = "产品表-上传图片(临时接口)返回url",notes = "产品表-上传图片(临时接口)返回url")
     @PostMapping(value = "/temporaryUploadImg")
-    public String temporaryUploadImg(TemporaryUpload temporaryUpload) {
+    public Result<String> temporaryUploadImg(@RequestBody TemporaryUpload temporaryUpload) {
         try {
             String base64Img = temporaryUpload.getBase64Data();
             // 将Base64数据转换为字节数组
@@ -274,10 +274,10 @@ public class ProductController extends JeecgController<Product, IProductService>
             //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
             String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品海报/" : "suixinyou-wx-client/pages-product/产品封面/";
             String fileUrl = OssBootUtil.upload(System.currentTimeMillis()+"",img, fileDir);
-            return fileUrl;
+            return Result.OK(fileUrl);
         } catch (Exception e) {
             e.printStackTrace();
-            return "上传图片失败";
+            return Result.OK("上传图片失败");
         }
     }
 
