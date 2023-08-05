@@ -2,6 +2,7 @@ package org.jeecg.modules.strategy.entity;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
@@ -85,7 +86,7 @@ public class OfficialStrategy implements Serializable {
      */
     @Excel(name = "攻略浏览量", width = 15)
     @ApiModelProperty(value = "攻略浏览量")
-    private Integer views;
+    private BigInteger views;
     /**
      * 攻略标签
      */
