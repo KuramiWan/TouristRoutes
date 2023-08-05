@@ -81,6 +81,7 @@ public class ProductController extends JeecgController<Product, IProductService>
     @Autowired
     private IWxClientUserinfoService wxClientUserinfoService;
 
+
     /**
      * 分页列表查询
      *
@@ -289,7 +290,10 @@ public class ProductController extends JeecgController<Product, IProductService>
         updateWrapper.eq("id",product.getId());
         //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
         productService.saveOrUpdate(product,updateWrapper);
-        return Result.OK("增添或更新成功");
+        //返回id
+        List<String> list = new ArrayList<>();
+        list.add(product.getId());
+        return Result.OK(list);
     }
     @AutoLog(value = "产品表-上传图片(临时接口)返回url")
     @ApiOperation(value = "产品表-上传图片(临时接口)返回url",notes = "产品表-上传图片(临时接口)返回url")
@@ -321,6 +325,7 @@ public class ProductController extends JeecgController<Product, IProductService>
     @ApiOperation(value = "产品表-通过id删除", notes = "产品表-通过id删除")
     @DeleteMapping(value = "/delete")
     public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
+
         productService.removeById(id);
         return Result.OK("删除成功!");
     }
