@@ -129,43 +129,45 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     @Override
     public boolean deleteProductAndScheduleAndTaskById(String id){
         //删除所选项目
-        productMapper.deleteById(id);
+        if(id != null && id != "") productMapper.deleteById(id);
 
         //查到所有的Schedule并删除
         QueryWrapper<Schedule> queryWrapperSchedule = new QueryWrapper<>();
         queryWrapperSchedule.eq("pro_id",id);
         queryWrapperSchedule.select("id");
         List<Schedule> scheduleList = scheduleMapper.selectList(queryWrapperSchedule);
-        scheduleMapper.deleteBatchIds(scheduleList);
+        if(scheduleList != null && scheduleList.size()>0)scheduleMapper.deleteBatchIds(scheduleList);
 
         //查到所有的Schedule并删除
         QueryWrapper<Task> queryWrapperTask = new QueryWrapper<>();
         queryWrapperTask.eq("pro_id",id);
         queryWrapperTask.select("id");
         List<Task> taskList = taskMapper.selectList(queryWrapperTask);
-        taskMapper.deleteBatchIds(taskList);
+        if(taskList != null && taskList.size()>0)taskMapper.deleteBatchIds(taskList);
+
 
         //查到所有的PriceDate并删除
         QueryWrapper<PriceDate> queryWrapperPriceDate = new QueryWrapper<>();
         queryWrapperPriceDate.eq("pro_id",id);
         queryWrapperPriceDate.select("id");
         List<PriceDate> priceDateList = priceDateMapper.selectList(queryWrapperPriceDate);
-        priceDateMapper.deleteBatchIds(priceDateList);
+        if(priceDateList != null && priceDateList.size()>0)priceDateMapper.deleteBatchIds(priceDateList);
+
 
         //查到所有的JourneyPackage并删除
         QueryWrapper<JourneyPackage> queryWrapperJourneyPackage = new QueryWrapper<>();
         queryWrapperJourneyPackage.eq("pro_id",id);
         queryWrapperJourneyPackage.select("id");
         List<JourneyPackage> journeyPackageList = journeyPackageMapper.selectList(queryWrapperJourneyPackage);
-        journeyPackageMapper.deleteBatchIds(journeyPackageList);
+        if(journeyPackageList != null && journeyPackageList.size()>0)journeyPackageMapper.deleteBatchIds(journeyPackageList);
+
 
         //查到所有的BatchPackageMapper并删除
         QueryWrapper<BatchPackage> queryWrapperBatchPackage = new QueryWrapper<>();
         queryWrapperBatchPackage.eq("pro_id",id);
         queryWrapperBatchPackage.select("id");
         List<BatchPackage> batchPackageList = batchPackageMapper.selectList(queryWrapperBatchPackage);
-        batchPackageMapper.deleteBatchIds(batchPackageList);
-
+        if(batchPackageList != null && batchPackageList.size()>0)batchPackageMapper.deleteBatchIds(batchPackageList);
         return true;
     }
 
