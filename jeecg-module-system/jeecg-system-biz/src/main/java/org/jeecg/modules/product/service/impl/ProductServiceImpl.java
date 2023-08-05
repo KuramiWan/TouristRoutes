@@ -1,11 +1,13 @@
 package org.jeecg.modules.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.product.entity.*;
 import org.jeecg.modules.product.mapper.*;
 import org.jeecg.modules.product.service.IProductService;
+import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.product.vo.ProductVo;
 import org.jeecg.modules.product.vo.ScheduleProVo;
 import org.jeecg.modules.product.vo.ScheduleVo;
@@ -35,6 +37,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     private ProductMapper productMapper;
     @Autowired
     private PriceDateMapper priceDateMapper;
+
     @Autowired
     private ScheduleMapper scheduleMapper;
     @Autowired
@@ -43,6 +46,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     private TaskMapper taskMapper;
     @Autowired
     private BatchPackageMapper batchPackageMapper;
+
+    @Autowired
+
+    private IScheduleService iScheduleService;
+
+
+
+
 
     @Override
     @Transactional
@@ -93,6 +104,69 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         List<JourneyPackage> journeyPackages = journeyPackageMapper.selectList(journeyPackageLambdaQueryWrapper);
         target.setJourney(journeyPackages);
         return target;
+    }
+
+    //删除项目及其相关的日程和任务(弃用)
+    @Transactional
+    @Override
+    public boolean deleteProductAndScheduleAndTask(ProductVo productVo){
+        //删除项目
+        String id = productVo.getId();
+        productMapper.deleteById(id);
+        if(productVo.getSchedules() != null && productVo.getSchedules().size() > 0){
+            //删除日程及任务
+            for (ScheduleProVo scheduleProVo:
+                    productVo.getSchedules()
+                 ) {
+                iScheduleService.deleteScheduleAndTask(scheduleProVo);
+            }
+        }
+        return true;
+    }
+
+    //删除项目及其相关的日程和任务
+    @Transactional
+    @Override
+    public boolean deleteProductAndScheduleAndTaskById(String id){
+        //删除所选项目
+        productMapper.deleteById(id);
+
+        //查到所有的Schedule并删除
+        QueryWrapper<Schedule> queryWrapperSchedule = new QueryWrapper<>();
+        queryWrapperSchedule.eq("pro_id",id);
+        queryWrapperSchedule.select("id");
+        List<Schedule> scheduleList = scheduleMapper.selectList(queryWrapperSchedule);
+        scheduleMapper.deleteBatchIds(scheduleList);
+
+        //查到所有的Schedule并删除
+        QueryWrapper<Task> queryWrapperTask = new QueryWrapper<>();
+        queryWrapperTask.eq("pro_id",id);
+        queryWrapperTask.select("id");
+        List<Task> taskList = taskMapper.selectList(queryWrapperTask);
+        taskMapper.deleteBatchIds(taskList);
+
+        //查到所有的PriceDate并删除
+        QueryWrapper<PriceDate> queryWrapperPriceDate = new QueryWrapper<>();
+        queryWrapperPriceDate.eq("pro_id",id);
+        queryWrapperPriceDate.select("id");
+        List<PriceDate> priceDateList = priceDateMapper.selectList(queryWrapperPriceDate);
+        priceDateMapper.deleteBatchIds(priceDateList);
+
+        //查到所有的JourneyPackage并删除
+        QueryWrapper<JourneyPackage> queryWrapperJourneyPackage = new QueryWrapper<>();
+        queryWrapperJourneyPackage.eq("pro_id",id);
+        queryWrapperJourneyPackage.select("id");
+        List<JourneyPackage> journeyPackageList = journeyPackageMapper.selectList(queryWrapperJourneyPackage);
+        journeyPackageMapper.deleteBatchIds(journeyPackageList);
+
+        //查到所有的BatchPackageMapper并删除
+        QueryWrapper<BatchPackage> queryWrapperBatchPackage = new QueryWrapper<>();
+        queryWrapperBatchPackage.eq("pro_id",id);
+        queryWrapperBatchPackage.select("id");
+        List<BatchPackage> batchPackageList = batchPackageMapper.selectList(queryWrapperBatchPackage);
+        batchPackageMapper.deleteBatchIds(batchPackageList);
+
+        return true;
     }
 
 }

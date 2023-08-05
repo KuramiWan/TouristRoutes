@@ -253,8 +253,8 @@ public class ProductController extends JeecgController<Product, IProductService>
     }
 
 
-    @AutoLog(value = "产品表-添加或修改(临时接口)")
-    @ApiOperation(value = "产品表-添加或修改(临时接口)",notes = "产品表-添加或修改(临时接口)")
+    @AutoLog(value = "产品表-添加或修改(临时接口)返回id")
+    @ApiOperation(value = "产品表-添加或修改(临时接口)返回id",notes = "产品表-添加或修改(临时接口)返回id")
     @PostMapping(value = "/temporarySaveOrUpdate")
     public Result<List<String>> temporarySaveOrUpdate(@RequestBody Product product){
         //更新条件构造器
@@ -297,8 +297,7 @@ public class ProductController extends JeecgController<Product, IProductService>
     @ApiOperation(value = "产品表-通过id删除", notes = "产品表-通过id删除")
     @DeleteMapping(value = "/delete")
     public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
-
-        productService.removeById(id);
+        productService.deleteProductAndScheduleAndTaskById(id);
         return Result.OK("删除成功!");
     }
 

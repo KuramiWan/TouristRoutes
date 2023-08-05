@@ -18,4 +18,10 @@ public interface IProductService extends IService<Product> {
     ProductVo queryById(String id);
 
     Page<ProductVo> getProductList(Page<Product> page);
+
+
+    //弃用
+    public boolean deleteProductAndScheduleAndTask(ProductVo productVo);
+
+    public boolean deleteProductAndScheduleAndTaskById(String id);
 }

@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.jeecg.modules.product.entity.BatchPackage;
-import org.jeecg.modules.product.entity.JourneyPackage;
-import org.jeecg.modules.product.entity.PriceDate;
-import org.jeecg.modules.product.entity.Schedule;
+import org.jeecg.modules.product.entity.*;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -125,8 +122,10 @@ public class ProductVo {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
     private java.util.Date updateTime;
+    //日程列表
     private List<ScheduleProVo> schedules;
     private List<PriceDate> price_date;
     private List<BatchPackage> batch_package;
     private List<JourneyPackage> journey;
+
 }
