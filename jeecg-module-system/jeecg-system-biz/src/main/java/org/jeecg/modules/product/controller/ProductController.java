@@ -25,6 +25,7 @@ import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.entity.Schedule;
+import org.jeecg.modules.product.entity.TemporaryUpload;
 import org.jeecg.modules.product.mapper.ProductMapper;
 import org.jeecg.modules.product.service.IProductService;
 import org.jeecg.modules.product.service.IScheduleService;
@@ -236,6 +237,32 @@ public class ProductController extends JeecgController<Product, IProductService>
 
             if (fileUrl != null) {
                 LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
+                Product target = productService.getOne(queryWrapper);
+                target.setProPageImg(fileUrl);
+                productService.update(target,queryWrapper);
+                return fileUrl;
+            }
+            return "上传图片失败";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "上传图片失败";
+        }
+    }
+
+    @AutoLog(value = "产品表-上传图片返回url")
+    @ApiOperation(value = "产品表-上传图片返回url",notes = "产品表-上传图片返回url")
+    @PostMapping(value = "/temporaryUploadImg")
+    public String temporaryUploadImg(TemporaryUpload temporaryUpload) {
+        try {
+            String base64Img = temporaryUpload.getBase64Data();
+            // 将Base64数据转换为字节数组
+            byte[] img = Base64.getDecoder().decode(base64Img);
+            //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
+            String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品封面/" : "suixinyou-wx-client/pages-product/产品海报/";
+            String fileUrl = OssBootUtil.upload(temporaryUpload.getProductid(),img, fileDir);
+
+            if (fileUrl != null) {
+                LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, temporaryUpload.getProductid());
                 Product target = productService.getOne(queryWrapper);
                 target.setProPageImg(fileUrl);
                 productService.update(target,queryWrapper);
