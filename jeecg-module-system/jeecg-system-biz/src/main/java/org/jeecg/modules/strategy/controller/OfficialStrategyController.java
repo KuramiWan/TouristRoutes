@@ -58,11 +58,16 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
     							   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
     							   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
     							   HttpServletRequest req) {
-    	//QueryWrapper<OfficialStrategy> queryWrapper = QueryGenerator.initQueryWrapper(officialStrategy, req.getParameterMap());
+    	QueryWrapper<OfficialStrategy> queryWrapper = QueryGenerator.initQueryWrapper(officialStrategy, req.getParameterMap());
+        if(req.getParameterValues("searchKey") != null){
+            queryWrapper.like("title",req.getParameterValues("searchKey")[0]);
+        }
     	Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
-    	IPage<OfficialStrategy> pageList = officialStrategyService.page(page, new LambdaQueryWrapper<>());
+    	IPage<OfficialStrategy> pageList = officialStrategyService.page(page, queryWrapper);
     	return Result.OK(pageList);
     }
+
+
 
     /**
      * 添加
