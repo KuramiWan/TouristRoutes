@@ -88,7 +88,7 @@ public class ProductController extends JeecgController<Product, IProductService>
      * @param
      * @param pageNo
      * @param pageSize
-     * @param
+     * @param proTitle
      * @return
      */
     //@AutoLog(value = "产品表-分页列表查询")
@@ -96,10 +96,22 @@ public class ProductController extends JeecgController<Product, IProductService>
     @GetMapping(value = "/list")
     public Result<IPage<Product>> queryPageList(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "proTitle", defaultValue = "") String proTitle
+    ) {
 //		QueryWrapper<Product> queryWrapper = QueryGenerator.initQueryWrapper(product, req.getParameterMap());
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.page(page, new LambdaQueryWrapper<>());
+        IPage pageList = new Page();
+        if(proTitle != null && proTitle != ""){
+            System.out.println("上");
+            LambdaQueryWrapper<Product> lambdaQueryWrapper = new LambdaQueryWrapper<Product>();
+            lambdaQueryWrapper.like(Product::getProTitle,proTitle);
+            pageList = productService.page(page, lambdaQueryWrapper);
+        }else{
+            System.out.println("下");
+            pageList = productService.page(page, new LambdaQueryWrapper<>());
+        }
+
         List<Product> records = pageList.getRecords();
         ArrayList<ProductList> productLists = new ArrayList<ProductList>();
         records.forEach(product -> {
