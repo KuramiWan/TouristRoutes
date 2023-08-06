@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
@@ -106,13 +107,15 @@ public class BatchPackageController extends JeecgController<BatchPackage, IBatch
     /**
      * 通过id删除
      *
-     * @param id
+     * @param param
      * @return
      */
     @AutoLog(value = "批次套餐-通过id删除")
     @ApiOperation(value = "批次套餐-通过id删除", notes = "批次套餐-通过id删除")
-    @DeleteMapping(value = "/delete")
-    public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
+    @PostMapping(value = "/delete")
+    public Result<String> delete(@RequestBody String param) {
+        JSONObject jsonObject = JSONObject.parseObject(param);
+        String id = jsonObject.getString("id");
         batchPackageService.removeById(id);
         return Result.OK("删除成功!");
     }
