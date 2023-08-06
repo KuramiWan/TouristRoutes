@@ -70,6 +70,7 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
     @ApiOperation(value = "官方攻略-分页列表查询", notes = "官方攻略-分页列表查询")
     @GetMapping(value = "/list")
     public Result<IPage<OfficialStrategy>> queryPageList(OfficialStrategy officialStrategy,
+<<<<<<< HEAD
                                                          @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                          HttpServletRequest req) {
@@ -77,7 +78,21 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
         Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
         IPage<OfficialStrategy> pageList = officialStrategyService.page(page, new LambdaQueryWrapper<>());
         return Result.OK(pageList);
+=======
+    							   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+    							   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+    							   HttpServletRequest req) {
+    	QueryWrapper<OfficialStrategy> queryWrapper = QueryGenerator.initQueryWrapper(officialStrategy, req.getParameterMap());
+        if(req.getParameterValues("searchKey") != null){
+            queryWrapper.like("title",req.getParameterValues("searchKey")[0]);
+        }
+    	Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
+    	IPage<OfficialStrategy> pageList = officialStrategyService.page(page, queryWrapper);
+    	return Result.OK(pageList);
+>>>>>>> 9de864e0ba8b22771c6f3e18648f72bf044c5ba8
     }
+
+
 
     /**
      * 添加

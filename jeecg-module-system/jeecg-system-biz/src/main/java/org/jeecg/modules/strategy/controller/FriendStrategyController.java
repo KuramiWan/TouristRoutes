@@ -17,8 +17,12 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.guide.service.ITouristGuideService;
 import org.jeecg.modules.strategy.entity.FriendId;
 import org.jeecg.modules.strategy.entity.FriendStrategy;
+<<<<<<< HEAD
 import org.jeecg.modules.strategy.entity.OfficialGuide;
 import org.jeecg.modules.strategy.service.IFriendIdService;
+=======
+import org.jeecg.modules.strategy.entity.OfficialStrategy;
+>>>>>>> 9de864e0ba8b22771c6f3e18648f72bf044c5ba8
 import org.jeecg.modules.strategy.service.IFriendStrategyService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -81,6 +85,29 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
         Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(id, pageNo, pageSize);
         return Result.OK(strategyVoPage);
     }
+
+
+    /**
+     * 通过title查询攻略id
+     *@param friendStrategy
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "通过title查询攻略id")
+    @ApiOperation(value = "通过title查询攻略id", notes = "通过title查询攻略id")
+    @GetMapping(value = "/newList")
+    public Result<IPage<FriendStrategy>> queryPageList(FriendStrategy friendStrategy,HttpServletRequest req)
+    {
+        QueryWrapper<FriendStrategy> queryWrapper = QueryGenerator.initQueryWrapper(friendStrategy, req.getParameterMap());
+        if(req.getParameterValues("searchKey") != null){
+            queryWrapper.like("title",req.getParameterValues("searchKey")[0]);
+            queryWrapper.select("id");
+        }
+        Page<FriendStrategy> page = new Page<FriendStrategy>();
+        IPage<FriendStrategy> pageList = friendStrategyService.page(page, queryWrapper);
+        return Result.OK(pageList);
+    }
+
 
     /**
      * 添加
