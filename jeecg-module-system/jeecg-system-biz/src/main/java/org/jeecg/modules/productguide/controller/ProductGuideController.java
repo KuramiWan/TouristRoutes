@@ -1,5 +1,6 @@
 package org.jeecg.modules.productguide.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -92,6 +94,33 @@ public class ProductGuideController extends JeecgController<ProductGuide, IProdu
     public Result<String> add(@RequestBody ProductGuide productGuide) {
         productGuideService.save(productGuide);
         return Result.OK("添加成功！");
+    }
+
+    /**
+     * 添加/编辑产品和导游的关系
+     *
+     * @param map
+     * @return
+     */
+    @AutoLog(value = "产品导游关系表-添加/编辑产品和导游的关系")
+    @ApiOperation(value = "产品导游关系表-添加/编辑产品和导游的关系", notes = "产品导游关系表-添加/编辑产品和导游的关系")
+    @PostMapping(value = "/addOrEdit")
+    @Transactional
+    public Result<String> addOrEdit(@RequestBody Map<String, Object> map) {
+        String proId = (String) map.get("proId");
+        List<String> valueList = (List<String>) map.get("value");
+
+        // 根据proid查出所有的导游，先删掉，再全部新增一遍
+        productGuideService.remove(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getProductId, proId));
+        if (valueList.size() > 0) {
+            valueList.forEach(i -> {
+                ProductGuide productGuide = new ProductGuide();
+                productGuide.setGuideId(i).setProductId(proId);
+                productGuideService.save(productGuide);
+            });
+            return Result.OK("修改成功！");
+        }
+        return Result.OK("修改成功！");
     }
 
     /**
@@ -164,8 +193,11 @@ public class ProductGuideController extends JeecgController<ProductGuide, IProdu
     @GetMapping(value = "/queryByProId")
     public Result<List<TouristGuide>> queryByProId(@RequestParam(name = "productId", required = true) String productId) {
         List<ProductGuide> list = productGuideService.list(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getProductId, productId));
-        List<String> ids = list.stream().map(ProductGuide::getGuideId).collect(Collectors.toList());
-        return Result.OK(touristGuideService.listByIds(ids));
+        if (list.size() > 0) {
+            List<String> ids = list.stream().map(ProductGuide::getGuideId).collect(Collectors.toList());
+            return Result.OK(touristGuideService.listByIds(ids));
+        }
+        return Result.OK(new ArrayList<TouristGuide>());
     }
 
     /**
