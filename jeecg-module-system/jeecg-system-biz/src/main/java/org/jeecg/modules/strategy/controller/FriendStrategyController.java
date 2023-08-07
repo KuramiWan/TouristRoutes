@@ -14,8 +14,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.guide.service.ITouristGuideService;
+import org.jeecg.modules.strategy.entity.FriendId;
 import org.jeecg.modules.strategy.entity.FriendStrategy;
+<<<<<<< HEAD
+import org.jeecg.modules.strategy.entity.OfficialGuide;
+import org.jeecg.modules.strategy.service.IFriendIdService;
+=======
 import org.jeecg.modules.strategy.entity.OfficialStrategy;
+>>>>>>> 9de864e0ba8b22771c6f3e18648f72bf044c5ba8
 import org.jeecg.modules.strategy.service.IFriendStrategyService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,12 +31,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.strategy.vo.FriendStrategyVo;
+import org.jeecg.modules.strategy.vo.Guide;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +63,10 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class FriendStrategyController extends JeecgController<FriendStrategy, IFriendStrategyService> {
     @Autowired
     private IFriendStrategyService friendStrategyService;
+    @Autowired
+    private IFriendIdService friendIdService;
+    @Autowired
+    private ITouristGuideService touristGuideService;
 
     /**
      * 分页列表查询
@@ -179,7 +192,7 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     @ApiOperation(value = "游友攻略-通过userId查询获赞数", notes = "游友攻略-通过userId查询获赞数")
     @GetMapping(value = "/queryLikeByUserId")
     public Result<Integer> queryLikeById(@RequestParam(name = "userId", required = true) String userId) {
-        List<FriendStrategy> friendStrategy = friendStrategyService.list(new LambdaQueryWrapper<FriendStrategy>().eq(FriendStrategy::getUserid,userId));
+        List<FriendStrategy> friendStrategy = friendStrategyService.list(new LambdaQueryWrapper<FriendStrategy>().eq(FriendStrategy::getUserid, userId));
         Integer num = 0;
         for (FriendStrategy strategy : friendStrategy) {
             num = num + strategy.getLikeCount();
@@ -214,4 +227,14 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
         return super.importExcel(request, response, FriendStrategy.class);
     }
 
+    /**
+     * 查询游友攻略的导游列表
+     */
+    @ApiOperation(value = "官方攻略-查询游友攻略的导游列表", notes = "官方攻略-查询游友攻略的导游列表")
+    @GetMapping(value = "/selectGuides")
+    public Result<List<Guide>> selectGuides(String id) {
+        List<String> guideIds = friendIdService.list(new LambdaQueryWrapper<FriendId>().eq(FriendId::getFriendId, id)).stream().map(FriendId::getGuideId).collect(Collectors.toList());
+        List<Guide> guideList = touristGuideService.listByIds(guideIds).stream().map(touristGuide -> {Guide guide = new Guide();BeanUtils.copyProperties(touristGuide, guide);return guide;}).collect(Collectors.toList());
+        return !guideList.isEmpty() ? Result.ok(guideList) : Result.error("未找到对应数据");
+    }
 }

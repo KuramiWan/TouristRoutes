@@ -1,15 +1,23 @@
 package org.jeecg.modules.strategy.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.guide.entity.TouristGuide;
+import org.jeecg.modules.guide.service.ITouristGuideService;
+import org.jeecg.modules.guide.vo.GuideProduct;
 import org.jeecg.modules.product.service.IScheduleService;
+import org.jeecg.modules.productguide.entity.ProductGuide;
+import org.jeecg.modules.strategy.entity.OfficialGuide;
 import org.jeecg.modules.strategy.entity.OfficialStrategy;
+import org.jeecg.modules.strategy.service.IOfficialGuideService;
 import org.jeecg.modules.strategy.service.IOfficialStrategyService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,6 +26,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.modules.strategy.vo.Guide;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,6 +51,11 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
 
     @Autowired
     private IScheduleService scheduleService;
+    @Autowired
+    private IOfficialGuideService officialGuideService;
+    @Autowired
+    private ITouristGuideService touristGuideService;
+
 
     /**
      * 分页列表查询
@@ -52,9 +67,18 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
      * @return
      */
     //@AutoLog(value = "官方攻略-分页列表查询")
-    @ApiOperation(value="官方攻略-分页列表查询", notes="官方攻略-分页列表查询")
+    @ApiOperation(value = "官方攻略-分页列表查询", notes = "官方攻略-分页列表查询")
     @GetMapping(value = "/list")
     public Result<IPage<OfficialStrategy>> queryPageList(OfficialStrategy officialStrategy,
+<<<<<<< HEAD
+                                                         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                         HttpServletRequest req) {
+        //QueryWrapper<OfficialStrategy> queryWrapper = QueryGenerator.initQueryWrapper(officialStrategy, req.getParameterMap());
+        Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
+        IPage<OfficialStrategy> pageList = officialStrategyService.page(page, new LambdaQueryWrapper<>());
+        return Result.OK(pageList);
+=======
     							   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
     							   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
     							   HttpServletRequest req) {
@@ -65,6 +89,7 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
     	Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
     	IPage<OfficialStrategy> pageList = officialStrategyService.page(page, queryWrapper);
     	return Result.OK(pageList);
+>>>>>>> 9de864e0ba8b22771c6f3e18648f72bf044c5ba8
     }
 
 
@@ -165,4 +190,15 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
         return super.importExcel(request, response, OfficialStrategy.class);
     }
 
+
+    /**
+     * 查询官方攻略的导游列表
+     */
+    @ApiOperation(value = "官方攻略-查询官方攻略的导游列表", notes = "官方攻略-查询官方攻略的导游列表")
+    @GetMapping(value = "/selectGuides")
+    public Result<List<Guide>> selectGuides(String id) {
+        List<String> guideIds = officialGuideService.list(new LambdaQueryWrapper<OfficialGuide>().eq(OfficialGuide::getOfficialId, id)).stream().map(OfficialGuide::getGuideId).collect(Collectors.toList());
+        List<Guide> guides = touristGuideService.listByIds(guideIds).stream().map(touristGuide ->  {Guide guide = new Guide();BeanUtils.copyProperties(touristGuide, guide);return guide;}).collect(Collectors.toList());
+        return !guides.isEmpty() ? Result.ok(guides) : Result.error("未找到对应数据");
+    }
 }

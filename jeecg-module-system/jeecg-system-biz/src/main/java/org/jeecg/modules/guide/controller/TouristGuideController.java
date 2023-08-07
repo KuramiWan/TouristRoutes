@@ -26,8 +26,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.guide.service.IUserLeaderLikeService;
+import org.jeecg.modules.guide.vo.GuideComment;
+import org.jeecg.modules.guide.vo.GuideProduct;
 import org.jeecg.modules.guide.vo.WaterFallGuide;
 import org.jeecg.modules.product.entity.Comment;
+import org.jeecg.modules.product.entity.Product;
+import org.jeecg.modules.product.service.IProductService;
+import org.jeecg.modules.productguide.entity.ProductGuide;
+import org.jeecg.modules.productguide.service.IProductGuideService;
+import org.jeecg.modules.servicecomments.entity.ServiceComments;
+import org.jeecg.modules.servicecomments.service.IServiceCommentsService;
+import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -64,6 +74,14 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     private ITouristGuideService touristGuideService;
     @Autowired
     private IUserLeaderLikeService userLeaderLikeService;
+    @Autowired
+    private IProductGuideService productGuideService;
+    @Autowired
+    private IProductService productService;
+    @Autowired
+    private IServiceCommentsService commentsService;
+    @Autowired
+    private IWxClientUserinfoService wxClientUserinfoService;
 
     @ApiOperation(value = "导游表-增加点赞数量", notes = "导游表-增加点赞数量")
     @PostMapping(value = "/addLikeNum")
@@ -330,5 +348,47 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, TouristGuide.class);
     }
+
+    /**
+     * 添加
+     *
+     * @param id
+     * @return
+     */
+    @AutoLog(value = "导游表-所属产品查询")
+    @ApiOperation(value = "导游表-所属产品查询", notes = "导游表-所属产品查询")
+    @GetMapping(value = "/selectGuideProducts")
+    public Result<List<GuideProduct>> selectGuideProducts(String id) {
+        List<String> productIds = productGuideService.list(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getGuideId, id)).stream().map(ProductGuide::getProductId).collect(Collectors.toList());
+        List<GuideProduct> guideProducts = productService.listByIds(productIds).stream().map(product -> {GuideProduct guideProduct = new GuideProduct();BeanUtils.copyProperties(product,guideProduct);return guideProduct;}).collect(Collectors.toList());
+        return !guideProducts.isEmpty() ? Result.ok(guideProducts) : Result.error("未找到对应数据");
+    }
+
+
+    /**
+     * 添加
+     *
+     * @param id
+     * @return
+     */
+//    @AutoLog(value = "导游表-评论查询")
+//    @ApiOperation(value = "导游表-评论查询", notes = "导游表-评论查询")
+//    @GetMapping(value = "/selectGuideComments")
+//    public Result<IPage<GuideComment>> selectGuideComments(@RequestParam(name = "id",required = false) String id, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+//        IPage<ServiceComments> page = commentsService.page(new Page<ServiceComments>(pageNo,pageSize,false), new LambdaQueryWrapper<ServiceComments>().eq(ServiceComments::getGuideId, id));
+//        List<GuideComment> guideComments = page.getRecords().stream().map(record -> {
+//            WxClientUserinfo user = wxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, record.getUserId()));
+//            GuideComment guideComment = new GuideComment().setComments(record.getComments());
+//            BeanUtils.copyProperties(user, guideComment);
+//            return guideComment;
+//        }).collect(Collectors.toList());
+//        // 创建一个新的 Page 对象，并设置其中的记录和总记录数
+//        IPage<GuideComment> newPage = new Page<>(pageNo, pageSize);
+//        newPage.setRecords(guideComments);
+//        return !guideComments.isEmpty() ? Result.ok(newPage) : Result.error("未找到对应数据");
+//    }
+
+
+
 
 }
