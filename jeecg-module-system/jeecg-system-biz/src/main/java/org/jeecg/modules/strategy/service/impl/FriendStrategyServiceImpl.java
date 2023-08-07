@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -80,6 +81,9 @@ public class FriendStrategyServiceImpl extends ServiceImpl<FriendStrategyMapper,
 
         Page<FriendStrategyVo> strategyVoPage = new Page<>();
         BeanUtils.copyProperties(strategyPage, strategyVoPage);
+
+        // 随机打乱list，模拟相关推荐
+        Collections.shuffle(friendStrategyVos);
 
         strategyVoPage.setRecords(friendStrategyVos);
 
