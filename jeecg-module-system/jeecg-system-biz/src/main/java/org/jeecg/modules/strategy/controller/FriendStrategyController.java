@@ -17,12 +17,8 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.guide.service.ITouristGuideService;
 import org.jeecg.modules.strategy.entity.FriendId;
 import org.jeecg.modules.strategy.entity.FriendStrategy;
-<<<<<<< HEAD
-import org.jeecg.modules.strategy.entity.OfficialGuide;
 import org.jeecg.modules.strategy.service.IFriendIdService;
-=======
-import org.jeecg.modules.strategy.entity.OfficialStrategy;
->>>>>>> 9de864e0ba8b22771c6f3e18648f72bf044c5ba8
+
 import org.jeecg.modules.strategy.service.IFriendStrategyService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
