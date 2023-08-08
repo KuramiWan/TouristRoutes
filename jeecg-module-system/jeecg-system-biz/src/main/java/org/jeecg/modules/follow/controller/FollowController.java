@@ -81,6 +81,12 @@ public class FollowController extends JeecgController<Follow, IFollowService> {
 		IPage<Follow> pageList = followService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
+
+	 @ApiOperation(value="关注人表-关注或者取关", notes="关注人表-关注或者取关")
+	 @RequestMapping(value = "/addOrSub")
+	 public boolean addOrSub(@RequestParam(value = "userId",required = true) String userId, @RequestParam(value = "followId",required = true) String followId,@RequestParam(value = "flag",required = true) Integer flag){
+		return flag==1?followService.save(new Follow().setFollowId(followId).setUserId(userId)):followService.remove(new LambdaQueryWrapper<Follow>().eq(Follow::getFollowId,followId).eq(Follow::getUserId,userId));
+	 }
 	
 	/**
 	 *   添加
