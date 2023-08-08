@@ -114,7 +114,7 @@ public class CollectController extends JeecgController<Collect, ICollectService>
 			 	offStrategyVo.setOfficialStrategyCommentVo(OffCommentVoPage);
 			 	officialStrategyList.add(offStrategyVo);
 			 }else {
-				 Page<FriendStrategyVo> FriStrategyVoPage = friendStrategyService.queryFriendStrategyInfo(friendStrategy.getId(), pageNo, pageSize);
+				 Page<FriendStrategyVo> FriStrategyVoPage = friendStrategyService.queryFriendStrategyInfo("",friendStrategy.getId(), pageNo, pageSize);
 			 	friendStrategyList.add(FriStrategyVoPage);
 			 }
 		 }

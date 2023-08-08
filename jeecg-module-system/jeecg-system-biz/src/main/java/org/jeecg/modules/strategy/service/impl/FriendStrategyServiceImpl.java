@@ -3,6 +3,8 @@ package org.jeecg.modules.strategy.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.jeecg.modules.follow.entity.Follow;
+import org.jeecg.modules.follow.mapper.FollowMapper;
 import org.jeecg.modules.strategy.comment.entity.FriendStrategyComment;
 import org.jeecg.modules.strategy.comment.mapper.FriendStrategyCommentMapper;
 import org.jeecg.modules.strategy.comment.vo.FriendStrategyCommentVo;
@@ -41,8 +43,11 @@ public class FriendStrategyServiceImpl extends ServiceImpl<FriendStrategyMapper,
     @Autowired
     private FriendStrategyCommentMapper friendStrategyCommentMapper;
 
+    @Autowired
+    private FollowMapper followMapper;
+
     @Override
-    public Page<FriendStrategyVo> queryFriendStrategyInfo(String id, Integer pageNo, Integer PageSize) {
+    public Page<FriendStrategyVo> queryFriendStrategyInfo(String myUserid, String id, Integer pageNo, Integer PageSize) {
         Page<FriendStrategy> page = new Page<>(pageNo, PageSize);
         LambdaQueryWrapper<FriendStrategy> wrapper = new LambdaQueryWrapper<FriendStrategy>().like(FriendStrategy::getId, id);
         Page<FriendStrategy> strategyPage = friendStrategyMapper.selectPage(page, wrapper);
@@ -54,6 +59,15 @@ public class FriendStrategyServiceImpl extends ServiceImpl<FriendStrategyMapper,
             FriendStrategyVo friendStrategyVo = new FriendStrategyVo();
             String friendId = i.getId();
             String wxuserid = i.getUserid();
+
+            // 查询这个人和游友攻略的人是否存在关注关系
+            Follow follow = followMapper.selectOne(new LambdaQueryWrapper<Follow>().eq(Follow::getFollowId, wxuserid).eq(Follow::getUserId, myUserid));
+            if (follow == null) {
+                friendStrategyVo.setIsFollow("关注");
+            } else {
+                friendStrategyVo.setIsFollow("取消关注");
+            }
+
             WxClientUserinfo wxClientUserinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, wxuserid));
             LambdaQueryWrapper<FriendStrategyComment> commentVoLambdaQueryWrapper = new LambdaQueryWrapper<FriendStrategyComment>().eq(FriendStrategyComment::getFriendId, friendId);
             Page<FriendStrategyComment> friendStrategyCommentPage = friendStrategyCommentMapper.selectPage(new Page<>(1, 10), commentVoLambdaQueryWrapper);

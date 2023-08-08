@@ -13,5 +13,5 @@ import org.jeecg.modules.strategy.vo.FriendStrategyVo;
  * @Version: V1.0
  */
 public interface IFriendStrategyService extends IService<FriendStrategy> {
-    Page<FriendStrategyVo> queryFriendStrategyInfo(String id, Integer pageNo, Integer PageSize);
+    Page<FriendStrategyVo> queryFriendStrategyInfo(String myUserid,String id, Integer pageNo, Integer PageSize);
 }

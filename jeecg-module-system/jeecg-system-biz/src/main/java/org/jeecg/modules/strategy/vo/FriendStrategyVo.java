@@ -14,6 +14,8 @@ import java.util.List;
 @Data
 public class FriendStrategyVo extends FriendStrategy {
 
+    private String isFollow;
+
     private String username;
 
     private String avatar;

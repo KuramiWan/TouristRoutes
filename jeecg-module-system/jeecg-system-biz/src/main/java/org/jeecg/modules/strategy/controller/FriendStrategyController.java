@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.strategy.vo.FriendStrategyVo;
 import org.jeecg.modules.strategy.vo.Guide;
+import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -64,6 +66,9 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     @Autowired
     private ITouristGuideService touristGuideService;
 
+    @Autowired
+    private IWxClientUserinfoService wxClientUserinfoService;
+
     /**
      * 分页列表查询
      *
@@ -74,11 +79,14 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     //@AutoLog(value = "游友攻略-分页列表查询")
     @ApiOperation(value = "游友攻略-分页列表查询", notes = "游友攻略-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<IPage<FriendStrategyVo>> queryPageList(
+    public Result<IPage<FriendStrategyVo>> queryPageList(HttpServletRequest http,
             @RequestParam(name = "id", defaultValue = "") String id,
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(id, pageNo, pageSize);
+        String openid = http.getHeader("openid");
+        // 查询该openid的用户信息
+        String myUserid = wxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(myUserid,id, pageNo, pageSize);
         return Result.OK(strategyVoPage);
     }
 
