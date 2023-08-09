@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -80,31 +81,35 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     @ApiOperation(value = "游友攻略-分页列表查询", notes = "游友攻略-分页列表查询")
     @GetMapping(value = "/list")
     public Result<IPage<FriendStrategyVo>> queryPageList(HttpServletRequest http,
-            @RequestParam(name = "id", defaultValue = "") String id,
-            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+                                                         @RequestParam(name = "id", defaultValue = "") String id,
+                                                         @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         String openid = http.getHeader("openid");
-        // 查询该openid的用户信息
-        String myUserid = wxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
-        Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(myUserid,id, pageNo, pageSize);
+        log.info("openid====" + openid);
+        String myUserid = "";
+        if (StringUtils.isNotEmpty(openid)) {
+            // 查询该openid的用户信息
+            myUserid = wxClientUserinfoService.getOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid)).getId();
+        }
+        Page<FriendStrategyVo> strategyVoPage = friendStrategyService.queryFriendStrategyInfo(myUserid, id, pageNo, pageSize);
         return Result.OK(strategyVoPage);
     }
 
 
     /**
      * 通过title查询攻略id
-     *@param friendStrategy
+     *
+     * @param friendStrategy
      * @param req
      * @return
      */
     //@AutoLog(value = "通过title查询攻略id")
     @ApiOperation(value = "通过title查询攻略id", notes = "通过title查询攻略id")
     @GetMapping(value = "/newList")
-    public Result<IPage<FriendStrategy>> queryPageList(FriendStrategy friendStrategy,HttpServletRequest req)
-    {
+    public Result<IPage<FriendStrategy>> queryPageList(FriendStrategy friendStrategy, HttpServletRequest req) {
         QueryWrapper<FriendStrategy> queryWrapper = QueryGenerator.initQueryWrapper(friendStrategy, req.getParameterMap());
-        if(req.getParameterValues("searchKey") != null){
-            queryWrapper.like("title",req.getParameterValues("searchKey")[0]);
+        if (req.getParameterValues("searchKey") != null) {
+            queryWrapper.like("title", req.getParameterValues("searchKey")[0]);
             queryWrapper.select("id");
         }
         Page<FriendStrategy> page = new Page<FriendStrategy>();
@@ -238,7 +243,11 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
     @GetMapping(value = "/selectGuides")
     public Result<List<Guide>> selectGuides(String id) {
         List<String> guideIds = friendIdService.list(new LambdaQueryWrapper<FriendId>().eq(FriendId::getFriendId, id)).stream().map(FriendId::getGuideId).collect(Collectors.toList());
-        List<Guide> guideList = touristGuideService.listByIds(guideIds).stream().map(touristGuide -> {Guide guide = new Guide();BeanUtils.copyProperties(touristGuide, guide);return guide;}).collect(Collectors.toList());
+        List<Guide> guideList = touristGuideService.listByIds(guideIds).stream().map(touristGuide -> {
+            Guide guide = new Guide();
+            BeanUtils.copyProperties(touristGuide, guide);
+            return guide;
+        }).collect(Collectors.toList());
         return !guideList.isEmpty() ? Result.ok(guideList) : Result.error("未找到对应数据");
     }
 }
