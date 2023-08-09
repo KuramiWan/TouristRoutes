@@ -103,7 +103,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/wxpay/userpay/wxPayCallback", "anon"); // wx小程序client端支付成功接收微信官方反馈
         filterChainDefinitionMap.put("/strategy/friendStrategy/list", "anon"); // 首页攻略瀑布（游友攻略）
         filterChainDefinitionMap.put("/core/product/list", "anon"); // 商城
-        filterChainDefinitionMap.put("/strategy/officialStrategy/list", "anon"); // 旅游攻略
+        filterChainDefinitionMap.put("/core/product/productList", "anon"); // 热门景点
+        filterChainDefinitionMap.put("/strategy/officialStrategy/list", "anon"); // 官方攻略
         filterChainDefinitionMap.put("/guide/touristGuide/list", "anon"); // 领队导游
         //==============================================================================================================
 
