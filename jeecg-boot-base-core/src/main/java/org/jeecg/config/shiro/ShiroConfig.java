@@ -102,6 +102,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/getOpenId", "anon"); // wx小程序client端登录
         filterChainDefinitionMap.put("/wxpay/userpay/wxPayCallback", "anon"); // wx小程序client端支付成功接收微信官方反馈
         filterChainDefinitionMap.put("/strategy/friendStrategy/list", "anon"); // 首页攻略瀑布（游友攻略）
+        filterChainDefinitionMap.put("/strategy/userStrategyLike/allList", "anon"); // 首页攻略瀑布（游友攻略点赞）
+        filterChainDefinitionMap.put("/userinfo/wxClientUserinfo/queryList", "anon"); // 首页攻略瀑布（游友点赞头像）
         filterChainDefinitionMap.put("/core/product/list", "anon"); // 商城
         filterChainDefinitionMap.put("/core/product/queryByProName", "anon"); // 首页搜索
         filterChainDefinitionMap.put("/core/product/productList", "anon"); // 热门景点

@@ -1,8 +1,6 @@
 package org.jeecg.modules.strategy.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +13,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.common.util.oss.OssBootUtil;
 import org.jeecg.modules.guide.service.ITouristGuideService;
 import org.jeecg.modules.strategy.entity.FriendId;
 import org.jeecg.modules.strategy.entity.FriendStrategy;
@@ -29,8 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.strategy.vo.FriendStrategyVo;
 import org.jeecg.modules.strategy.vo.Guide;
+import org.jeecg.modules.strategy.vo.PostStrategy;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
 import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
+import org.jeecg.modules.user.userinfo.vo.UploadRequest;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -250,4 +251,51 @@ public class FriendStrategyController extends JeecgController<FriendStrategy, IF
         }).collect(Collectors.toList());
         return !guideList.isEmpty() ? Result.ok(guideList) : Result.error("未找到对应数据");
     }
+
+    /**
+     * 发布旅游攻略
+     */
+    @ApiOperation(value = "官方攻略-查询游友攻略的导游列表", notes = "官方攻略-查询游友攻略的导游列表")
+    @PostMapping(value = "/postFriendStrategy")
+    public Result<String> postFriendStrategy(@RequestBody PostStrategy postStrategy) {
+        boolean status = false;
+        if (postStrategy!=null){
+            String userid = postStrategy.getUserid();
+            List<String> imgList = postStrategy.getImg().stream().map(img -> {
+                if(img==null) return null;
+//                System.out.println("======================="+img);
+                long currentTimestamp = System.currentTimeMillis();
+                String timestampString = Long.toString(currentTimestamp);
+                String stringResult = FriendStrategyController.UpLoadImg(img,timestampString);
+                return !stringResult.equals("失败")?stringResult:null;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            postStrategy.setImg(imgList);
+            FriendStrategy friendStrategy = new FriendStrategy();
+            BeanUtils.copyProperties(postStrategy,friendStrategy);
+            status = friendStrategyService.save(friendStrategy);
+        }
+        return status?Result.ok("发布成功"):Result.error("发布失败");
+    }
+
+    public static String UpLoadImg(String base64,String userid) {
+        try {
+            String base64Data = base64.substring(base64.indexOf(',') + 1);
+            base64Data = base64Data.replaceAll("\r|\n", "");;
+            base64Data = base64Data.trim();
+            // 将Base64数据转换为字节数组
+            byte[] imageData = Base64.getDecoder().decode(base64Data);
+            String fileDir = "suixinyou-wx-client/pages-travellingGuideline/旅游攻略/游友攻略/攻略详情/";
+            String fileUrl = OssBootUtil.upload(userid,imageData, fileDir);
+            if (fileUrl != null) {
+                return fileUrl;
+            } else {
+                return "失败";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "失败";
+        }
+    }
+
+
 }
