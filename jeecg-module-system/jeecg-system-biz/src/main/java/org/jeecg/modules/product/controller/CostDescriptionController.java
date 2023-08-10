@@ -102,6 +102,42 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 		costDescriptionService.updateById(costDescription);
 		return Result.OK("编辑成功!");
 	}
+
+
+	 /**
+	  *  编辑/修改费用说明
+	  *
+	  * @param map
+	  * @return
+	  */
+	 @AutoLog(value = "费用说明-修改费用说明")
+	 @ApiOperation(value="费用说明-修改费用说明", notes="费用说明-修改费用说明")
+	 @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.POST})
+	 public Result<String> update(@RequestBody Map<String, Object> map) {
+		 String proId = (String) map.get("proId");
+		 String cdDigest = (String) map.get("cdDigest");
+		 String cdTicket = (String) map.get("cdTicket");
+		 String cdTraffic = (String) map.get("cdTraffic");
+		 String cdFood = (String) map.get("cdFood");
+		 String cdGuide = (String) map.get("cdGuide");
+		 String cdOther = (String) map.get("cdOther");
+
+		 CostDescription costDescription = costDescriptionService.getOne(new LambdaQueryWrapper<CostDescription>().eq(CostDescription::getProId,proId));
+		 if (costDescription == null){
+		 	costDescription = new CostDescription();
+			 costDescription.setProId(proId);
+		 }
+		 costDescription.setCdDigest(cdDigest)
+				 .setCdFood(cdFood)
+				 .setCdGuide(cdGuide)
+				 .setCdTicket(cdTicket)
+				 .setCdOther(cdOther)
+				 .setCdTraffic(cdTraffic);
+		 costDescriptionService.remove(new LambdaQueryWrapper<CostDescription>().eq(CostDescription::getProId,proId));
+		 costDescriptionService.save(costDescription);
+
+		 return Result.OK("编辑成功!");
+	 }
 	
 	/**
 	 *   通过id删除
@@ -160,7 +196,8 @@ public class CostDescriptionController extends JeecgController<CostDescription, 
 	 public Result<CostDescription> queryByProId(@RequestParam(name="proId",required=true) String proId) {
 		 CostDescription costDescription = costDescriptionService.getOne(new LambdaQueryWrapper<CostDescription>().eq(CostDescription::getProId,proId));
 		 if(costDescription==null) {
-			 return Result.error("未找到对应数据");
+			 CostDescription costDescription1 = new CostDescription();
+			 return Result.ok(costDescription1);
 		 }
 		 return Result.OK(costDescription);
 	 }
