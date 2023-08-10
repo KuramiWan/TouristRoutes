@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.jeecg.modules.Insure.entity.Insure;
+import org.jeecg.modules.Insure.mapper.InsureMapper;
 import org.jeecg.modules.product.entity.*;
 import org.jeecg.modules.product.mapper.*;
 import org.jeecg.modules.product.service.IProductService;
@@ -11,6 +13,10 @@ import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.product.vo.ProductVo;
 import org.jeecg.modules.product.vo.ScheduleProVo;
 import org.jeecg.modules.product.vo.ScheduleVo;
+import org.jeecg.modules.productguide.entity.ProductGuide;
+import org.jeecg.modules.productguide.mapper.ProductGuideMapper;
+import org.jeecg.modules.purchaseNotes.entity.PurchaseNotes;
+import org.jeecg.modules.purchaseNotes.mapper.PurchaseNotesMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +56,17 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     @Autowired
 
     private IScheduleService iScheduleService;
+    @Autowired
+    private ProductGuideMapper productGuideMapper;
+    @Autowired
+    private TagMapper tagMapper;
+    @Autowired
+    private PurchaseNotesMapper purchaseNotesMapper;
+    @Autowired
+    private InsureMapper insureMapper;
+    @Autowired
+    private CostDescriptionMapper costDescriptionMapper;
+
 
 
 
@@ -168,6 +185,43 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         queryWrapperBatchPackage.select("id");
         List<BatchPackage> batchPackageList = batchPackageMapper.selectList(queryWrapperBatchPackage);
         if(batchPackageList != null && batchPackageList.size()>0)batchPackageMapper.deleteBatchIds(batchPackageList);
+
+        //查到所有导游并删除
+        QueryWrapper<ProductGuide> queryGuides = new QueryWrapper<>();
+        queryGuides.eq("product_id",id);
+        queryGuides.select("id");
+        List<ProductGuide> productGuides = productGuideMapper.selectList(queryGuides);
+        if(productGuides != null && productGuides.size()>0)productGuideMapper.deleteBatchIds(productGuides);
+        //查到所有标签并删除
+        QueryWrapper<Tag> queryTags = new QueryWrapper<>();
+        queryTags.eq("pro_id",id);
+        queryTags.select("id");
+        List<Tag> tags = tagMapper.selectList(queryTags);
+        if(tags != null && tags.size()>0)tagMapper.deleteBatchIds(tags);
+        //删除购买说明
+        QueryWrapper<PurchaseNotes> queryPurchaseNotes = new QueryWrapper<>();
+        queryPurchaseNotes.eq("pro_id",id);
+        queryPurchaseNotes.select("id");
+        List<PurchaseNotes> purchaseNotes = purchaseNotesMapper.selectList(queryPurchaseNotes);
+        if(purchaseNotes != null && purchaseNotes.size()>0)purchaseNotesMapper.deleteBatchIds(purchaseNotes);
+        //删除费用说明
+        QueryWrapper<CostDescription> queryCostDescription = new QueryWrapper<>();
+        queryCostDescription.eq("pro_id",id);
+        queryCostDescription.select("id");
+        List<CostDescription> costDescriptions = costDescriptionMapper.selectList(queryCostDescription);
+        if(costDescriptions != null && costDescriptions.size()>0)costDescriptionMapper.deleteBatchIds(costDescriptions);
+        //删除保险
+        QueryWrapper<Insure> queryInsure = new QueryWrapper<>();
+        queryInsure.eq("pro_id",id);
+        queryInsure.select("id");
+        List<Insure> insures = insureMapper.selectList(queryInsure);
+        if(insures != null && insures.size()>0)insureMapper.deleteBatchIds(insures);
+        //删除每日价格
+        QueryWrapper<PriceDate> queryPriceDate = new QueryWrapper<>();
+        queryPriceDate.eq("pro_id",id);
+        queryPriceDate.select("id");
+        List<PriceDate> priceDates = priceDateMapper.selectList(queryPriceDate);
+        if(priceDates != null && priceDates.size()>0)priceDateMapper.deleteBatchIds(priceDates);
         return true;
     }
 
