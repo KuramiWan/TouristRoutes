@@ -261,6 +261,7 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     @DeleteMapping(value = "/delete")
     public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
         touristGuideService.removeById(id);
+        productGuideService.remove(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getGuideId, id));
         return Result.OK("删除成功!");
     }
 
@@ -360,7 +361,11 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
     @GetMapping(value = "/selectGuideProducts")
     public Result<List<GuideProduct>> selectGuideProducts(String id) {
         List<String> productIds = productGuideService.list(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getGuideId, id)).stream().map(ProductGuide::getProductId).collect(Collectors.toList());
-        List<GuideProduct> guideProducts = productService.listByIds(productIds).stream().map(product -> {GuideProduct guideProduct = new GuideProduct();BeanUtils.copyProperties(product,guideProduct);return guideProduct;}).collect(Collectors.toList());
+        List<GuideProduct> guideProducts = productService.listByIds(productIds).stream().map(product -> {
+            GuideProduct guideProduct = new GuideProduct();
+            BeanUtils.copyProperties(product, guideProduct);
+            return guideProduct;
+        }).collect(Collectors.toList());
         return !guideProducts.isEmpty() ? Result.ok(guideProducts) : Result.error("未找到对应数据");
     }
 
@@ -387,8 +392,6 @@ public class TouristGuideController extends JeecgController<TouristGuide, ITouri
 //        newPage.setRecords(guideComments);
 //        return !guideComments.isEmpty() ? Result.ok(newPage) : Result.error("未找到对应数据");
 //    }
-
-
 
 
 }
