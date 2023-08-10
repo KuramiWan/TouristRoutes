@@ -105,7 +105,7 @@ public class WxPayController {
         map.put("body", "随心游产品支付测试"); // 产品描述
         map.put("total_fee", String.valueOf((int) Math.round((ordersUnpaid.getPayingMoney() * 100)))); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
-        map.put("notify_url", "http://you.xiuxiu365.cn:27000/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
+        map.put("notify_url", "https://you.xiuxiu365.cn:27102/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
         map.put("trade_type", "JSAPI"); // 交易类型
         map.put("openid", openid); // 用户标识
         map.put("spbill_create_ip", IpUtil.getIpAddress(http)); // 终端IP

@@ -1,5 +1,5 @@
 server:
-  port: 27201
+  port: 8080
   tomcat:
     max-swallow-size: -1
   error:
@@ -144,9 +144,9 @@ spring:
   #redis 配置
   redis:
     database: 0
-    host: 47.115.224.7
-    port: 6379
-    password: 'admin'
+    host: 47.117.123.80
+    port: 27203
+    password: 'suixinyou'
 #mybatis plus 设置
 mybatis-plus:
   mapper-locations: classpath*:org/jeecg/modules/**/xml/*Mapper.xml
