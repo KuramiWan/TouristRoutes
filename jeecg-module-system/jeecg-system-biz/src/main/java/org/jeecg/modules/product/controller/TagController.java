@@ -102,7 +102,31 @@ public class TagController extends JeecgController<Tag, ITagService> {
 		tagService.updateById(tag);
 		return Result.OK("编辑成功!");
 	}
-	
+
+	 /**
+	  *  保存列表通过productId
+	  *
+	  * @param productId
+	  * @return
+	  */
+	 @AutoLog(value = "产品标签表-保存列表通过productId")
+	 @ApiOperation(value="产品标签表-保存列表通过productId", notes="产品标签表-保存列表通过productId")
+	 @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.POST})
+	 public Result<String> update(@RequestBody Map<String, Object> map) {
+		 String proId = (String) map.get("proId");
+		 List<String> valueList = (List<String>) map.get("value");
+		 tagService.remove(new LambdaQueryWrapper<Tag>().eq(Tag::getProId,proId));
+		 if(valueList.size() > 0){
+			 valueList.forEach(i -> {
+				 Tag tag = new Tag();
+				 tag.setProId(proId).setTagContent(i);
+				 tagService.save(tag);
+					 });
+			 return Result.OK("修改成功！");
+		 }
+		 return Result.error("编辑失败!");
+	 }
+
 	/**
 	 *   通过id删除
 	 *
