@@ -20,16 +20,32 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class PriceDateList {
-    /**对应产品id*/
+    /**
+     * 对应产品id
+     */
     private String proId;
-    /**产品日期*/
+    /**
+     * 产品日期id
+     */
+    private String dateId;
+    /**
+     * 产品日期
+     */
     private DateDetail dateDetail;
-    /**当天日期对应的价格*/
+    /**
+     * 当天日期对应的价格
+     */
     private Double pdPrice;
-    /**当天报名人数*/
+    /**
+     * 当天报名人数
+     */
     private Integer pdEnrollment;
-    /**当天是否人满*/
+    /**
+     * 当天是否人满
+     */
     private String pdFull;
-    /**当天最多可报名人数*/
+    /**
+     * 当天最多可报名人数
+     */
     private Integer pdMaxMan;
 }
