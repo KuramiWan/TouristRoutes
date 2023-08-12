@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,10 +70,13 @@ public class WxPayController {
     @Autowired
     private IWxClientUserinfoService wxClientUserinfoService;
 
+    private static String DATE_ID = "";
+
     @PostMapping("/getOrder")
     @Transactional
     public Result<Map<String, String>> getOrder(HttpServletRequest http, @RequestBody OrdersUnpaid ordersInfo) throws Exception {
         String productId = http.getParameter("productId");
+        DATE_ID = http.getParameter("dateId");
         String openid = http.getHeader("openid");
         log.info("ordersInfo===========================" + ordersInfo);
         //log.info("productId================================" + productId);
@@ -106,6 +110,7 @@ public class WxPayController {
         //map.put("total_fee", String.valueOf((int) Math.round((ordersUnpaid.getPayingMoney() * 100)))); // 产品价格（单位：分）
         map.put("total_fee", "1"); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
+        log.info("out_trade_no**************************" + orderId);
         map.put("notify_url", "https://you.xiuxiu365.cn:27102/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
         map.put("trade_type", "JSAPI"); // 交易类型
         map.put("openid", openid); // 用户标识
@@ -213,6 +218,7 @@ public class WxPayController {
                 String resultCode = notifyMap.get("result_code").trim();
                 //系统支付订单编号（订单号）
                 String outTradeNo = notifyMap.get("out_trade_no").trim();
+                log.info("out_trade_no**************************" + outTradeNo);
                 //交易类型
                 String tradeType = notifyMap.get("trade_type").trim();
                 //微信支付订单号
@@ -243,8 +249,14 @@ public class WxPayController {
                 String userid = ordersUnpaid.getUserId();
                 Date dateStarted = ordersUnpaid.getDateStarted();
                 Date dateClosed = ordersUnpaid.getDateClosed();
+                String journeypackageId = ordersUnpaid.getJourneypackageId();
+                String batchpackageId = ordersUnpaid.getBatchpackageId();
+                String contactName = ordersUnpaid.getContactName();
+                String contactPhone = ordersUnpaid.getContactPhone();
+                List<String> travelerId = ordersUnpaid.getTravelerId();
                 Integer adultCount = ordersUnpaid.getAdultCount();
                 Integer childrenCount = ordersUnpaid.getChildrenCount();
+                List<String> insureId = ordersUnpaid.getInsureId();
                 String note = ordersUnpaid.getNote();
 
                 // 在已支付订单表里面添加一条记录
@@ -252,23 +264,30 @@ public class WxPayController {
                 ordersPaid.setTransactionId(transactionId)
                         .setUserId(userid)
                         .setProductId(productId)
-                        .setPaidMoney(Double.valueOf(cashFee))
-                        .setPaidMethod("微信支付")
                         .setDateStarted(dateStarted)
                         .setDateClosed(dateClosed)
+                        .setJourneypackageId(journeypackageId)
+                        .setBatchpackageId(batchpackageId)
+                        .setContactName(contactName)
+                        .setContactPhone(contactPhone)
+                        .setTravellerId(travelerId)
                         .setAdultCount(adultCount)
                         .setChildrenCount(childrenCount)
+                        .setPaidMoney(Double.valueOf(cashFee))
+                        .setPaidMethod("微信支付")
+                        .setInsureId(insureId)
                         .setNote(note)
                         .setCreateTime(date);
                 ordersPaidService.save(ordersPaid);
-
+                log.info("productId=====================" + productId);
                 // 该产品的购买数量+1
                 Product product = productService.getById(productId);
                 product.setSoldNumber(product.getSoldNumber() + 1);
                 productService.updateById(product);
-
+                log.info("dateStarted==============================" + dateStarted);
                 // 该产品在这个日期(产品id + 购买日期唯一确定)的购买数量+1
-                PriceDate priceDate = priceDateService.getOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, productId).eq(PriceDate::getPdDate, ordersPaid.getDateStarted()));
+                log.info("DATE_ID==============================" + DATE_ID);
+                PriceDate priceDate = priceDateService.getOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getId, DATE_ID));
                 Integer pdEnrollment = priceDate.getPdEnrollment(); // 当前人数
                 Integer pdMaxMan = priceDate.getPdMaxMan(); // 最大人数
                 if (pdEnrollment < pdMaxMan) {

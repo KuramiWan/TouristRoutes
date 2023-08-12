@@ -4,13 +4,12 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.math.BigDecimal;
+import java.util.List;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.jeecg.modules.utils.json.CommonStringTypeHandler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecg.common.aspect.annotation.Dict;
@@ -97,11 +96,17 @@ public class OrdersPaid implements Serializable {
     @ApiModelProperty(value = "结束日期")
     private Date dateClosed;
     /**
-     * 套餐id
+     * 行程套餐id
      */
-    @Excel(name = "套餐id", width = 15)
-    @ApiModelProperty(value = "套餐id")
-    private String plansId;
+    @Excel(name = "行程套餐id", width = 15)
+    @ApiModelProperty(value = "行程套餐id")
+    private String journeypackageId;
+    /**
+     * 选择导游id
+     */
+    @Excel(name = "选择导游id", width = 15)
+    @ApiModelProperty(value = "选择导游id")
+    private String batchpackageId;
     /**
      * 用户id
      */
@@ -109,17 +114,24 @@ public class OrdersPaid implements Serializable {
     @ApiModelProperty(value = "用户id")
     private String userId;
     /**
-     * 联系人id
+     * 联系人姓名
      */
-    @Excel(name = "联系人id", width = 15)
-    @ApiModelProperty(value = "联系人id")
-    private String contactId;
+    @Excel(name = "联系人姓名", width = 15)
+    @ApiModelProperty(value = "联系人姓名")
+    private String contactName;
+    /**
+     * 联系人手机号
+     */
+    @Excel(name = "联系人手机号", width = 15)
+    @ApiModelProperty(value = "联系人手机号")
+    private String contactPhone;
     /**
      * 出行人id(数组)
      */
     @Excel(name = "出行人id(数组)", width = 15)
     @ApiModelProperty(value = "出行人id(数组)")
-    private String travellerId;
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> travellerId;
     /**
      * 成人个数
      */
@@ -155,7 +167,8 @@ public class OrdersPaid implements Serializable {
      */
     @Excel(name = "保险id", width = 15)
     @ApiModelProperty(value = "保险id")
-    private String insureId;
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> insureId;
     /**
      * 订单备注
      */

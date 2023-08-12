@@ -96,10 +96,10 @@ public class OrdersUnpaid implements Serializable {
     @ApiModelProperty(value = "行程套餐id")
     private String journeypackageId;
     /**
-     * 批次套餐id
+     * 选择导游id
      */
-    @Excel(name = "批次套餐id", width = 15)
-    @ApiModelProperty(value = "批次套餐id")
+    @Excel(name = "选择导游id", width = 15)
+    @ApiModelProperty(value = "选择导游id")
     private String batchpackageId;
     /**
      * 用户id
@@ -155,7 +155,8 @@ public class OrdersUnpaid implements Serializable {
      */
     @Excel(name = "保险id", width = 15)
     @ApiModelProperty(value = "保险id")
-    private String insureId;
+    @TableField(typeHandler = CommonStringTypeHandler.class)
+    private List<String> insureId;
     /**
      * 订单备注
      */

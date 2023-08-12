@@ -172,6 +172,7 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 
 		 priceDates.forEach(priceDate -> {
 			 PriceDateList priceDateList = new PriceDateList();
+			 priceDateList.setDateId(priceDate.getId());
 			 DateDetail dateDetail = new DateDetail();
 			 Integer pdMaxMan = priceDate.getPdMaxMan();
 			 Integer pdEnrollment = priceDate.getPdEnrollment();

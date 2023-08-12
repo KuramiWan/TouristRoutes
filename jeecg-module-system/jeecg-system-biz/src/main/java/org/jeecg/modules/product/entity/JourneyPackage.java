@@ -44,10 +44,14 @@ public class JourneyPackage implements Serializable {
 	@Excel(name = "行程套餐内容", width = 15)
     @ApiModelProperty(value = "行程套餐内容")
     private java.lang.String jpContent;
-	/**套餐价格*/
-	@Excel(name = "套餐价格", width = 15)
-    @ApiModelProperty(value = "套餐价格")
-    private java.lang.Double jpPrice;
+	/**套餐价格(成人)*/
+	@Excel(name = "套餐价格(成人)", width = 15)
+    @ApiModelProperty(value = "套餐价格(成人)")
+    private java.lang.Double jpPriceAdult;
+    /**套餐价格(儿童)*/
+    @Excel(name = "套餐价格(儿童)", width = 15)
+    @ApiModelProperty(value = "套餐价格(儿童)")
+    private java.lang.Double jpPriceChild;
 	/**创建人*/
     @ApiModelProperty(value = "创建人")
     private java.lang.String createBy;
