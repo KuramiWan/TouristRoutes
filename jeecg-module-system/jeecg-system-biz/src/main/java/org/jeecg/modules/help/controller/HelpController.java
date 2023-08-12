@@ -52,25 +52,16 @@ public class HelpController extends JeecgController<Help, IHelpService> {
 	private IHelpService helpService;
 	
 	/**
-	 * 分页列表查询
+	 * 列表查询
 	 *
-	 * @param help
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
 	 * @return
 	 */
-	//@AutoLog(value = "帮助中心表-分页列表查询")
-	@ApiOperation(value="帮助中心表-分页列表查询", notes="帮助中心表-分页列表查询")
+	//@AutoLog(value = "帮助中心表-列表查询")
+	@ApiOperation(value="帮助中心表-列表查询", notes="帮助中心表-列表查询")
 	@GetMapping(value = "/list")
-	public Result<IPage<Help>> queryPageList(Help help,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<Help> queryWrapper = QueryGenerator.initQueryWrapper(help, req.getParameterMap());
-		Page<Help> page = new Page<Help>(pageNo, pageSize);
-		IPage<Help> pageList = helpService.page(page, queryWrapper);
-		return Result.OK(pageList);
+	public Result<List<Help>> queryPageList() {
+		List<Help> list = helpService.list();
+		return Result.OK(list);
 	}
 	
 	/**
