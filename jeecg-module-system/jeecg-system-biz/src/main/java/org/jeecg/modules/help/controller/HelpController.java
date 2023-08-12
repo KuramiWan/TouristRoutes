@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -59,10 +61,27 @@ public class HelpController extends JeecgController<Help, IHelpService> {
 	//@AutoLog(value = "帮助中心表-列表查询")
 	@ApiOperation(value="帮助中心表-列表查询", notes="帮助中心表-列表查询")
 	@GetMapping(value = "/list")
-	public Result<List<Help>> queryPageList() {
+	public Result<List<Help>> queryList() {
 		List<Help> list = helpService.list();
 		return Result.OK(list);
 	}
+
+
+
+	 /**
+	  * 列表查询
+	  *
+	  * @return
+	  */
+	 //@AutoLog(value = "帮助中心表-列表查询")
+	 @ApiOperation(value="联系我们表-分页列表查询", notes="联系我们表-分页列表查询")
+	 @GetMapping(value = "/listPage")
+	 public Result<IPage<Help>> listPage(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+											  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+		 Page<Help> page = new Page<Help>(pageNo, pageSize);
+		 IPage<Help> pageList = helpService.page(page);
+		 return Result.OK(pageList);
+	 }
 	
 	/**
 	 *   添加
@@ -75,7 +94,8 @@ public class HelpController extends JeecgController<Help, IHelpService> {
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Help help) {
 		helpService.save(help);
-		return Result.OK("添加成功！");
+		String id = help.getId();
+		return Result.OK("添加成功！",id);
 	}
 	
 	/**
@@ -91,6 +111,24 @@ public class HelpController extends JeecgController<Help, IHelpService> {
 		helpService.updateById(help);
 		return Result.OK("编辑成功!");
 	}
+
+	 /**
+	  *  保存帮助中心数据
+	  *
+	  * @return
+	  */
+	 @AutoLog(value = "帮助中心表-保存帮助中心数据")
+	 @ApiOperation(value="帮助中心表-保存帮助中心数据", notes="帮助中心表-保存帮助中心数据")
+	 @PostMapping(value = "/updateHelps")
+	 public Result<String> updateHelps(@RequestBody List<Help> helps) {
+	 	if (helps.size() <= 0){
+	 		return Result.error("数据为空！无法保存");
+		}
+		 for (Help help : helps) {
+			 helpService.updateById(help);
+		 }
+		 return Result.OK("编辑成功!");
+	 }
 	
 	/**
 	 *   通过id删除
