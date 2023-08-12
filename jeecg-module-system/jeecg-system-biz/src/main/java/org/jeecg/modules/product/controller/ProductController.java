@@ -105,11 +105,11 @@ public class ProductController extends JeecgController<Product, IProductService>
         if(proTitle != null && proTitle != ""){
             System.out.println("上");
             LambdaQueryWrapper<Product> lambdaQueryWrapper = new LambdaQueryWrapper<Product>();
-            lambdaQueryWrapper.like(Product::getProTitle,proTitle);
+            lambdaQueryWrapper.like(Product::getProTitle,proTitle).eq(Product::getProType,2);
             pageList = productService.page(page, lambdaQueryWrapper);
         }else{
             System.out.println("下");
-            pageList = productService.page(page, new LambdaQueryWrapper<>());
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType,2));
         }
 
         List<Product> records = pageList.getRecords();
@@ -120,9 +120,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             int size = list.size();
 
             //查出该产品有多少购买量
-            LambdaQueryWrapper<OrdersPaid> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(OrdersPaid::getProductId, product.getId());
-            int count = ordersPaidService.list(wrapper).size();
+            int count = product.getSoldNumber();
             productList.setId(product.getId())
                     .setOrigin(product.getOrigin())
                     .setProEvaluate(product.getProEvaluate())
@@ -141,7 +139,7 @@ public class ProductController extends JeecgController<Product, IProductService>
 
 
     /**
-     * 产品表-分页列表查询产品(出售数量降序查询)
+     * 产品表-分页列表查询产品(出售数量降序查询)(景点类型)
      *
      * @param
      * @param pageNo
@@ -149,19 +147,19 @@ public class ProductController extends JeecgController<Product, IProductService>
      * @param
      * @return
      */
-    //@AutoLog(value = "产品表-分页列表查询产品(出售数量降序查询))
-    @ApiOperation(value = "产品表-分页列表查询产品(出售数量降序查询)", notes = "产品表-分页列表查询产品(出售数量降序查询)")
+    //@AutoLog(value = "产品表-分页列表查询产品(出售数量降序查询)(景点类型))
+    @ApiOperation(value = "产品表-分页列表查询产品(出售数量降序查询)(景点类型)", notes = "产品表-分页列表查询产品(出售数量降序查询)(景点类型)")
     @GetMapping(value = "/productList")
     public Result<IPage<Product>> queryProductPageList(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+        IPage pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
         return Result.OK(pageList);
     }
 
     /**
-     * 产品表-分页列表查询产品(推荐指数升降序查询)
+     * 产品表-分页列表查询产品(推荐指数升降序查询)(景点类型)
      *
      * @param
      * @param pageNo
@@ -169,8 +167,8 @@ public class ProductController extends JeecgController<Product, IProductService>
      * @param
      * @return
      */
-    //@AutoLog(value = "产品表-分页列表查询产品(推荐指数降序查询))
-    @ApiOperation(value = "产品表-分页列表查询产品(推荐指数升降序查询)", notes = "产品表-分页列表查询产品(推荐指数升降序查询)")
+    //@AutoLog(value = "产品表-分页列表查询产品(推荐指数降序查询)(景点类型))
+    @ApiOperation(value = "产品表-分页列表查询产品(推荐指数升降序查询)(景点类型)", notes = "产品表-分页列表查询产品(推荐指数升降序查询)(景点类型)")
     @GetMapping(value = "/productListByRec")
     public Result<IPage<Product>> querryProductListByRec(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
@@ -179,9 +177,9 @@ public class ProductController extends JeecgController<Product, IProductService>
         Page<Product> page = new Page<Product>(pageNo, pageSize);
         IPage pageList = new Page();
         if(num == 2){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getRecNum));
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getRecNum));
         }else{
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
         }
         return Result.OK(pageList);
     }
@@ -205,11 +203,11 @@ public class ProductController extends JeecgController<Product, IProductService>
         Page<Product> page = new Page<Product>(pageNo, pageSize);
         IPage pageList = new Page();
         if(num == 2){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getProEvaluate));
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getProEvaluate));
         }else if (num == 3){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByAsc(Product::getProEvaluate));
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByAsc(Product::getProEvaluate));
         }else {
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
         }
         return Result.OK(pageList);
     }
@@ -415,7 +413,7 @@ public class ProductController extends JeecgController<Product, IProductService>
                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                 @RequestParam(name = "proName", required = true) String proName) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().like(Product::getLocalDetail,proName).orderByDesc(Product::getSoldNumber));
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().like(Product::getLocalDetail,proName).eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
         if (pageList == null || pageList.getSize() <= 0) {
             return Result.error("未找到对应数据");
         }

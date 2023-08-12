@@ -76,6 +76,12 @@ public class Product implements Serializable {
     @ApiModelProperty(value = "成团人数")
     private java.lang.Integer proMan;
     /**
+     * 产品类型(1为景点，2为线路)
+     */
+    @Excel(name = "产品类型(1为景点，2为线路)", width = 15)
+    @ApiModelProperty(value = "产品类型(1为景点，2为线路)")
+    private java.lang.Integer proType;
+    /**
      * 封面标题
      */
     @Excel(name = "封面标题", width = 15)
