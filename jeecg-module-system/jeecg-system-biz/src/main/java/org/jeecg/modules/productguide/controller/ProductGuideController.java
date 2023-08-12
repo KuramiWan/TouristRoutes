@@ -11,12 +11,16 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.db.sql.Order;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.guide.entity.TouristGuide;
 import org.jeecg.modules.guide.service.ITouristGuideService;
+import org.jeecg.modules.orders.entity.OrdersPaid;
+import org.jeecg.modules.orders.service.IOrdersPaidService;
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
 import org.jeecg.modules.productguide.entity.ProductGuide;
 import org.jeecg.modules.productguide.service.IProductGuideService;
 
@@ -59,6 +63,9 @@ public class ProductGuideController extends JeecgController<ProductGuide, IProdu
 
     @Autowired
     private ITouristGuideService touristGuideService;
+
+    @Autowired
+    private IOrdersPaidService ordersPaidService;
 
     /**
      * 分页列表查询
@@ -183,21 +190,20 @@ public class ProductGuideController extends JeecgController<ProductGuide, IProdu
     }
 
     /**
-     * 通过产品id查询导游信息
+     * 通过订单id查询导游信息
      *
-     * @param productId
+     * @param orderId
      * @return
      */
     //@AutoLog(value = "产品导游关系表-通过id查询")
-    @ApiOperation(value = "产品导游关系表-通过产品id查询导游信息", notes = "产品导游关系表-通过产品id查询导游信息")
-    @GetMapping(value = "/queryByProId")
-    public Result<List<TouristGuide>> queryByProId(@RequestParam(name = "productId", required = true) String productId) {
-        List<ProductGuide> list = productGuideService.list(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getProductId, productId));
-        if (list.size() > 0) {
-            List<String> ids = list.stream().map(ProductGuide::getGuideId).collect(Collectors.toList());
-            return Result.OK(touristGuideService.listByIds(ids));
+    @ApiOperation(value = "产品导游关系表-通过订单id查询导游信息", notes = "产品导游关系表-通过订单id查询导游信息")
+    @GetMapping(value = "/queryByOrderId")
+    public Result<TouristGuide> queryByOrderId(@RequestParam(name = "orderId", required = true) String orderId) {
+        OrdersPaid ordersPaid = ordersPaidService.getOne(new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getId,orderId));
+        if (ordersPaid != null) {
+            return Result.OK(touristGuideService.getById(ordersPaid.getBatchpackageId()));
         }
-        return Result.OK(new ArrayList<TouristGuide>());
+        return Result.OK(new TouristGuide());
     }
 
     /**

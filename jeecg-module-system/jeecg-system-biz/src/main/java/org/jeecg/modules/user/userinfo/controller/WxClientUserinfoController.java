@@ -71,7 +71,7 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
         IPage<OrderList> unpaidPageList = iWxClientUserinfoService.unPaid(userid, unpaidPage);
         // 获取待出行订单列表
         Page<OrdersPaid> unGoPage = new Page<>(pageNo,pageSize);
-        IPage<OrderList> unGoPageList = iWxClientUserinfoService.unGo(userid, unGoPage);
+        IPage<OrderList> unGoPageList = iWxClientUserinfoService.unGo(null, unGoPage);
         // 获取待评价订单列表
         Page<OrdersPaid> unEvaluate = new Page<>(pageNo,pageSize);
         IPage<OrderList> unEvaluateList = iWxClientUserinfoService.unEvaluate(userid, unEvaluate);

@@ -93,6 +93,7 @@ public class WxPayController {
 
         // 根据产品id和openid生成未付款订单
         OrdersUnpaid ordersUnpaid = new OrdersUnpaid();
+        ordersInfo.setPayingMoney(ordersInfo.getPayingMoney() * 100);
         BeanUtils.copyProperties(ordersInfo, ordersUnpaid);
         ordersUnpaid.setProductId(productId).setUserId(wxClientUserinfo.getId()).setStatus(0);
         // 插入并返回该订单的id
@@ -106,8 +107,8 @@ public class WxPayController {
         WxPayConfig wxPayConfig = new WxPayConfig();
         WXPay wxPay = new WXPay(wxPayConfig);
         HashMap<String, String> map = new HashMap<>();
-        map.put("body", "随心游产品支付测试"); // 产品描述
-        //map.put("total_fee", String.valueOf((int) Math.round((ordersUnpaid.getPayingMoney() * 100)))); // 产品价格（单位：分）
+        map.put("body", "随心游产品支付"); // 产品描述
+        //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
         map.put("total_fee", "1"); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
         log.info("out_trade_no**************************" + orderId);
@@ -277,6 +278,7 @@ public class WxPayController {
                         .setPaidMethod("微信支付")
                         .setInsureId(insureId)
                         .setNote(note)
+                        .setStatus(1)
                         .setCreateTime(date);
                 ordersPaidService.save(ordersPaid);
                 log.info("productId=====================" + productId);
