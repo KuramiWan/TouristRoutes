@@ -161,6 +161,32 @@ public class ProductController extends JeecgController<Product, IProductService>
     }
 
     /**
+     * 产品表-分页列表查询产品(推荐指数升降序查询)
+     *
+     * @param
+     * @param pageNo
+     * @param pageSize
+     * @param
+     * @return
+     */
+    //@AutoLog(value = "产品表-分页列表查询产品(推荐指数降序查询))
+    @ApiOperation(value = "产品表-分页列表查询产品(推荐指数升降序查询)", notes = "产品表-分页列表查询产品(推荐指数升降序查询)")
+    @GetMapping(value = "/productListByRec")
+    public Result<IPage<Product>> querryProductListByRec(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name="num",required = true) Integer num) {
+        Page<Product> page = new Page<Product>(pageNo, pageSize);
+        IPage pageList = new Page();
+        if(num == 2){
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getRecNum));
+        }else{
+            pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+        }
+        return Result.OK(pageList);
+    }
+
+    /**
      * 产品表-分页列表查询产品(价格升降序查询)
      *
      * @param
