@@ -125,7 +125,7 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
             Product product = productService.getById(record.getProductId());
             productMap.put("img", product.getProPageImg());
             productMap.put("title", product.getProPageTitle());
-            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPayingMoney()).setStatus(Collections.singletonMap("待支付", 0)).setDateStarted(record.getDateStarted());
+            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPayingMoney()).setStatus(Collections.singletonMap("待支付", 0)).setDateStarted(record.getDateStarted()).setOrdersUnpaid(record);
             orderLists.add(orderList);
         });
         IPage<OrderList> orderListIPage = new Page<>(page.getCurrent(), page.getSize());
@@ -135,7 +135,7 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
 
     @Override
     public IPage<OrderList> unGo(String userid,IPage<OrdersPaid> paidPage) {
-        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).eq(OrdersPaid::getStatus, 0).orderByDesc(OrdersPaid::getCreateTime));
+        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).orderByDesc(OrdersPaid::getCreateTime));
         List<OrderList> orderLists = new ArrayList<>();
         ordersPaidIPage.getRecords().forEach(record->{
             OrderList orderList = new OrderList();
@@ -154,7 +154,7 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
 
     @Override
     public IPage<OrderList> unEvaluate(String userid, IPage<OrdersPaid> paidPage) {
-        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).eq(OrdersPaid::getStatus, 1).orderByDesc(OrdersPaid::getCreateTime));
+        IPage<OrdersPaid> ordersPaidIPage = ordersPaidService.page(paidPage, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userid).orderByDesc(OrdersPaid::getCreateTime));
         List<OrderList> orderLists = new ArrayList<>();
         ordersPaidIPage.getRecords().forEach(record->{
             OrderList orderList = new OrderList();
@@ -162,7 +162,7 @@ public class WxClientUserinfoServiceImpl extends ServiceImpl<WxClientUserinfoMap
             Product product = productService.getById(record.getProductId());
             productMap.put("img", product.getProPageImg());
             productMap.put("title", product.getProPageTitle());
-            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("待评价", 1)).setDateStarted(record.getDateStarted());
+            orderList.setProduct(productMap).setOrderId(record.getId()).setMoney(record.getPaidMoney()).setStatus(Collections.singletonMap("已支付", 1)).setDateStarted(record.getDateStarted());
             orderLists.add(orderList);
         });
         IPage<OrderList> orderListIPage = new Page<>(paidPage.getCurrent(), paidPage.getSize());
