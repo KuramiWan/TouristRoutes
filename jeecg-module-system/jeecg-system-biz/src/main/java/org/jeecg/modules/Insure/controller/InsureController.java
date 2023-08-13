@@ -182,7 +182,7 @@ public class InsureController extends JeecgController<Insure, IInsureService> {
 	 @GetMapping(value = "/queryListByProId")
 	 public Result<List<Insure>> queryListByProId(@RequestParam(name="proId",required=true) String proId) {
 		 List<Insure> list = insureService.list(new LambdaQueryWrapper<Insure>().eq(Insure::getProid, proId).orderByAsc(Insure::getPrice));
-		 if(list==null || list.size() <=0) {
+		 if(list==null || list.size() <0) {
 			 return Result.error("未找到对应数据");
 		 }
 		 return Result.OK(list);
