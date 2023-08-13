@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.product.entity.Tag;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -87,7 +88,8 @@ public class InsureController extends JeecgController<Insure, IInsureService> {
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody Insure insure) {
 		insureService.save(insure);
-		return Result.OK("添加成功！");
+		String id = insure.getId();
+		return Result.OK("添加成功！",id);
 	}
 	
 	/**
@@ -148,6 +150,26 @@ public class InsureController extends JeecgController<Insure, IInsureService> {
 		}
 		return Result.OK(insure);
 	}
+
+	 /**
+	  *   修改
+	  *
+	  * @param insures
+	  * @return
+	  */
+	 @AutoLog(value = "后台查询日程价格表-修改")
+	 @ApiOperation(value="后台查询日程价格表-修改", notes="后台查询日程价格表-修改")
+	 @PostMapping(value = "/updateInsureList")
+	 public Result<String> updateInsureList(@RequestBody List<Insure> insures) {
+	 	if (insures.size()<=0){
+	 		return Result.error("保存失败！");
+		}
+		 for (Insure insure : insures) {
+		 	insureService.updateById(insure);
+
+		 }
+		 return Result.OK("保存成功！");
+	 }
 
 	 /**
 	  * 通过proId查询
