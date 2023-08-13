@@ -212,7 +212,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         if(costDescriptions != null && costDescriptions.size()>0)costDescriptionMapper.deleteBatchIds(costDescriptions);
         //删除保险
         QueryWrapper<Insure> queryInsure = new QueryWrapper<>();
-        queryInsure.eq("pro_id",id);
+        queryInsure.eq("proid",id);
         queryInsure.select("id");
         List<Insure> insures = insureMapper.selectList(queryInsure);
         if(insures != null && insures.size()>0)insureMapper.deleteBatchIds(insures);

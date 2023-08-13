@@ -190,6 +190,24 @@ public class ProductGuideController extends JeecgController<ProductGuide, IProdu
     }
 
     /**
+     * 通过产品id查询导游信息
+     *
+     * @param productId
+     * @return
+     */
+    //@AutoLog(value = "产品导游关系表-通过id查询")
+    @ApiOperation(value = "产品导游关系表-通过产品id查询导游信息", notes = "产品导游关系表-通过产品id查询导游信息")
+    @GetMapping(value = "/queryByProId")
+    public Result<List<TouristGuide>> queryByProId(@RequestParam(name = "productId", required = true) String productId) {
+        List<ProductGuide> list = productGuideService.list(new LambdaQueryWrapper<ProductGuide>().eq(ProductGuide::getProductId, productId));
+        if (list.size() > 0) {
+            List<String> ids = list.stream().map(ProductGuide::getGuideId).collect(Collectors.toList());
+            return Result.OK(touristGuideService.listByIds(ids));
+        }
+        return Result.OK(new ArrayList<TouristGuide>());
+    }
+
+    /**
      * 通过订单id查询导游信息
      *
      * @param orderId
