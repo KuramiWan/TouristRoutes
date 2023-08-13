@@ -102,14 +102,14 @@ public class ProductController extends JeecgController<Product, IProductService>
 //		QueryWrapper<Product> queryWrapper = QueryGenerator.initQueryWrapper(product, req.getParameterMap());
         Page<Product> page = new Page<Product>(pageNo, pageSize);
         IPage pageList = new Page();
-        if(proTitle != null && proTitle != ""){
+        if (proTitle != null && proTitle != "") {
             System.out.println("上");
             LambdaQueryWrapper<Product> lambdaQueryWrapper = new LambdaQueryWrapper<Product>();
-            lambdaQueryWrapper.like(Product::getProTitle,proTitle).eq(Product::getProType,2);
+            lambdaQueryWrapper.like(Product::getProTitle, proTitle).eq(Product::getProType, 2);
             pageList = productService.page(page, lambdaQueryWrapper);
-        }else{
+        } else {
             System.out.println("下");
-            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType,2));
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 2));
         }
 
         List<Product> records = pageList.getRecords();
@@ -135,7 +135,25 @@ public class ProductController extends JeecgController<Product, IProductService>
         return Result.OK(pageList);
     }
 
-
+    /**
+     * 产品表-分页列表查询产品(后台使用)
+     *
+     * @param
+     * @param pageNo
+     * @param pageSize
+     * @param
+     * @return
+     */
+    //@AutoLog(value = "产品表-分页列表查询产品(后台使用)
+    @ApiOperation(value = "产品表-分页列表查询产品(后台使用)", notes = "产品表-分页列表查询产品(后台使用)")
+    @GetMapping(value = "/productAllList")
+    public Result<IPage<Product>> queryProductPageAllList(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        Page<Product> page = new Page<Product>(pageNo, pageSize);
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().orderByDesc(Product::getCreateTime));
+        return Result.OK(pageList);
+    }
 
 
     /**
@@ -154,7 +172,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByDesc(Product::getSoldNumber));
         return Result.OK(pageList);
     }
 
@@ -193,13 +211,13 @@ public class ProductController extends JeecgController<Product, IProductService>
     public Result<IPage<Product>> querryProductListByRec(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(name="num",required = true) Integer num) {
+            @RequestParam(name = "num", required = true) Integer num) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
         IPage pageList = new Page();
-        if(num == 2){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getRecNum));
-        }else{
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
+        if (num == 2) {
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByDesc(Product::getRecNum));
+        } else {
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByDesc(Product::getSoldNumber));
         }
         return Result.OK(pageList);
     }
@@ -219,15 +237,15 @@ public class ProductController extends JeecgController<Product, IProductService>
     public Result<IPage<Product>> queryProductPageListByPrice(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(name="num",required = true) Integer num) {
+            @RequestParam(name = "num", required = true) Integer num) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
         IPage pageList = new Page();
-        if(num == 2){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getProEvaluate));
-        }else if (num == 3){
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByAsc(Product::getProEvaluate));
-        }else {
-            pageList = productService.page(page,new LambdaQueryWrapper<Product>().eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
+        if (num == 2) {
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByDesc(Product::getProEvaluate));
+        } else if (num == 3) {
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByAsc(Product::getProEvaluate));
+        } else {
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 1).orderByDesc(Product::getSoldNumber));
         }
         return Result.OK(pageList);
     }
@@ -261,18 +279,18 @@ public class ProductController extends JeecgController<Product, IProductService>
     }
 
     @AutoLog(value = "产品表-添加或修改")
-    @ApiOperation(value = "产品表-添加或修改",notes = "产品表-添加或修改")
+    @ApiOperation(value = "产品表-添加或修改", notes = "产品表-添加或修改")
     @PostMapping(value = "/saveOrUpdate")
-    public Result<List<String>> saveOrUpdate(@RequestBody Product product){
+    public Result<List<String>> saveOrUpdate(@RequestBody Product product) {
         //更新条件构造器
         UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id",product.getId());
+        updateWrapper.eq("id", product.getId());
         //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
-        productService.saveOrUpdate(product,updateWrapper);
+        productService.saveOrUpdate(product, updateWrapper);
 
         //判断是否更新图片
-        String pageImgHeader = product.getProPageImg().substring(0,5);
-        String postersHeader = product.getPosters().substring(0,5);
+        String pageImgHeader = product.getProPageImg().substring(0, 5);
+        String postersHeader = product.getPosters().substring(0, 5);
 
         //测试
 //        System.out.println("pageImgHeader:"+pageImgHeader);
@@ -288,45 +306,45 @@ public class ProductController extends JeecgController<Product, IProductService>
 
         List<String> urlList = new ArrayList<>();
 
-        if(product.getProPageImg() != null && product.getProPageImg() != "" && !pageImgHeader.equals("https")) {
+        if (product.getProPageImg() != null && product.getProPageImg() != "" && !pageImgHeader.equals("https")) {
             ProductUpload productUpload = new ProductUpload();
             productUpload.setProductid(product.getId());
             productUpload.setBase64Data(product.getProPageImg());
             String fileDir = "suixinyou-wx-client/pages-product/产品封面/";
-            String url = uploadImg(productUpload,fileDir);
+            String url = uploadImg(productUpload, fileDir);
             //若修改过图片则返回图片地址
             urlList.add(url);
-        }else{
+        } else {
             urlList.add(product.getProPageImg());
         }
-        if(product.getPosters() != null && product.getPosters() != "" && !postersHeader.equals("https")) {
+        if (product.getPosters() != null && product.getPosters() != "" && !postersHeader.equals("https")) {
             ProductUpload productUpload = new ProductUpload();
             productUpload.setProductid(product.getId());
             productUpload.setBase64Data(product.getPosters());
             String fileDir = "suixinyou-wx-client/pages-product/产品海报/";
-            String url = uploadImg(productUpload,fileDir);
+            String url = uploadImg(productUpload, fileDir);
             //若修改过图片则返回图片地址
             urlList.add(url);
-        }else{
+        } else {
             urlList.add(product.getPosters());
         }
         return Result.OK(urlList);
     }
 
 
-    public String uploadImg(ProductUpload productUpload,String fileDir) {
+    public String uploadImg(ProductUpload productUpload, String fileDir) {
         try {
             String base64Img = productUpload.getBase64Data();
             // 将Base64数据转换为字节数组
             byte[] img = Base64.getDecoder().decode(base64Img);
             //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
-            String fileUrl = OssBootUtil.upload(productUpload.getProductid(),img, fileDir);
+            String fileUrl = OssBootUtil.upload(productUpload.getProductid(), img, fileDir);
 
             if (fileUrl != null) {
                 LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<Product>().eq(Product::getId, productUpload.getProductid());
                 Product target = productService.getOne(queryWrapper);
                 target.setProPageImg(fileUrl);
-                productService.update(target,queryWrapper);
+                productService.update(target, queryWrapper);
                 return fileUrl;
             }
             return "上传图片失败";
@@ -338,21 +356,22 @@ public class ProductController extends JeecgController<Product, IProductService>
 
 
     @AutoLog(value = "产品表-添加或修改(临时接口)返回id")
-    @ApiOperation(value = "产品表-添加或修改(临时接口)返回id",notes = "产品表-添加或修改(临时接口)返回id")
+    @ApiOperation(value = "产品表-添加或修改(临时接口)返回id", notes = "产品表-添加或修改(临时接口)返回id")
     @PostMapping(value = "/temporarySaveOrUpdate")
-    public Result<List<String>> temporarySaveOrUpdate(@RequestBody Product product){
+    public Result<List<String>> temporarySaveOrUpdate(@RequestBody Product product) {
         //更新条件构造器
         UpdateWrapper<Product> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id",product.getId());
+        updateWrapper.eq("id", product.getId());
         //先判断是否满足更新条件（是否有传进来的id的数据），若没有就走添加
-        productService.saveOrUpdate(product,updateWrapper);
+        productService.saveOrUpdate(product, updateWrapper);
         //返回id
         List<String> list = new ArrayList<>();
         list.add(product.getId());
         return Result.OK(list);
     }
+
     @AutoLog(value = "产品表-上传图片(临时接口)返回url")
-    @ApiOperation(value = "产品表-上传图片(临时接口)返回url",notes = "产品表-上传图片(临时接口)返回url")
+    @ApiOperation(value = "产品表-上传图片(临时接口)返回url", notes = "产品表-上传图片(临时接口)返回url")
     @PostMapping(value = "/temporaryUploadImg")
     public Result<List<String>> temporaryUploadImg(@RequestBody TemporaryUpload temporaryUpload) {
         try {
@@ -361,7 +380,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             byte[] img = Base64.getDecoder().decode(base64Img);
             //String fileDir = "suixinyou-wx-client/pages-product/产品封面/"; // 文件保存目录，根据实际情况调整
             String fileDir = (temporaryUpload.getWitch() == 0) ? "suixinyou-wx-client/pages-product/产品海报/" : "suixinyou-wx-client/pages-product/产品封面/";
-            String fileUrl = OssBootUtil.upload(System.currentTimeMillis()+"",img, fileDir);
+            String fileUrl = OssBootUtil.upload(System.currentTimeMillis() + "", img, fileDir);
             List<String> list = new ArrayList<>();
             list.add(fileUrl);
             return Result.OK(list);
@@ -430,10 +449,10 @@ public class ProductController extends JeecgController<Product, IProductService>
     @ApiOperation(value = "产品表-通过proName查询", notes = "产品表-通过proName查询")
     @GetMapping(value = "/queryByProName")
     public Result<IPage<Product>> queryByProName(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                                @RequestParam(name = "proName", required = true) String proName) {
+                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                 @RequestParam(name = "proName", required = true) String proName) {
         Page<Product> page = new Page<Product>(pageNo, pageSize);
-        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().like(Product::getLocalDetail,proName).eq(Product::getProType,1).orderByDesc(Product::getSoldNumber));
+        IPage pageList = productService.page(page, new LambdaQueryWrapper<Product>().like(Product::getLocalDetail, proName).eq(Product::getProType, 1).orderByDesc(Product::getSoldNumber));
         if (pageList == null || pageList.getSize() <= 0) {
             return Result.error("未找到对应数据");
         }
