@@ -109,7 +109,7 @@ public class WxPayController {
         HashMap<String, String> map = new HashMap<>();
         map.put("body", "随心游产品支付"); // 产品描述
         //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
-        map.put("total_fee", "1"); // 产品价格（单位：分）
+        map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
         log.info("out_trade_no**************************" + orderId);
         map.put("notify_url", "https://you.xiuxiu365.cn:27102/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
