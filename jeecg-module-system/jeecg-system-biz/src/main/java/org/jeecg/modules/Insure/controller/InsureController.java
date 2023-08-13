@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.product.entity.Tag;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -175,6 +176,30 @@ public class InsureController extends JeecgController<Insure, IInsureService> {
     public ModelAndView exportXls(HttpServletRequest request, Insure insure) {
         return super.exportXls(request, insure, Insure.class, "保险");
     }
+
+//	 /**
+//	  *  保存列表通过productId
+//	  *
+//	  * @param productId
+//	  * @return
+//	  */
+//	 @AutoLog(value = "产品标签表-保存列表通过productId")
+//	 @ApiOperation(value="产品标签表-保存列表通过productId", notes="产品标签表-保存列表通过productId")
+//	 @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.POST})
+//	 public Result<String> update(@RequestBody Map<String, Object> map) {
+//		 String proId = (String) map.get("proId");
+//		 List<String> valueList = (List<String>) map.get("value");
+//		 insureService.remove(new LambdaQueryWrapper<Insure>().eq(Insure::getProid,proId));
+//		 if(valueList.size() > 0){
+//			 valueList.forEach(i -> {
+//				 Insure insure = new Insure();
+//				 insure.setProid(proId).setContent(i);
+//				 insure.save(tag);
+//			 });
+//			 return Result.OK("修改成功！");
+//		 }
+//		 return Result.error("编辑失败!");
+//	 }
 
     /**
       * 通过excel导入数据

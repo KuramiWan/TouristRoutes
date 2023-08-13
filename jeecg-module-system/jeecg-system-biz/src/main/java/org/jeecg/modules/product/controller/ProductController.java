@@ -159,6 +159,26 @@ public class ProductController extends JeecgController<Product, IProductService>
     }
 
     /**
+     * 产品表-分页列表查询产品(出售数量降序查询)(景点类型)
+     *
+     * @param
+     * @param pageNo
+     * @param pageSize
+     * @param
+     * @return
+     */
+    //@AutoLog(value = "产品表-分页列表查询产品(出售数量降序查询)(景点类型))
+    @ApiOperation(value = "产品表-分页列表查询产品(出售数量降序查询)(景点类型)", notes = "产品表-分页列表查询产品(出售数量降序查询)(景点类型)")
+    @GetMapping(value = "/products")
+    public Result<IPage<Product>> queryProductPages(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        Page<Product> page = new Page<Product>(pageNo, pageSize);
+        IPage pageList = productService.page(page,new LambdaQueryWrapper<Product>().orderByDesc(Product::getSoldNumber));
+        return Result.OK(pageList);
+    }
+
+    /**
      * 产品表-分页列表查询产品(推荐指数升降序查询)(景点类型)
      *
      * @param
