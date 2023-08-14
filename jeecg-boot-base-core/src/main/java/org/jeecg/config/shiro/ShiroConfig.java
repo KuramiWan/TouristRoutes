@@ -114,6 +114,26 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/strategy/officialStrategy/list", "anon"); // 官方攻略
         filterChainDefinitionMap.put("/strategy/friendStrategy/newList", "anon"); // 游友攻略搜索
         filterChainDefinitionMap.put("/guide/touristGuide/list", "anon"); // 领队导游
+        filterChainDefinitionMap.put("/guide/touristGuide/queryById", "anon"); // 进入领队导游
+        filterChainDefinitionMap.put("/servicecomments/serviceComments/list", "anon");//进入领队导游
+        filterChainDefinitionMap.put("/guide/touristGuide/selectGuideProducts", "anon");//进入领队导游
+        filterChainDefinitionMap.put("core/costDescription/queryByProId", "anon");//进去产品（下面都是知道出新的注释）
+        filterChainDefinitionMap.put("/core/schedule/queryListByProId", "anon");
+        filterChainDefinitionMap.put("/core/journeyPackage/queryByProId", "anon");
+        filterChainDefinitionMap.put("core/batchPackage/queryByProId", "anon");
+        filterChainDefinitionMap.put("/productguide/productGuide/queryByProId", "anon");
+        filterChainDefinitionMap.put("/purchaseNotes/purchaseNotes/queryByProId", "anon");
+        filterChainDefinitionMap.put("/core/task/queryAllByProId", "anon");
+        filterChainDefinitionMap.put("/core/comment/list", "anon");
+        filterChainDefinitionMap.put("/core/costDescription/queryByProId", "anon");
+        filterChainDefinitionMap.put("/core/batchPackage/queryByProId", "anon");
+        filterChainDefinitionMap.put("/core/priceDate/queryByProIds", "anon");
+        filterChainDefinitionMap.put("/core/product/getPurchaseCount", "anon");
+        filterChainDefinitionMap.put("/core/tag/queryByProId", "anon");
+        filterChainDefinitionMap.put("/strategy/officialStrategy/queryById", "anon");//进入官方攻略
+        filterChainDefinitionMap.put("/comment/officialStrategyComment/queryByOfficialId", "anon");
+        filterChainDefinitionMap.put("/strategy/officialStrategy/selectGuides", "anon");
+        filterChainDefinitionMap.put("/help/help/list", "anon");
         //==============================================================================================================
 
 
