@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -67,9 +69,9 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		QueryWrapper<OrdersUnpaid> queryWrapper = QueryGenerator.initQueryWrapper(ordersUnpaid, req.getParameterMap());
+		//QueryWrapper<OrdersUnpaid> queryWrapper = QueryGenerator.initQueryWrapper(ordersUnpaid, req.getParameterMap());
 		Page<OrdersUnpaid> page = new Page<OrdersUnpaid>(pageNo, pageSize);
-		IPage<OrdersUnpaid> pageList = ordersUnpaidService.page(page, queryWrapper);
+		IPage<OrdersUnpaid> pageList = ordersUnpaidService.page(page, new LambdaQueryWrapper<>());
 		return Result.OK(pageList);
 	}
 	
@@ -81,7 +83,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
 	 */
 	@AutoLog(value = "未付款的订单表-添加")
 	@ApiOperation(value="未付款的订单表-添加", notes="未付款的订单表-添加")
-	@RequiresPermissions("orders:orders_unpaid:add")
 	@PostMapping(value = "/add")
 	public Result<String> add(@RequestBody OrdersUnpaid ordersUnpaid) {
 		ordersUnpaidService.save(ordersUnpaid);
@@ -96,7 +97,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
 	 */
 	@AutoLog(value = "未付款的订单表-编辑")
 	@ApiOperation(value="未付款的订单表-编辑", notes="未付款的订单表-编辑")
-	@RequiresPermissions("orders:orders_unpaid:edit")
 	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
 	public Result<String> edit(@RequestBody OrdersUnpaid ordersUnpaid) {
 		ordersUnpaidService.updateById(ordersUnpaid);
@@ -111,7 +111,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
 	 */
 	@AutoLog(value = "未付款的订单表-通过id删除")
 	@ApiOperation(value="未付款的订单表-通过id删除", notes="未付款的订单表-通过id删除")
-	@RequiresPermissions("orders:orders_unpaid:delete")
 	@DeleteMapping(value = "/delete")
 	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
 		ordersUnpaidService.removeById(id);
@@ -126,7 +125,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
 	 */
 	@AutoLog(value = "未付款的订单表-批量删除")
 	@ApiOperation(value="未付款的订单表-批量删除", notes="未付款的订单表-批量删除")
-	@RequiresPermissions("orders:orders_unpaid:deleteBatch")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.ordersUnpaidService.removeByIds(Arrays.asList(ids.split(",")));
@@ -156,7 +154,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     * @param request
     * @param ordersUnpaid
     */
-    @RequiresPermissions("orders:orders_unpaid:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, OrdersUnpaid ordersUnpaid) {
         return super.exportXls(request, ordersUnpaid, OrdersUnpaid.class, "未付款的订单表");
@@ -169,7 +166,6 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     * @param response
     * @return
     */
-    @RequiresPermissions("orders:orders_unpaid:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, OrdersUnpaid.class);
