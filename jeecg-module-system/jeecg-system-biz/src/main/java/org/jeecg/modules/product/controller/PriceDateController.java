@@ -170,20 +170,26 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 		 }
 		 List<PriceDateList> priceDateLists = new ArrayList<PriceDateList>();
 
-		 priceDates.forEach(priceDate -> {
+		 for (PriceDate priceDate : priceDates){
 			 PriceDateList priceDateList = new PriceDateList();
 			 priceDateList.setDateId(priceDate.getId());
 			 DateDetail dateDetail = new DateDetail();
 			 Integer pdMaxMan = priceDate.getPdMaxMan();
 			 Integer pdEnrollment = priceDate.getPdEnrollment();
 			 Date pdDate = priceDate.getPdDate();
-			 if(pdMaxMan == pdEnrollment){
+			 if (pdMaxMan == pdEnrollment) {
 				 priceDateList.setPdFull("已满");
-			 }else {
-			 	priceDateList.setPdFull("可报名");
+			 } else {
+				 priceDateList.setPdFull("可报名");
 			 }
 			 // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
-			 SimpleDateFormat week = new SimpleDateFormat("EEEE",Locale.SIMPLIFIED_CHINESE);
+			 Date date = new Date();
+			 long timestamp = date.getTime();
+			 long realTime = pdDate.getTime();
+			 if (timestamp > realTime) {
+				 continue;
+			 }
+			 SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
 			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
 			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
 			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
@@ -202,7 +208,7 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 					 .setPdPrice(priceDate.getPdPrice())
 					 .setDateDetail(dateDetail);
 			 priceDateLists.add(priceDateList);
-		 });
+		 }
 		 return Result.OK(priceDateLists);
 	 }
 
