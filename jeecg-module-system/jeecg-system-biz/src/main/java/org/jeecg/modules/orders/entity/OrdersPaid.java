@@ -25,7 +25,7 @@ import lombok.experimental.Accessors;
  * @Version: V1.0
  */
 @Data
-@TableName("orders_paid")
+@TableName(value = "orders_paid",autoResultMap = true)
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "orders_paid对象", description = "已付款的订单表")
