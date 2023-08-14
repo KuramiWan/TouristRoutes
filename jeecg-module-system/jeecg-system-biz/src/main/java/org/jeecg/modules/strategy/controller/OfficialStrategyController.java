@@ -13,6 +13,7 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.guide.entity.TouristGuide;
 import org.jeecg.modules.guide.service.ITouristGuideService;
 import org.jeecg.modules.guide.vo.GuideProduct;
+import org.jeecg.modules.help.entity.Help;
 import org.jeecg.modules.product.service.IScheduleService;
 import org.jeecg.modules.productguide.entity.ProductGuide;
 import org.jeecg.modules.strategy.entity.OfficialGuide;
@@ -83,6 +84,24 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
 
         }
 
+    /**
+     * 分页列表查询(后台)
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    //@AutoLog(value = "官方攻略-分页列表查询")
+    @ApiOperation(value = "官方攻略-页列表查询(后台)", notes = "官方攻略-页列表查询(后台)")
+    @GetMapping(value = "/queryList")
+    public Result<IPage<OfficialStrategy>> queryList(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize){
+        Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
+        IPage<OfficialStrategy> pageList = officialStrategyService.page(page);
+        return Result.OK(pageList);
+
+    }
+
 
         /**
          * 添加
@@ -95,7 +114,8 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
         @PostMapping(value = "/add")
         public Result<String> add (@RequestBody OfficialStrategy officialStrategy){
             officialStrategyService.save(officialStrategy);
-            return Result.OK("添加成功！");
+            String id = officialStrategy.getId();
+            return Result.OK("添加成功！",id);
         }
 
         /**
@@ -111,6 +131,26 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
             officialStrategyService.updateById(officialStrategy);
             return Result.OK("编辑成功!");
         }
+
+
+    /**
+     * 保存
+     *
+     * @param officialStrategys
+     * @return
+     */
+    @AutoLog(value = "官方攻略-保存")
+    @ApiOperation(value = "官方攻略-保存", notes = "官方攻略-保存")
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public Result<String> update (@RequestBody List<OfficialStrategy> officialStrategys){
+        if(officialStrategys.size() <= 0){
+            return Result.error("数据为空！无法保存");
+        }
+        for (OfficialStrategy officialStrategy : officialStrategys) {
+            officialStrategyService.updateById(officialStrategy);
+        }
+        return Result.OK("保存成功!");
+    }
 
         /**
          * 通过id删除
