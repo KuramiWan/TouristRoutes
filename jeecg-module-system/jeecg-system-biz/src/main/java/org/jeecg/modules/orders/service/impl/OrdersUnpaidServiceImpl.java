@@ -392,4 +392,15 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
         return detailsPage;
     }
 
+    @Override
+    public IPage<OrdersUnpaidDetails> getOrderAllUnpaid(Page<OrdersUnpaid> page) {
+        return null;
+    }
+
+    @Override
+    public IPage<OrdersUnpaidDetails> getAllOrderPaid(Page<OrdersUnpaid> page) {
+        return null;
+    }
+
+
 }

@@ -121,6 +121,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/core/schedule/queryListByProId", "anon");
         filterChainDefinitionMap.put("/core/journeyPackage/queryByProId", "anon");
         filterChainDefinitionMap.put("core/batchPackage/queryByProId", "anon");
+        filterChainDefinitionMap.put("/core/product/productListByRec", "anon"); // 景点按照推荐指数排序
         filterChainDefinitionMap.put("/productguide/productGuide/queryByProId", "anon");
         filterChainDefinitionMap.put("/purchaseNotes/purchaseNotes/queryByProId", "anon");
         filterChainDefinitionMap.put("/core/task/queryAllByProId", "anon");

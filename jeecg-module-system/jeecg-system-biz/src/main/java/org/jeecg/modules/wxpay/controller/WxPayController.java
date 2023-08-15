@@ -1,6 +1,7 @@
 package org.jeecg.modules.wxpay.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,6 +17,8 @@ import org.jeecg.modules.orders.mapper.OrdersPaidMapper;
 import org.jeecg.modules.orders.mapper.OrdersUnpaidMapper;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.ordersFee.entity.OrdersFee;
+import org.jeecg.modules.ordersFee.service.IOrdersFeeService;
 import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.mapper.ProductMapper;
@@ -39,10 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author QiaoQi
@@ -68,15 +68,36 @@ public class WxPayController {
     private IPriceDateService priceDateService;
 
     @Autowired
+    private IOrdersFeeService ordersFeeService;
+
+    @Autowired
     private IWxClientUserinfoService wxClientUserinfoService;
 
     private static String DATE_ID = "";
+
+    private static String JOURNEY_PACKAGE_NAME;
+
+    private static Double JOURNEY_PACKAGE_PRICE_ADULT;
+
+    private static Double JOURNEY_PACKAGE_PRICE_CHILD;
+
+    private static List<String> INSURE_NAME;
+
+    private static List<String> INSURE_PRICE;
 
     @PostMapping("/getOrder")
     @Transactional
     public Result<Map<String, String>> getOrder(HttpServletRequest http, @RequestBody OrdersUnpaid ordersInfo) throws Exception {
         String productId = http.getParameter("productId");
         DATE_ID = http.getParameter("dateId");
+
+        // 持久化费用明细(防止套餐内容和价格修改，保险修改导致订单数据不一致)
+        JOURNEY_PACKAGE_NAME = http.getParameter("journeyPackageName");
+        JOURNEY_PACKAGE_PRICE_ADULT = Double.valueOf(http.getParameter("journeyPackagePriceAdult"));
+        JOURNEY_PACKAGE_PRICE_CHILD = Double.valueOf(http.getParameter("journeyPackagePriceChild"));
+        INSURE_NAME = Collections.singletonList(http.getParameter("insureName"));
+        INSURE_PRICE = Collections.singletonList(http.getParameter("insurePrice"));
+
         String openid = http.getHeader("openid");
         log.info("ordersInfo===========================" + ordersInfo);
         //log.info("productId================================" + productId);
@@ -299,6 +320,19 @@ public class WxPayController {
                     }
                 }
                 priceDateService.updateById(priceDate);
+
+                // 存一份费用明细到orders_fee表
+                OrdersFee ordersFee = new OrdersFee();
+                String ordersPaidId = ordersPaid.getId();
+
+                ordersFee.setOrdersPaidId(ordersPaidId);
+                ordersFee.setPackageName(JOURNEY_PACKAGE_NAME);
+                ordersFee.setPackageFeeAdult(JOURNEY_PACKAGE_PRICE_ADULT);
+                ordersFee.setPackageFeeChild(JOURNEY_PACKAGE_PRICE_CHILD);
+                ordersFee.setInsureName(INSURE_NAME);
+                ordersFee.setInsureFee(INSURE_PRICE);
+
+                ordersFeeService.save(ordersFee);
 
                 // 通知微信官方接口，业务完成
                 log.info("微信支付回调成功订单号: {}", notifyMap);
