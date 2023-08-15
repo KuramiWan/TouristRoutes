@@ -16,6 +16,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.orders.entity.OrdersPaid;
+import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.orders.service.IOrdersPaidService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,11 +24,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
 import org.jeecg.modules.orders.vo.OrderProducts;
+import org.jeecg.modules.orders.vo.OrdersPaidDetails;
+import org.jeecg.modules.orders.vo.OrdersUnpaidDetails;
 import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.service.IPriceDateService;
 import org.jeecg.modules.product.service.IProductService;
+import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.service.IWxClientUserinfoService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -61,10 +67,16 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
     private IOrdersPaidService ordersPaidService;
 
     @Autowired
+    private IOrdersUnpaidService ordersUnpaidService;
+
+    @Autowired
     private IProductService productService;
 
     @Autowired
     private IPriceDateService priceDateService;
+
+    @Autowired
+    private IWxClientUserinfoService wxClientUserinfoService;
 
     /**
      * 分页列表查询
@@ -87,6 +99,86 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
         IPage<OrdersPaid> pageList = ordersPaidService.page(page, queryWrapper);
         return Result.OK(pageList);
     }
+
+
+    /**
+     * 后台分页查询所有待确认付款订单信息
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "后台分页查询所有待确认付款订单信息-分页列表查询", notes = "后台分页查询所有待确认付款订单信息-分页列表查询")
+    @GetMapping(value = "/listAllConfirmPaid")
+    public Result<IPage<OrdersPaidDetails>> listAllConfirmPaid(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+
+        Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToConfirm(page, null);
+        return Result.OK(unpaidDetails);
+    }
+
+
+    /**
+     * 后台分页查询所有待出行付款订单信息
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "后台分页查询所有待出行付款订单信息-分页列表查询", notes = "后台分页查询所有待出行付款订单信息-分页列表查询")
+    @GetMapping(value = "/listAllTravelPaid")
+    public Result<IPage<OrdersPaidDetails>> listAllTravelPaid(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+
+        Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToTravel(page, null);
+        return Result.OK(unpaidDetails);
+    }
+
+
+    /**
+     * 后台分页查询所有待评价付款订单信息
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "后台分页查询所有待评价付款订单信息-分页列表查询", notes = "后台分页查询所有待评价付款订单信息-分页列表查询")
+    @GetMapping(value = "/listAllCommentPaid")
+    public Result<IPage<OrdersPaidDetails>> listAllCommentPaid(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+
+        Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToComment(page, null);
+        return Result.OK(unpaidDetails);
+    }
+
+    /**
+     * 后台分页查询所有待评价付款订单信息
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "后台分页查询所有待评价付款订单信息-分页列表查询", notes = "后台分页查询所有待评价付款订单信息-分页列表查询")
+    @GetMapping(value = "/listAllOverPaid")
+    public Result<IPage<OrdersPaidDetails>> listAllOverPaid(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+
+        Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToOver(page, null);
+        return Result.OK(unpaidDetails);
+    }
+
 
     /**
      * 添加
