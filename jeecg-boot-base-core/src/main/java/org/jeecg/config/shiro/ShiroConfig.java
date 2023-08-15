@@ -126,6 +126,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/purchaseNotes/purchaseNotes/queryByProId", "anon");
         filterChainDefinitionMap.put("/core/task/queryAllByProId", "anon");
         filterChainDefinitionMap.put("/core/comment/list", "anon");
+        filterChainDefinitionMap.put("/strategy/officialStrategy/queryList", "anon");
         filterChainDefinitionMap.put("/core/costDescription/queryByProId", "anon");
         filterChainDefinitionMap.put("/core/batchPackage/queryByProId", "anon");
         filterChainDefinitionMap.put("/core/priceDate/queryByProIds", "anon");
