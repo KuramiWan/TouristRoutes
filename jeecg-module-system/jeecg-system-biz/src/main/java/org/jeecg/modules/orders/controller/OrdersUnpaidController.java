@@ -66,6 +66,26 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     @Autowired
     private IWxClientUserinfoService wxClientUserinfoService;
 
+
+    /**
+     * 后台分页查询所有未付款订单信息
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "后台分页查询所有未付款订单信息-分页列表查询", notes = "后台分页查询所有未付款订单信息-分页列表查询")
+    @GetMapping(value = "/listAllUnpaid")
+    public Result<IPage<OrdersUnpaidDetails>> listAllUnpaid(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+
+        Page<OrdersUnpaid> page = new Page<OrdersUnpaid>(pageNo, pageSize);
+        IPage<OrdersUnpaidDetails> unpaidDetails = ordersUnpaidService.getOrderUnpaid(page, null);
+        return Result.OK(unpaidDetails);
+    }
+
     /**
      * 分页列表查询
      *
@@ -119,7 +139,7 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     }
 
     /**
-     * 分页列表查询未付款的订单表
+     * 分页列表查询未付款的订单表(废弃)
      *
      * @param pageNo
      * @param pageSize
