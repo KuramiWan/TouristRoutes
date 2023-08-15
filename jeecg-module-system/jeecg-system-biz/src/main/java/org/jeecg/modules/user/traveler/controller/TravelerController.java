@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.user.traveler.entity.Traveler;
 import org.jeecg.modules.user.traveler.service.TravelerService;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +53,39 @@ public class TravelerController {
     @GetMapping("getList")
     public Result selectAll(Page<Traveler> page, Traveler traveler) {
         return Result.ok(this.travelerService.page(page, new QueryWrapper<>(traveler)));
+    }
+
+    /**
+     *   查询
+     *
+     * @param
+     * @return
+     */
+    @AutoLog(value = "出行人-查询")
+    @ApiOperation(value="出行人-查询", notes="出行人-查询")
+    @GetMapping(value = "/queryById")
+    public Result<Traveler> queryById(@RequestParam(name="id",required = true) String id) {
+        Traveler traveler = travelerService.getOne(new LambdaQueryWrapper<Traveler>().eq(Traveler::getId, id));
+        return Result.OK(traveler);
+    }
+
+    /**
+     *   根据Ids查询
+     *
+     * @param
+     * @return
+     */
+    @AutoLog(value = "出行人-根据Ids查询")
+    @ApiOperation(value="出行人-根据Ids查询", notes="根据Ids查询-查询")
+    @GetMapping(value = "/queryListById")
+    public Result<List<Traveler>> queryListById(@RequestParam(name="ids",required = true) List<String> ids) {
+        List<Traveler> travelers = new ArrayList<>();
+        for (String id : ids) {
+            Traveler traveler = travelerService.getById(id);
+            travelers.add(traveler);
+        }
+
+        return Result.OK(travelers);
     }
 
     /**

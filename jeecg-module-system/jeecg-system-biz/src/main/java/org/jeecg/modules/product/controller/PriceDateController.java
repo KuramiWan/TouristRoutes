@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -23,6 +24,7 @@ import org.jeecg.modules.product.entity.PriceDate;
 import org.jeecg.modules.product.mapper.PriceDateMapper;
 import org.jeecg.modules.product.service.IPriceDateService;
 import org.jeecg.modules.product.vo.DateDetail;
+import org.jeecg.modules.product.vo.DateDetail2;
 import org.jeecg.modules.product.vo.PriceDateList;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -31,6 +33,7 @@ import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -211,6 +214,72 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 		 }
 		 return Result.OK(priceDateLists);
 	 }
+
+	 /**
+	  * 通过proId查询(订单表)
+	  *
+	  * @param proId
+	  * @return
+	  */
+	 //@AutoLog(value = "每天的产品价格表-通过proId批量查询(订单表)")
+	 @ApiOperation(value="每天的产品价格表-通过proId查询(订单表)", notes="每天的产品价格表-通过proId查询(订单表)")
+	 @GetMapping(value = "/queryByProId")
+	 public Result<PriceDateList> queryByProId(@RequestParam(name="proId",required=true) String proId,
+	@RequestParam(name="startTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date startTime,
+	@RequestParam(name="endTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date endTime) {
+		 PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate,startTime));
+		 if(priceDate  == null) {
+			 return Result.error("未找到对应数据");
+		 }
+
+			 PriceDateList priceDateList = new PriceDateList();
+			 priceDateList.setDateId(priceDate.getId());
+			 DateDetail dateDetail = new DateDetail();
+		 	 DateDetail2 dateDetail2 =new DateDetail2();
+			 Integer pdMaxMan = priceDate.getPdMaxMan();
+			 Integer pdEnrollment = priceDate.getPdEnrollment();
+			 Date pdDate = priceDate.getPdDate();
+			 if (pdMaxMan == pdEnrollment) {
+				 priceDateList.setPdFull("已满");
+			 } else {
+				 priceDateList.setPdFull("可报名");
+			 }
+			 // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
+			 Date date = new Date();
+			 long timestamp = date.getTime();
+			 long realTime = pdDate.getTime();
+			 SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
+			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
+			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
+			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
+			 String yearM = ruler1.format(pdDate);
+			 String year = ruler2.format(pdDate);
+			 String weekOne = week.format(pdDate);
+			 String day = ruler3.format(pdDate);
+
+			 String MonD = ruler1.format(endTime);
+			 String year2 = ruler2.format(endTime);
+			 String weekOne2 = week.format(endTime);
+			 String day2 = ruler3.format(endTime);
+			 dateDetail.setDate(yearM)
+					 .setYear(year)
+					 .setDay(day)
+					 .setWeek(weekOne);
+			 dateDetail2.setDate(MonD)
+					 .setYear(year2)
+					 .setDay(day2)
+					 .setWeek(weekOne2);
+
+			 priceDateList.setProId(priceDate.getProId())
+					 .setPdEnrollment(priceDate.getPdEnrollment())
+					 .setPdMaxMan(priceDate.getPdMaxMan())
+					 .setPdPrice(priceDate.getPdPrice())
+					 .setDateDetail(dateDetail)
+					 .setDateDetail2(dateDetail2);
+
+		 return Result.OK(priceDateList);
+	 }
+
 
     /**
     * 导出excel

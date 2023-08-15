@@ -155,6 +155,22 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     }
 
     /**
+     * 取消订单（状态为-1）
+     *
+     * @param id
+     * @return
+     */
+    @AutoLog(value = "未付款的订单表-取消订单（状态为-1）")
+    @ApiOperation(value = "未付款的订单表-取消订单（状态为-1）", notes = "未付款的订单表-取消订单（状态为-1）")
+    @PostMapping(value = "/editUnOrder")
+    public Result<String> editUnOrder(@RequestParam(name = "id", defaultValue = "1") String id) {
+        OrdersUnpaid ordersUnpaid = ordersUnpaidService.getById(id);
+        ordersUnpaid.setStatus(-1);
+        ordersUnpaidService.updateById(ordersUnpaid);
+        return Result.OK("更新成成功！");
+    }
+
+    /**
      * 编辑
      *
      * @param ordersUnpaid

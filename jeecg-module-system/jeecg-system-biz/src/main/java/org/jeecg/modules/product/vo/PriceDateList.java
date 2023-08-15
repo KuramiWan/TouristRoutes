@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.auth.In;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +19,8 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @data 2023/7/22 14:42
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 public class PriceDateList {
@@ -48,4 +52,6 @@ public class PriceDateList {
      * 当天最多可报名人数
      */
     private Integer pdMaxMan;
+
+    private DateDetail2 dateDetail2;
 }
