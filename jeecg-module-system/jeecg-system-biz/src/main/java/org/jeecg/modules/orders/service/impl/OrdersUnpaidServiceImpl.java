@@ -171,7 +171,7 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Override
     public IPage<OrdersPaidDetails> getOrderPaidToConfirm(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的数据
-        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, 1));
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, '1'));
         if (ordersPaidPage.getRecords() == null) {
             return null;
         }
@@ -227,7 +227,7 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Override
     public IPage<OrdersPaidDetails> getOrderPaidToTravel(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的数据
-        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, 2));
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, '2'));
         if (ordersPaidPage.getRecords() == null) {
             return null;
         }
@@ -283,7 +283,7 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Override
     public IPage<OrdersPaidDetails> getOrderPaidToComment(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的数据
-        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, 3));
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, '3'));
         if (ordersPaidPage.getRecords() == null) {
             return null;
         }
@@ -339,7 +339,7 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Override
     public IPage<OrdersPaidDetails> getOrderPaidToOver(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的数据
-        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, 4));
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersPaid>().eq(OrdersPaid::getUserId, userinfo.getId()).eq(OrdersPaid::getStatus, '4'));
         if (ordersPaidPage.getRecords() == null) {
             return null;
         }

@@ -112,11 +112,13 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
     @GetMapping(value = "/listAllConfirmPaid")
     public Result<IPage<OrdersPaidDetails>> listAllConfirmPaid(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestHeader(name = "openid") String openid
     ) {
-
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
         Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
-        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToConfirm(page, null);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToConfirm(page, userinfo);
         return Result.OK(unpaidDetails);
     }
 
@@ -132,11 +134,13 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
     @GetMapping(value = "/listAllTravelPaid")
     public Result<IPage<OrdersPaidDetails>> listAllTravelPaid(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestHeader(name = "openid") String openid
     ) {
-
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
         Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
-        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToTravel(page, null);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToTravel(page, userinfo);
         return Result.OK(unpaidDetails);
     }
 
@@ -152,30 +156,34 @@ public class OrdersPaidController extends JeecgController<OrdersPaid, IOrdersPai
     @GetMapping(value = "/listAllCommentPaid")
     public Result<IPage<OrdersPaidDetails>> listAllCommentPaid(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestHeader(name = "openid") String openid
     ) {
-
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
         Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
-        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToComment(page, null);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToComment(page, userinfo);
         return Result.OK(unpaidDetails);
     }
 
     /**
-     * 后台分页查询所有待评价付款订单信息
+     * 后台分页查询所有已结束付款订单信息
      *
      * @param pageNo
      * @param pageSize
      * @return
      */
-    @ApiOperation(value = "后台分页查询所有待评价付款订单信息-分页列表查询", notes = "后台分页查询所有待评价付款订单信息-分页列表查询")
+    @ApiOperation(value = "后台分页查询所有已结束付款订单信息-分页列表查询", notes = "后台分页查询所有已结束付款订单信息-分页列表查询")
     @GetMapping(value = "/listAllOverPaid")
     public Result<IPage<OrdersPaidDetails>> listAllOverPaid(
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestHeader(name = "openid") String openid
     ) {
-
+        LambdaQueryWrapper<WxClientUserinfo> wxClientUserinfoLambdaQueryWrapper = new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getOpenid, openid);
+        WxClientUserinfo userinfo = wxClientUserinfoService.getOne(wxClientUserinfoLambdaQueryWrapper);
         Page<OrdersPaid> page = new Page<OrdersPaid>(pageNo, pageSize);
-        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToOver(page, null);
+        IPage<OrdersPaidDetails> unpaidDetails = ordersUnpaidService.getOrderPaidToOver(page, userinfo);
         return Result.OK(unpaidDetails);
     }
 
