@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.product.entity.CostDescription;
 import org.jeecg.modules.productService.entity.ProductService;
 import org.jeecg.modules.productService.service.IProductServiceService;
 
@@ -102,6 +103,32 @@ public class ProductServiceController extends JeecgController<ProductService, IP
 		productServiceService.updateById(productService);
 		return Result.OK("编辑成功!");
 	}
+
+	 /**
+	  *  编辑/修改客服电话
+	  *
+	  * @param map
+	  * @return
+	  */
+	 @AutoLog(value = "费用说明-修改客服电话")
+	 @ApiOperation(value="费用说明-修改客服电话", notes="费用说明-修改客服电话")
+	 @RequestMapping(value = "/update", method = {RequestMethod.POST})
+	 public Result<String> update(@RequestBody Map<String, Object> map) {
+		 String proId = (String) map.get("proId");
+		 String phone = (String) map.get("phone");
+
+		 ProductService service = productServiceService.getOne(new LambdaQueryWrapper<ProductService>().eq(ProductService::getProId, proId));
+		 if (service == null){
+			 service = new ProductService();
+			 service.setProId(proId);
+		 }
+		 service.setPhone(phone);
+
+		 productServiceService.remove(new LambdaQueryWrapper<ProductService>().eq(ProductService::getProId,proId));
+		 productServiceService.save(service);
+
+		 return Result.OK("编辑成功!");
+	 }
 	
 	/**
 	 *   通过id删除
