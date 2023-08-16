@@ -228,9 +228,6 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	@RequestParam(name="startTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date startTime,
 	@RequestParam(name="endTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date endTime) {
 		 PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate,startTime));
-		 SimpleDateFormat timeRuler = new SimpleDateFormat("yyyy-MM-dd");
-		 String startTime2 = timeRuler.format(startTime);
-		 String endTime2 = timeRuler.format(endTime);
 		 if(priceDate  == null) {
 			 return Result.error("未找到对应数据");
 		 }
@@ -260,10 +257,10 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 			 String weekOne = week.format(pdDate);
 			 String day = ruler3.format(pdDate);
 
-			 String MonD = ruler1.format(endTime2);
-			 String year2 = ruler2.format(endTime2);
-			 String weekOne2 = week.format(endTime2);
-			 String day2 = ruler3.format(endTime2);
+			 String MonD = ruler1.format(endTime);
+			 String year2 = ruler2.format(endTime);
+			 String weekOne2 = week.format(endTime);
+			 String day2 = ruler3.format(endTime);
 			 dateDetail.setDate(yearM)
 					 .setYear(year)
 					 .setDay(day)
