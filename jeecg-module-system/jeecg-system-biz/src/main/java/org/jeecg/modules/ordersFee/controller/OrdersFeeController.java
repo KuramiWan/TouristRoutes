@@ -9,9 +9,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.orders.entity.OrdersPaid;
+import org.jeecg.modules.orders.service.IOrdersPaidService;
+import org.jeecg.modules.orders.service.IOrdersUnpaidService;
 import org.jeecg.modules.ordersFee.entity.OrdersFee;
 import org.jeecg.modules.ordersFee.service.IOrdersFeeService;
 
@@ -50,6 +55,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public class OrdersFeeController extends JeecgController<OrdersFee, IOrdersFeeService> {
 	@Autowired
 	private IOrdersFeeService ordersFeeService;
+
+	@Autowired
+	private IOrdersUnpaidService ordersUnpaidService;
+
+	@Autowired
+	private IOrdersPaidService ordersPaidService;
 	
 	/**
 	 * 分页列表查询
@@ -145,6 +156,41 @@ public class OrdersFeeController extends JeecgController<OrdersFee, IOrdersFeeSe
 		}
 		return Result.OK(ordersFee);
 	}
+
+	 /**
+	  * 通过paidId查询
+	  *
+	  * @param paidId
+	  * @return
+	  */
+	 //@AutoLog(value = "订单的费用明细-通过PaidId查询")
+	 @ApiOperation(value="订单的费用明细-通过PaidId查询", notes="订单的费用明细-通过PaidId查询")
+	 @GetMapping(value = "/queryByOrderPaidId")
+	 public Result<OrdersFee> queryByOrderPaidId(@RequestParam(name="paidId",required=true) String paidId) {
+		 OrdersFee ordersFee = ordersFeeService.getOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId,paidId));
+		 if(ordersFee==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.OK(ordersFee);
+	 }
+
+	 /**
+	  * 通过unPaidId查询
+	  *
+	  * @param unPaidId
+	  * @return
+	  */
+	 //@AutoLog(value = "订单的费用明细-通过unPaidId查询")
+	 @ApiOperation(value="订单的费用明细-通过unPaidId查询", notes="订单的费用明细-通过unPaidId查询")
+	 @GetMapping(value = "/queryByOrderUnPaidId")
+	 public Result<OrdersFee> queryByOrderUnPaidId(@RequestParam(name="unPaidId",required=true) String unPaidId) {
+		 OrdersFee ordersFee = ordersFeeService.getOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId,unPaidId));
+		 if(ordersFee==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.OK(ordersFee);
+	 }
+
 
     /**
     * 导出excel
