@@ -23,7 +23,7 @@
       <module name="jeecg-boot-parent" options="-parameters" />
       <module name="jeecg-module-demo" options="-parameters" />
       <module name="jeecg-module-system" options="" />
-      <module name="jeecg-system-api" options="-parameters" />
+      <module name="jeecg-system-api" options="" />
       <module name="jeecg-system-biz" options="-parameters" />
       <module name="jeecg-system-cloud-api" options="-parameters" />
       <module name="jeecg-system-local-api" options="-parameters" />
