@@ -227,10 +227,10 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
 	 public Result<PriceDateList> queryByProId(@RequestParam(name="proId",required=true) String proId,
 	@RequestParam(name="startTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date startTime,
 	@RequestParam(name="endTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date endTime) {
+		 PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate,startTime));
 		 SimpleDateFormat timeRuler = new SimpleDateFormat("yyyy-MM-dd");
 		 String startTime2 = timeRuler.format(startTime);
 		 String endTime2 = timeRuler.format(endTime);
-		 PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate,startTime2));
 		 if(priceDate  == null) {
 			 return Result.error("未找到对应数据");
 		 }
