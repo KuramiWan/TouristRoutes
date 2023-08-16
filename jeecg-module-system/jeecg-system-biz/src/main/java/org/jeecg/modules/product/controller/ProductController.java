@@ -109,7 +109,7 @@ public class ProductController extends JeecgController<Product, IProductService>
             pageList = productService.page(page, lambdaQueryWrapper);
         } else {
             System.out.println("下");
-            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 2));
+            pageList = productService.page(page, new LambdaQueryWrapper<Product>().eq(Product::getProType, 2).orderByDesc(Product::getId));
         }
 
         List<Product> records = pageList.getRecords();
