@@ -105,7 +105,7 @@ public class ProductController extends JeecgController<Product, IProductService>
         if (proTitle != null && proTitle != "") {
             System.out.println("上");
             LambdaQueryWrapper<Product> lambdaQueryWrapper = new LambdaQueryWrapper<Product>();
-            lambdaQueryWrapper.like(Product::getProTitle, proTitle).eq(Product::getProType, 2);
+            lambdaQueryWrapper.like(Product::getProTitle, proTitle).eq(Product::getProType, 2).orderByDesc(Product::getId);
             pageList = productService.page(page, lambdaQueryWrapper);
         } else {
             System.out.println("下");
