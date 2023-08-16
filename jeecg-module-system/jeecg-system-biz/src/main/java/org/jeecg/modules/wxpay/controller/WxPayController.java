@@ -95,8 +95,14 @@ public class WxPayController {
         JOURNEY_PACKAGE_NAME = http.getParameter("journeyPackageName");
         JOURNEY_PACKAGE_PRICE_ADULT = Double.valueOf(http.getParameter("journeyPackagePriceAdult"));
         JOURNEY_PACKAGE_PRICE_CHILD = Double.valueOf(http.getParameter("journeyPackagePriceChild"));
-        INSURE_NAME = Collections.singletonList(http.getParameter("insureName"));
-        INSURE_PRICE = Collections.singletonList(http.getParameter("insurePrice"));
+        INSURE_NAME = Arrays.asList(http.getParameter("insureName").split(","));
+        INSURE_PRICE = Arrays.asList(http.getParameter("insurePrice").split(","));
+
+        log.info("journeyPackageName===========================" + JOURNEY_PACKAGE_NAME);
+        log.info("journeyPackagePriceAdult===========================" + JOURNEY_PACKAGE_PRICE_ADULT);
+        log.info("journeyPackagePriceChild===========================" + JOURNEY_PACKAGE_PRICE_CHILD);
+        log.info("insureName===========================" + INSURE_NAME);
+        log.info("insurePrice===========================" + INSURE_PRICE);
 
         String openid = http.getHeader("openid");
         log.info("ordersInfo===========================" + ordersInfo);
@@ -130,7 +136,8 @@ public class WxPayController {
         HashMap<String, String> map = new HashMap<>();
         map.put("body", "随心游产品支付"); // 产品描述
         //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
-        map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
+        //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
+        map.put("total_fee", "1"); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
         log.info("out_trade_no**************************" + orderId);
         map.put("notify_url", "https://you.xiuxiu365.cn:27102/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
@@ -299,8 +306,7 @@ public class WxPayController {
                         .setPaidMethod("微信支付")
                         .setInsureId(insureId)
                         .setNote(note)
-                        .setStatus(1)
-                        .setCreateTime(date);
+                        .setStatus(1);
                 ordersPaidService.save(ordersPaid);
                 log.info("productId=====================" + productId);
                 // 该产品的购买数量+1
