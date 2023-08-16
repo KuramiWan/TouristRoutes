@@ -1,5 +1,6 @@
 package org.jeecg.modules.product.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,249 +45,253 @@ import io.swagger.annotations.ApiOperation;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
- /**
+/**
  * @Description: 每天的产品价格表
  * @Author: jeecg-boot
- * @Date:   2023-07-14
+ * @Date: 2023-07-14
  * @Version: V1.0
  */
-@Api(tags="每天的产品价格表")
+@Api(tags = "每天的产品价格表")
 @RestController
 @RequestMapping("/core/priceDate")
 @Slf4j
 public class PriceDateController extends JeecgController<PriceDate, IPriceDateService> {
-	@Autowired
-	private IPriceDateService priceDateService;
+    @Autowired
+    private IPriceDateService priceDateService;
 
-	@Autowired
-	private PriceDateMapper priceDateMapper;
-	
-	/**
-	 * 分页列表查询
-	 *
-	 * @param priceDate
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
-	//@AutoLog(value = "每天的产品价格表-分页列表查询")
-	@ApiOperation(value="每天的产品价格表-分页列表查询", notes="每天的产品价格表-分页列表查询")
-	@GetMapping(value = "/list")
-	public Result<IPage<PriceDate>> queryPageList(PriceDate priceDate,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<PriceDate> queryWrapper = QueryGenerator.initQueryWrapper(priceDate, req.getParameterMap());
-		Page<PriceDate> page = new Page<PriceDate>(pageNo, pageSize);
-		IPage<PriceDate> pageList = priceDateService.page(page, queryWrapper);
-		return Result.OK(pageList);
-	}
-	
-	/**
-	 *   添加
-	 *
-	 * @param priceDate
-	 * @return
-	 */
-	@AutoLog(value = "每天的产品价格表-添加")
-	@ApiOperation(value="每天的产品价格表-添加", notes="每天的产品价格表-添加")
-	@PostMapping(value = "/add")
-	public Result<String> add(@RequestBody PriceDate priceDate) {
-		priceDateService.save(priceDate);
-		return Result.OK("添加成功！");
-	}
-	
-	/**
-	 *  编辑
-	 *
-	 * @param priceDate
-	 * @return
-	 */
-	@AutoLog(value = "每天的产品价格表-编辑")
-	@ApiOperation(value="每天的产品价格表-编辑", notes="每天的产品价格表-编辑")
-	@RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
-	public Result<String> edit(@RequestBody PriceDate priceDate) {
-		priceDateService.updateById(priceDate);
-		return Result.OK("编辑成功!");
-	}
-	
-	/**
-	 *   通过id删除
-	 *
-	 * @param id
-	 * @return
-	 */
-	@AutoLog(value = "每天的产品价格表-通过id删除")
-	@ApiOperation(value="每天的产品价格表-通过id删除", notes="每天的产品价格表-通过id删除")
-	@DeleteMapping(value = "/delete")
-	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		priceDateService.removeById(id);
-		return Result.OK("删除成功!");
-	}
+    @Autowired
+    private PriceDateMapper priceDateMapper;
 
-	/**
-	 *  批量删除
-	 *
-	 * @param ids
-	 * @return
-	 */
-	@AutoLog(value = "每天的产品价格表-批量删除")
-	@ApiOperation(value="每天的产品价格表-批量删除", notes="每天的产品价格表-批量删除")
-	@DeleteMapping(value = "/deleteBatch")
-	public Result<String> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		this.priceDateService.removeByIds(Arrays.asList(ids.split(",")));
-		return Result.OK("批量删除成功!");
-	}
-	
-	/**
-	 * 通过id查询
-	 *
-	 * @param id
-	 * @return
-	 */
-	//@AutoLog(value = "每天的产品价格表-通过id查询")
-	@ApiOperation(value="每天的产品价格表-通过id查询", notes="每天的产品价格表-通过id查询")
-	@GetMapping(value = "/queryById")
-	public Result<PriceDate> queryById(@RequestParam(name="id",required=true) String id) {
-		PriceDate priceDate = priceDateService.getById(id);
-		if(priceDate==null) {
-			return Result.error("未找到对应数据");
-		}
-		return Result.OK(priceDate);
-	}
+    /**
+     * 分页列表查询
+     *
+     * @param priceDate
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    //@AutoLog(value = "每天的产品价格表-分页列表查询")
+    @ApiOperation(value = "每天的产品价格表-分页列表查询", notes = "每天的产品价格表-分页列表查询")
+    @GetMapping(value = "/list")
+    public Result<IPage<PriceDate>> queryPageList(PriceDate priceDate,
+                                                  @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                  HttpServletRequest req) {
+        QueryWrapper<PriceDate> queryWrapper = QueryGenerator.initQueryWrapper(priceDate, req.getParameterMap());
+        Page<PriceDate> page = new Page<PriceDate>(pageNo, pageSize);
+        IPage<PriceDate> pageList = priceDateService.page(page, queryWrapper);
+        return Result.OK(pageList);
+    }
 
+    /**
+     * 添加
+     *
+     * @param priceDate
+     * @return
+     */
+    @AutoLog(value = "每天的产品价格表-添加")
+    @ApiOperation(value = "每天的产品价格表-添加", notes = "每天的产品价格表-添加")
+    @PostMapping(value = "/add")
+    public Result<String> add(@RequestBody PriceDate priceDate) {
+        priceDateService.save(priceDate);
+        return Result.OK("添加成功！");
+    }
 
-	 /**
-	  * 通过proId批量查询
-	  *
-	  * @param proId
-	  * @return
-	  */
-	 //@AutoLog(value = "每天的产品价格表-通过proId批量查询")
-	 @ApiOperation(value="每天的产品价格表-通过proId批量查询", notes="每天的产品价格表-通过proId批量查询")
-	 @GetMapping(value = "/queryByProIds")
-	 public Result<List<PriceDateList>> queryByProIds(@RequestParam(name="proId",required=true) String proId) {
-		 List<PriceDate> priceDates = priceDateMapper.selectList(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId));
-		 if(priceDates==null) {
-			 return Result.error("未找到对应数据");
-		 }
-		 List<PriceDateList> priceDateLists = new ArrayList<PriceDateList>();
+    /**
+     * 编辑
+     *
+     * @param priceDate
+     * @return
+     */
+    @AutoLog(value = "每天的产品价格表-编辑")
+    @ApiOperation(value = "每天的产品价格表-编辑", notes = "每天的产品价格表-编辑")
+    @RequestMapping(value = "/edit", method = {RequestMethod.PUT, RequestMethod.POST})
+    public Result<String> edit(@RequestBody PriceDate priceDate) {
+        priceDateService.updateById(priceDate);
+        return Result.OK("编辑成功!");
+    }
 
-		 for (PriceDate priceDate : priceDates){
-			 PriceDateList priceDateList = new PriceDateList();
-			 priceDateList.setDateId(priceDate.getId());
-			 DateDetail dateDetail = new DateDetail();
-			 Integer pdMaxMan = priceDate.getPdMaxMan();
-			 Integer pdEnrollment = priceDate.getPdEnrollment();
-			 Date pdDate = priceDate.getPdDate();
-			 if (pdMaxMan == pdEnrollment) {
-				 priceDateList.setPdFull("已满");
-			 } else {
-				 priceDateList.setPdFull("可报名");
-			 }
-			 // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
-			 Date date = new Date();
-			 long timestamp = date.getTime();
-			 long realTime = pdDate.getTime();
-			 if (timestamp > realTime) {
-				 continue;
-			 }
-			 SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
-			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
-			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
-			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
-			 String yearM = ruler1.format(pdDate);
-			 String year = ruler2.format(pdDate);
-			 String weekOne = week.format(pdDate);
-			 String day = ruler3.format(pdDate);
-			 dateDetail.setDate(yearM)
-					 .setYear(year)
-					 .setDay(day)
-					 .setWeek(weekOne);
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    @AutoLog(value = "每天的产品价格表-通过id删除")
+    @ApiOperation(value = "每天的产品价格表-通过id删除", notes = "每天的产品价格表-通过id删除")
+    @DeleteMapping(value = "/delete")
+    public Result<String> delete(@RequestParam(name = "id", required = true) String id) {
+        priceDateService.removeById(id);
+        return Result.OK("删除成功!");
+    }
 
-			 priceDateList.setProId(priceDate.getProId())
-					 .setPdEnrollment(priceDate.getPdEnrollment())
-					 .setPdMaxMan(priceDate.getPdMaxMan())
-					 .setPdPrice(priceDate.getPdPrice())
-					 .setDateDetail(dateDetail);
-			 priceDateLists.add(priceDateList);
-		 }
-		 return Result.OK(priceDateLists);
-	 }
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    @AutoLog(value = "每天的产品价格表-批量删除")
+    @ApiOperation(value = "每天的产品价格表-批量删除", notes = "每天的产品价格表-批量删除")
+    @DeleteMapping(value = "/deleteBatch")
+    public Result<String> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
+        this.priceDateService.removeByIds(Arrays.asList(ids.split(",")));
+        return Result.OK("批量删除成功!");
+    }
 
-	 /**
-	  * 通过proId查询(订单表)
-	  *
-	  * @param proId
-	  * @return
-	  */
-	 //@AutoLog(value = "每天的产品价格表-通过proId批量查询(订单表)")
-	 @ApiOperation(value="每天的产品价格表-通过proId查询(订单表)", notes="每天的产品价格表-通过proId查询(订单表)")
-	 @GetMapping(value = "/queryByProId")
-	 public Result<PriceDateList> queryByProId(@RequestParam(name="proId",required=true) String proId,
-	@RequestParam(name="startTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date startTime,
-	@RequestParam(name="endTime",required=true) @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd") @DateTimeFormat(pattern="yyyy-MM-dd")Date endTime) {
-		 PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate,startTime));
-		 if(priceDate  == null) {
-			 return Result.error("未找到对应数据");
-		 }
-
-			 PriceDateList priceDateList = new PriceDateList();
-			 priceDateList.setDateId(priceDate.getId());
-			 DateDetail dateDetail = new DateDetail();
-		 	 DateDetail2 dateDetail2 =new DateDetail2();
-			 Integer pdMaxMan = priceDate.getPdMaxMan();
-			 Integer pdEnrollment = priceDate.getPdEnrollment();
-			 Date pdDate = priceDate.getPdDate();
-			 if (pdMaxMan == pdEnrollment) {
-				 priceDateList.setPdFull("已满");
-			 } else {
-				 priceDateList.setPdFull("可报名");
-			 }
-			 // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
-			 Date date = new Date();
-			 long timestamp = date.getTime();
-			 long realTime = pdDate.getTime();
-			 SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
-			 SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
-			 SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
-			 SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
-			 String yearM = ruler1.format(pdDate);
-			 String year = ruler2.format(pdDate);
-			 String weekOne = week.format(pdDate);
-			 String day = ruler3.format(pdDate);
-
-			 String MonD = ruler1.format(endTime);
-			 String year2 = ruler2.format(endTime);
-			 String weekOne2 = week.format(endTime);
-			 String day2 = ruler3.format(endTime);
-			 dateDetail.setDate(yearM)
-					 .setYear(year)
-					 .setDay(day)
-					 .setWeek(weekOne);
-			 dateDetail2.setDate(MonD)
-					 .setYear(year2)
-					 .setDay(day2)
-					 .setWeek(weekOne2);
-
-			 priceDateList.setProId(priceDate.getProId())
-					 .setPdEnrollment(priceDate.getPdEnrollment())
-					 .setPdMaxMan(priceDate.getPdMaxMan())
-					 .setPdPrice(priceDate.getPdPrice())
-					 .setDateDetail(dateDetail)
-					 .setDateDetail2(dateDetail2);
-
-		 return Result.OK(priceDateList);
-	 }
+    /**
+     * 通过id查询
+     *
+     * @param id
+     * @return
+     */
+    //@AutoLog(value = "每天的产品价格表-通过id查询")
+    @ApiOperation(value = "每天的产品价格表-通过id查询", notes = "每天的产品价格表-通过id查询")
+    @GetMapping(value = "/queryById")
+    public Result<PriceDate> queryById(@RequestParam(name = "id", required = true) String id) {
+        PriceDate priceDate = priceDateService.getById(id);
+        if (priceDate == null) {
+            return Result.error("未找到对应数据");
+        }
+        return Result.OK(priceDate);
+    }
 
 
     /**
-    * 导出excel
-    *
-    * @param request
-    * @param priceDate
-    */
+     * 通过proId批量查询
+     *
+     * @param proId
+     * @return
+     */
+    //@AutoLog(value = "每天的产品价格表-通过proId批量查询")
+    @ApiOperation(value = "每天的产品价格表-通过proId批量查询", notes = "每天的产品价格表-通过proId批量查询")
+    @GetMapping(value = "/queryByProIds")
+    public Result<List<PriceDateList>> queryByProIds(@RequestParam(name = "proId", required = true) String proId) {
+        List<PriceDate> priceDates = priceDateMapper.selectList(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId));
+        if (priceDates == null) {
+            return Result.error("未找到对应数据");
+        }
+        List<PriceDateList> priceDateLists = new ArrayList<PriceDateList>();
+
+        for (PriceDate priceDate : priceDates) {
+            PriceDateList priceDateList = new PriceDateList();
+            priceDateList.setDateId(priceDate.getId());
+            DateDetail dateDetail = new DateDetail();
+            Integer pdMaxMan = priceDate.getPdMaxMan();
+            Integer pdEnrollment = priceDate.getPdEnrollment();
+            Date pdDate = priceDate.getPdDate();
+            if (pdMaxMan == pdEnrollment) {
+                priceDateList.setPdFull("已满");
+            } else {
+                priceDateList.setPdFull("可报名");
+            }
+            // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
+            Date date = new Date();
+            long timestamp = date.getTime();
+            long realTime = pdDate.getTime();
+            if (timestamp > realTime) {
+                continue;
+            }
+            SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
+            SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
+            SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
+            SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
+            String yearM = ruler1.format(pdDate);
+            String year = ruler2.format(pdDate);
+            String weekOne = week.format(pdDate);
+            String day = ruler3.format(pdDate);
+            dateDetail.setDate(yearM)
+                    .setYear(year)
+                    .setDay(day)
+                    .setWeek(weekOne);
+
+            priceDateList.setProId(priceDate.getProId())
+                    .setPdEnrollment(priceDate.getPdEnrollment())
+                    .setPdMaxMan(priceDate.getPdMaxMan())
+                    .setPdPrice(priceDate.getPdPrice())
+                    .setDateDetail(dateDetail);
+            priceDateLists.add(priceDateList);
+        }
+        return Result.OK(priceDateLists);
+    }
+
+    /**
+     * 通过proId查询(订单表)
+     *
+     * @param proId
+     * @return
+     */
+    //@AutoLog(value = "每天的产品价格表-通过proId批量查询(订单表)")
+    @ApiOperation(value = "每天的产品价格表-通过proId查询(订单表)", notes = "每天的产品价格表-通过proId查询(订单表)")
+    @GetMapping(value = "/queryByProId")
+    public Result<PriceDateList> queryByProId(@RequestParam(name = "proId", required = true) String proId,
+                                              @RequestParam(name = "startTime", required = true) String startTime,
+                                              @RequestParam(name = "endTime", required = true) String endTime) throws ParseException {
+        log.info("startTime==================" + startTime);
+        log.info("endTime==================" + endTime);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = format.parse(startTime);
+        PriceDate priceDate = priceDateMapper.selectOne(new LambdaQueryWrapper<PriceDate>().eq(PriceDate::getProId, proId).eq(PriceDate::getPdDate, date1));
+        if (priceDate == null) {
+            return Result.error("未找到对应数据");
+        }
+
+        PriceDateList priceDateList = new PriceDateList();
+        priceDateList.setDateId(priceDate.getId());
+        DateDetail dateDetail = new DateDetail();
+        DateDetail2 dateDetail2 = new DateDetail2();
+        Integer pdMaxMan = priceDate.getPdMaxMan();
+        Integer pdEnrollment = priceDate.getPdEnrollment();
+        Date pdDate = priceDate.getPdDate();
+        if (pdMaxMan == pdEnrollment) {
+            priceDateList.setPdFull("已满");
+        } else {
+            priceDateList.setPdFull("可报名");
+        }
+        // 解决办法：SimpleDateFormat方法添加第二个参数java.util.Locale locale
+        Date date = new Date();
+        long timestamp = date.getTime();
+        long realTime = pdDate.getTime();
+        SimpleDateFormat week = new SimpleDateFormat("EEEE", Locale.SIMPLIFIED_CHINESE);
+        SimpleDateFormat ruler1 = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat ruler2 = new SimpleDateFormat("yyyy");
+        SimpleDateFormat ruler3 = new SimpleDateFormat("dd");
+        String yearM = ruler1.format(pdDate);
+        String year = ruler2.format(pdDate);
+        String weekOne = week.format(pdDate);
+        String day = ruler3.format(pdDate);
+
+        String MonD = ruler1.format(endTime);
+        String year2 = ruler2.format(endTime);
+        String weekOne2 = week.format(endTime);
+        String day2 = ruler3.format(endTime);
+        dateDetail.setDate(yearM)
+                .setYear(year)
+                .setDay(day)
+                .setWeek(weekOne);
+        dateDetail2.setDate(MonD)
+                .setYear(year2)
+                .setDay(day2)
+                .setWeek(weekOne2);
+
+        priceDateList.setProId(priceDate.getProId())
+                .setPdEnrollment(priceDate.getPdEnrollment())
+                .setPdMaxMan(priceDate.getPdMaxMan())
+                .setPdPrice(priceDate.getPdPrice())
+                .setDateDetail(dateDetail)
+                .setDateDetail2(dateDetail2);
+
+        return Result.OK(priceDateList);
+    }
+
+
+    /**
+     * 导出excel
+     *
+     * @param request
+     * @param priceDate
+     */
     @RequiresPermissions("core:price_date:exportXls")
     @RequestMapping(value = "/exportXls")
     public ModelAndView exportXls(HttpServletRequest request, PriceDate priceDate) {
@@ -294,12 +299,12 @@ public class PriceDateController extends JeecgController<PriceDate, IPriceDateSe
     }
 
     /**
-      * 通过excel导入数据
-    *
-    * @param request
-    * @param response
-    * @return
-    */
+     * 通过excel导入数据
+     *
+     * @param request
+     * @param response
+     * @return
+     */
     @RequiresPermissions("core:price_date:importExcel")
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.jeecg.modules.Insure.entity.Insure;
+import org.jeecg.modules.guide.entity.TouristGuide;
 import org.jeecg.modules.product.entity.JourneyPackage;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.productguide.entity.ProductGuide;
@@ -99,7 +100,7 @@ public class OrdersPaidDetails {
      */
     @Excel(name = "选择导游", width = 15)
     @ApiModelProperty(value = "选择导游")
-    private ProductGuide productGuide;
+    private TouristGuide touristGuide;
     /**
      * 用户
      */

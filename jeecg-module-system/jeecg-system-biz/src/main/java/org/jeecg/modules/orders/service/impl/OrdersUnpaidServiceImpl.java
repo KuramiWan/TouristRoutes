@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.Insure.entity.Insure;
 import org.jeecg.modules.Insure.mapper.InsureMapper;
+import org.jeecg.modules.guide.entity.TouristGuide;
+import org.jeecg.modules.guide.mapper.TouristGuideMapper;
 import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.orders.mapper.OrdersPaidMapper;
@@ -21,6 +23,7 @@ import org.jeecg.modules.productguide.mapper.ProductGuideMapper;
 import org.jeecg.modules.user.traveler.entity.Traveler;
 import org.jeecg.modules.user.traveler.mapper.TravelerDao;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
+import org.jeecg.modules.user.userinfo.mapper.WxClientUserinfoMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -52,13 +55,16 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     private JourneyPackageMapper journeyPackageMapper;
 
     @Autowired
-    private ProductGuideMapper productGuideMapper;
+    private TouristGuideMapper touristGuideMapper;
 
     @Autowired
     private InsureMapper insureMapper;
 
     @Autowired
     private TravelerDao travelerMapper;
+
+    @Autowired
+    private WxClientUserinfoMapper wxClientUserinfoMapper;
 
     @Override
     public IPage<OrdersPaidDetails> getOrderAllPaid(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
@@ -87,8 +93,10 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersPaidDetails.setProductGuide(productGuide);
+            if(i.getBatchpackageId()!=null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersPaidDetails.setTouristGuide(productGuide);
+            }
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();
@@ -119,7 +127,12 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Override
     public IPage<OrdersUnpaidDetails> getOrderUnpaid(Page<OrdersUnpaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的，status = 0的数据
-        Page<OrdersUnpaid> ordersUnpaidPage = ordersUnpaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getUserId, userinfo.getId()).eq(OrdersUnpaid::getStatus, '0'));
+        Page<OrdersUnpaid> ordersUnpaidPage = null;
+        if (userinfo != null) {
+            ordersUnpaidPage = ordersUnpaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getUserId, userinfo.getId()).eq(OrdersUnpaid::getStatus, '0'));
+        } else {
+            ordersUnpaidPage = ordersUnpaidMapper.selectPage(page, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getStatus, '0'));
+        }
         List<OrdersUnpaid> records = ordersUnpaidPage.getRecords();
         Page<OrdersUnpaidDetails> detailsPage = new Page<>();
         BeanUtils.copyProperties(ordersUnpaidPage, detailsPage);
@@ -128,7 +141,12 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             OrdersUnpaidDetails ordersUnpaidDetails = new OrdersUnpaidDetails();
             // 对于每个订单，把订单的用户信息，产品信息，套餐信息，导游信息，出行人信息，保险信息查出来
             BeanUtils.copyProperties(i, ordersUnpaidDetails);
-            ordersUnpaidDetails.setUserinfo(userinfo);
+            if (userinfo == null) {
+                WxClientUserinfo wxClientUserinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, i.getUserId()));
+                ordersUnpaidDetails.setUserinfo(wxClientUserinfo);
+            } else {
+                ordersUnpaidDetails.setUserinfo(userinfo);
+            }
 
             // 产品信息
             Product product = productMapper.selectById(i.getProductId());
@@ -139,8 +157,11 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersUnpaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersUnpaidDetails.setProductGuide(productGuide);
+            if (i.getBatchpackageId() != null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersUnpaidDetails.setTouristGuide(productGuide);
+            }
+
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();
@@ -195,8 +216,10 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersPaidDetails.setProductGuide(productGuide);
+            if (i.getBatchpackageId() != null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersPaidDetails.setTouristGuide(productGuide);
+            }
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();
@@ -251,8 +274,10 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersPaidDetails.setProductGuide(productGuide);
+            if (i.getBatchpackageId() != null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersPaidDetails.setTouristGuide(productGuide);
+            }
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();
@@ -307,8 +332,10 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersPaidDetails.setProductGuide(productGuide);
+            if (i.getBatchpackageId() != null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersPaidDetails.setTouristGuide(productGuide);
+            }
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();
@@ -363,8 +390,10 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            ProductGuide productGuide = productGuideMapper.selectById(i.getBatchpackageId());
-            ordersPaidDetails.setProductGuide(productGuide);
+            if (i.getBatchpackageId() != null) {
+                TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
+                ordersPaidDetails.setTouristGuide(productGuide);
+            }
 
             // 保险信息
             ArrayList<Insure> insureArrayList = new ArrayList<>();

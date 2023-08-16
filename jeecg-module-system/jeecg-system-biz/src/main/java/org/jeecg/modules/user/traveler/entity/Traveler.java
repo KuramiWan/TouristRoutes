@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 @SuppressWarnings("serial")
 public class Traveler extends Model<Traveler> {
     //ID
-    private Long id;
+    private String id;
     //真名
     private String realName;
     //身份证
@@ -28,11 +28,11 @@ public class Traveler extends Model<Traveler> {
     private String userId;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

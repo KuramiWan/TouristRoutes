@@ -120,7 +120,7 @@ public class WxPayController {
 
         // 根据产品id和openid生成未付款订单
         OrdersUnpaid ordersUnpaid = new OrdersUnpaid();
-        ordersInfo.setPayingMoney(ordersInfo.getPayingMoney() * 100);
+        ordersInfo.setPayingMoney(ordersInfo.getPayingMoney());
         BeanUtils.copyProperties(ordersInfo, ordersUnpaid);
         ordersUnpaid.setProductId(productId).setUserId(wxClientUserinfo.getId()).setStatus(0);
         // 插入并返回该订单的id
@@ -128,6 +128,19 @@ public class WxPayController {
         boolean save = ordersUnpaidService.save(ordersUnpaid);
         if (save) {
             orderId = ordersUnpaid.getId();
+
+            // 存一份费用明细到orders_fee表
+            OrdersFee ordersFee = new OrdersFee();
+            String ordersUnPaidId = ordersUnpaid.getId();
+
+            ordersFee.setOrdersPaidId(ordersUnPaidId);
+            ordersFee.setPackageName(JOURNEY_PACKAGE_NAME);
+            ordersFee.setPackageFeeAdult(JOURNEY_PACKAGE_PRICE_ADULT);
+            ordersFee.setPackageFeeChild(JOURNEY_PACKAGE_PRICE_CHILD);
+            ordersFee.setInsureName(INSURE_NAME);
+            ordersFee.setInsureFee(INSURE_PRICE);
+
+            ordersFeeService.save(ordersFee);
         }
 
         // 填充接口请求的数据
@@ -136,8 +149,7 @@ public class WxPayController {
         HashMap<String, String> map = new HashMap<>();
         map.put("body", "随心游产品支付"); // 产品描述
         //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
-        //map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()))); // 产品价格（单位：分）
-        map.put("total_fee", "1"); // 产品价格（单位：分）
+        map.put("total_fee", String.valueOf((int) Math.round(ordersUnpaid.getPayingMoney()) * 100)); // 产品价格（单位：分）
         map.put("out_trade_no", orderId); // 商户订单号(这里就是未支付订单表中的id字段)
         log.info("out_trade_no**************************" + orderId);
         map.put("notify_url", "https://you.xiuxiu365.cn:27102/jeecg-boot/wxpay/userpay/wxPayCallback"); // 通知地址
@@ -287,6 +299,7 @@ public class WxPayController {
                 Integer childrenCount = ordersUnpaid.getChildrenCount();
                 List<String> insureId = ordersUnpaid.getInsureId();
                 String note = ordersUnpaid.getNote();
+                String paidMoney = String.valueOf(ordersUnpaid.getPayingMoney());
 
                 // 在已支付订单表里面添加一条记录
                 OrdersPaid ordersPaid = new OrdersPaid();
@@ -302,7 +315,7 @@ public class WxPayController {
                         .setTravellerId(travelerId)
                         .setAdultCount(adultCount)
                         .setChildrenCount(childrenCount)
-                        .setPaidMoney(Double.valueOf(cashFee))
+                        .setPaidMoney(Double.valueOf(paidMoney))
                         .setPaidMethod("微信支付")
                         .setInsureId(insureId)
                         .setNote(note)
