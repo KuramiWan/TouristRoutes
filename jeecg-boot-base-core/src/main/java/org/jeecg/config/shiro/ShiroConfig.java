@@ -118,6 +118,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/servicecomments/serviceComments/list", "anon");//进入领队导游
         filterChainDefinitionMap.put("/guide/touristGuide/selectGuideProducts", "anon");//进入领队导游
         filterChainDefinitionMap.put("core/costDescription/queryByProId", "anon");//进去产品（下面都是知道出新的注释）
+        filterChainDefinitionMap.put("/productService/productService/queryByProId", "anon");//进去产品
         filterChainDefinitionMap.put("/core/schedule/queryListByProId", "anon");
         filterChainDefinitionMap.put("/core/journeyPackage/queryByProId", "anon");
         filterChainDefinitionMap.put("core/batchPackage/queryByProId", "anon");

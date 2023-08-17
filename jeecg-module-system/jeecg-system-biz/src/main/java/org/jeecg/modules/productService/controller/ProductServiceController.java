@@ -186,9 +186,9 @@ public class ProductServiceController extends JeecgController<ProductService, IP
 	 @GetMapping(value = "/queryByProId")
 	 public Result<ProductService> queryByProId(@RequestParam(name="proId",required=true) String proId) {
 		 ProductService productService = productServiceService.getOne(new LambdaQueryWrapper<ProductService>().eq(ProductService::getProId,proId));
-		 if(productService==null) {
-			 return Result.error("未找到对应数据");
-		 }
+		 //if(productService==null) {
+			// return Result.error("未找到对应数据");
+		 //}
 		 return Result.OK(productService);
 	 }
 
