@@ -79,6 +79,8 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
         }
         Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
         IPage<OfficialStrategy> pageList = officialStrategyService.page(page, queryWrapper);
+        // 随机打乱list，模拟相关推荐
+        Collections.shuffle(pageList.getRecords());
         return Result.OK(pageList);
 
     }
@@ -97,6 +99,8 @@ public class OfficialStrategyController extends JeecgController<OfficialStrategy
                                                      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Page<OfficialStrategy> page = new Page<OfficialStrategy>(pageNo, pageSize);
         IPage<OfficialStrategy> pageList = officialStrategyService.page(page);
+        // 随机打乱list，模拟相关推荐
+        Collections.shuffle(pageList.getRecords());
         return Result.OK(pageList);
 
     }
