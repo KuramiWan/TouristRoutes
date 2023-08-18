@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.orders.entity.OrdersPaid;
 import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.orders.vo.OrdersAllDetails;
 import org.jeecg.modules.orders.vo.OrdersPaidDetails;
 import org.jeecg.modules.orders.vo.OrdersUnpaidDetails;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
@@ -42,4 +43,17 @@ public interface IOrdersUnpaidService extends IService<OrdersUnpaid> {
 
     // 后台查询orders_paid订单
     public IPage<OrdersUnpaidDetails> getAllOrderPaid(Page<OrdersUnpaid> page);
+
+
+    // 后台查询所有订单信息(未付款 status = 0)
+    public IPage<OrdersAllDetails> getOrdersAllUnPaidDetails(Page<OrdersAllDetails> page);
+
+    // 后台查询所有订单信息(已付款 所有的)
+    public IPage<OrdersAllDetails> getOrdersAllPaidDetails(Page<OrdersAllDetails> page);
+
+    // 后台未付款订单根据订单id搜索
+    public IPage<OrdersAllDetails> getUnpaidOrdersBySearch(Page<OrdersAllDetails> page,String keyword);
+
+    // 后台已付款订单根据订单id搜索
+    public IPage<OrdersAllDetails> getPaidOrdersBySearch(Page<OrdersAllDetails> page,String keyword);
 }

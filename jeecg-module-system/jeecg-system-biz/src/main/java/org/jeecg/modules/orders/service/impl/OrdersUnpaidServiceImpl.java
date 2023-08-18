@@ -2,6 +2,7 @@ package org.jeecg.modules.orders.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.Insure.entity.Insure;
 import org.jeecg.modules.Insure.mapper.InsureMapper;
@@ -12,8 +13,11 @@ import org.jeecg.modules.orders.entity.OrdersUnpaid;
 import org.jeecg.modules.orders.mapper.OrdersPaidMapper;
 import org.jeecg.modules.orders.mapper.OrdersUnpaidMapper;
 import org.jeecg.modules.orders.service.IOrdersUnpaidService;
+import org.jeecg.modules.orders.vo.OrdersAllDetails;
 import org.jeecg.modules.orders.vo.OrdersPaidDetails;
 import org.jeecg.modules.orders.vo.OrdersUnpaidDetails;
+import org.jeecg.modules.ordersFee.entity.OrdersFee;
+import org.jeecg.modules.ordersFee.mapper.OrdersFeeMapper;
 import org.jeecg.modules.product.entity.JourneyPackage;
 import org.jeecg.modules.product.entity.Product;
 import org.jeecg.modules.product.mapper.JourneyPackageMapper;
@@ -31,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +71,9 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
     @Autowired
     private WxClientUserinfoMapper wxClientUserinfoMapper;
 
+    @Autowired
+    private OrdersFeeMapper ordersFeeMapper;
+
     @Override
     public IPage<OrdersPaidDetails> getOrderAllPaid(Page<OrdersPaid> page, WxClientUserinfo userinfo) {
         // 查询ordersUnpaid表，userid相同的数据
@@ -93,7 +101,7 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
             ordersPaidDetails.setJourneyPackage(journeyPackage);
 
             // 导游信息
-            if(i.getBatchpackageId()!=null) {
+            if (i.getBatchpackageId() != null) {
                 TouristGuide productGuide = touristGuideMapper.selectById(i.getBatchpackageId());
                 ordersPaidDetails.setTouristGuide(productGuide);
             }
@@ -431,5 +439,519 @@ public class OrdersUnpaidServiceImpl extends ServiceImpl<OrdersUnpaidMapper, Ord
         return null;
     }
 
+    @Override
+    public IPage<OrdersAllDetails> getOrdersAllUnPaidDetails(Page<OrdersAllDetails> page) {
+        // 获取第几页和每页几条
+        long current = page.getCurrent();
+        long size = page.getSize();
+
+        // 创建OrdersUnpaid的page对象
+        Page<OrdersUnpaid> unpaidPage = new Page<>(current, size);
+        // 查询orders_unpaid表，status = 0 的数据,并且按照创建时间倒序排列
+        Page<OrdersUnpaid> ordersUnpaidPage = ordersUnpaidMapper.selectPage(unpaidPage, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getStatus, "0").orderByDesc(OrdersUnpaid::getCreateTime));
+
+        // 得到未付款的订单初始集合
+        List<OrdersUnpaid> ordersUnpaidPageRecords = ordersUnpaidPage.getRecords();
+
+        // 创建 IPage<OrdersAllDetails> 对象，等待处理完数据填充其records部分
+        Page<OrdersAllDetails> ordersAllDetailsPage = new Page<>();
+        BeanUtils.copyProperties(ordersUnpaidPage, ordersAllDetailsPage);
+        // 创建 空集合，等待填充数据
+        ArrayList<OrdersAllDetails> ordersAllDetails = new ArrayList<>();
+
+        // 先处理未付款订单的初始集合
+        if (ordersUnpaidPageRecords != null) {
+            ordersUnpaidPageRecords.forEach(record -> {
+                // 创建orderAllDetails对象 等待赋值
+                OrdersAllDetails ordersUnpaidDetails = new OrdersAllDetails();
+
+                // 订单id
+                ordersUnpaidDetails.setId(record.getId());
+
+                // 订单创建时间
+                ordersUnpaidDetails.setCreateTime(record.getCreateTime());
+
+                // 微信支付订单号
+                ordersUnpaidDetails.setTransactionId(null); // 未付款，所以没有微信支付订单号
+
+                // 产品信息
+                String productId = record.getProductId();
+                Product product = productMapper.selectById(productId);
+                ordersUnpaidDetails.setProduct(product);
+
+                // 出发日期
+                ordersUnpaidDetails.setDateStarted(record.getDateStarted());
+
+                // 结束日期
+                ordersUnpaidDetails.setDateClosed(record.getDateClosed());
+
+
+                OrdersFee ordersFee = ordersFeeMapper.selectOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId, record.getId()));
+                // 行程套餐（在ordersFee里面查到）
+                JourneyPackage journeyPackage = new JourneyPackage();
+                journeyPackage.setJpContent(ordersFee.getPackageName());
+                journeyPackage.setJpPriceAdult(ordersFee.getPackageFeeAdult());
+                journeyPackage.setJpPriceChild(ordersFee.getPackageFeeChild());
+                // 组装journeyPackage对象完毕，加入OrdersAllDetails类的属性中
+                ordersUnpaidDetails.setJourneypackage(journeyPackage);
+
+                // 导游信息（可能没有导游，非空判断）
+                if (StringUtils.isNotEmpty(record.getBatchpackageId())) {
+                    TouristGuide touristGuide = touristGuideMapper.selectById(record.getBatchpackageId());
+                    ordersUnpaidDetails.setTouristGuide(touristGuide);
+                }
+
+                // 用户信息
+                String userId = record.getUserId();
+                WxClientUserinfo userinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, userId));
+                ordersUnpaidDetails.setUserinfo(userinfo);
+
+                // 联系人姓名
+                ordersUnpaidDetails.setContactName(record.getContactName());
+
+                // 联系人手机号
+                ordersUnpaidDetails.setContactPhone(record.getContactPhone());
+
+                // 出行人信息
+                ArrayList<Traveler> travelerArrayList = new ArrayList<>();
+                record.getTravelerId().forEach(travelerId -> {
+                    travelerArrayList.add(travelerMapper.selectById(travelerId));
+                });
+                ordersUnpaidDetails.setTravellers(travelerArrayList);
+
+                // 成人个数
+                ordersUnpaidDetails.setAdultCount(record.getAdultCount());
+
+                // 儿童个数
+                ordersUnpaidDetails.setChildrenCount(record.getChildrenCount());
+
+                // 实付金额
+                ordersUnpaidDetails.setPaidMoney(record.getPayingMoney());
+
+                // 付款方式
+                ordersUnpaidDetails.setPaidMethod("微信支付");
+
+                // 优惠卷抵扣金额
+                ordersUnpaidDetails.setCoupon(null);
+
+                // 保险信息
+                ArrayList<Insure> insures = new ArrayList<>();
+                List<String> insureName = ordersFee.getInsureName();
+                List<String> insureFee = ordersFee.getInsureFee();
+                for (int i = 0; i < insureName.size(); i++) {
+                    String name = insureName.get(i);
+                    if ("".equals(name)) {
+                        break;
+                    }
+                    String price = insureFee.get(i);
+                    insures.add(new Insure().setContent(name).setPrice(Integer.valueOf(price)));
+                }
+                ordersUnpaidDetails.setInsures(insures);
+
+                // 订单备注
+                ordersUnpaidDetails.setNote(record.getNote());
+
+                // 游侠币抵扣金额
+                ordersUnpaidDetails.setYouxiabi(null);
+
+                // 订单状态
+                ordersUnpaidDetails.setStatus(record.getStatus());
+
+                // 每次处理完之后，将orderAllDetails对象加入ordersAllDetails集合中
+                ordersAllDetails.add(ordersUnpaidDetails);
+            });
+        }
+        // 设置page对象的records属性
+        ordersAllDetailsPage.setRecords(ordersAllDetails);
+
+        return ordersAllDetailsPage;
+    }
+
+    @Override
+    public IPage<OrdersAllDetails> getOrdersAllPaidDetails(Page<OrdersAllDetails> page) {
+        // 获取第几页和每页几条
+        long current = page.getCurrent();
+        long size = page.getSize();
+
+        // 创建OrdersPaid的page对象
+        Page<OrdersPaid> paidPage = new Page<>(current, size);
+        // 查询orders_paid表的数据,并且按照创建时间倒序排列
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(paidPage, new LambdaQueryWrapper<OrdersPaid>().orderByDesc(OrdersPaid::getCreateTime));
+        // 得到已付款的订单初始集合
+        List<OrdersPaid> ordersPaidPageRecords = ordersPaidPage.getRecords();
+
+
+        // 创建 IPage<OrdersAllDetails> 对象，等待处理完数据填充其records部分
+        Page<OrdersAllDetails> ordersAllDetailsPage = new Page<>();
+        BeanUtils.copyProperties(ordersPaidPage, ordersAllDetailsPage);
+        // 创建 空集合，等待填充数据
+        ArrayList<OrdersAllDetails> ordersAllDetails = new ArrayList<>();
+
+        // 再处理已付款订单的初始集合
+        if (ordersPaidPageRecords != null) {
+            ordersPaidPageRecords.forEach(record -> {
+                // 创建orderAllDetails对象 等待赋值
+                OrdersAllDetails ordersPaidDetails = new OrdersAllDetails();
+
+                // 订单id
+                ordersPaidDetails.setId(record.getId());
+
+                // 订单创建时间
+                ordersPaidDetails.setCreateTime(record.getCreateTime());
+
+                // 微信支付订单号
+                ordersPaidDetails.setTransactionId(record.getTransactionId()); // 未付款，所以没有微信支付订单号
+
+                // 产品信息
+                String productId = record.getProductId();
+                Product product = productMapper.selectById(productId);
+                ordersPaidDetails.setProduct(product);
+
+                // 出发日期
+                ordersPaidDetails.setDateStarted(record.getDateStarted());
+
+                // 结束日期
+                ordersPaidDetails.setDateClosed(record.getDateClosed());
+
+                OrdersFee ordersFee = ordersFeeMapper.selectOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId, record.getId()));
+                // 行程套餐（在ordersFee里面查到）
+                JourneyPackage journeyPackage = new JourneyPackage();
+                journeyPackage.setJpContent(ordersFee.getPackageName());
+                journeyPackage.setJpPriceAdult(ordersFee.getPackageFeeAdult());
+                journeyPackage.setJpPriceChild(ordersFee.getPackageFeeChild());
+                // 组装journeyPackage对象完毕，加入OrdersAllDetails类的属性中
+                ordersPaidDetails.setJourneypackage(journeyPackage);
+
+                // 导游信息（可能没有导游，非空判断）
+                if (StringUtils.isNotEmpty(record.getBatchpackageId())) {
+                    TouristGuide touristGuide = touristGuideMapper.selectById(record.getBatchpackageId());
+                    ordersPaidDetails.setTouristGuide(touristGuide);
+                }
+
+                // 用户信息
+                String userId = record.getUserId();
+                WxClientUserinfo userinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, userId));
+                ordersPaidDetails.setUserinfo(userinfo);
+
+                // 联系人姓名
+                ordersPaidDetails.setContactName(record.getContactName());
+
+                // 联系人手机号
+                ordersPaidDetails.setContactPhone(record.getContactPhone());
+
+                // 出行人信息
+                ArrayList<Traveler> travelerArrayList = new ArrayList<>();
+                record.getTravellerId().forEach(travelerId -> {
+                    travelerArrayList.add(travelerMapper.selectById(travelerId));
+                });
+                ordersPaidDetails.setTravellers(travelerArrayList);
+
+                // 成人个数
+                ordersPaidDetails.setAdultCount(record.getAdultCount());
+
+                // 儿童个数
+                ordersPaidDetails.setChildrenCount(record.getChildrenCount());
+
+                // 实付金额
+                ordersPaidDetails.setPaidMoney(record.getPaidMoney());
+
+                // 付款方式
+                ordersPaidDetails.setPaidMethod(record.getPaidMethod());
+
+                // 优惠卷抵扣金额
+                ordersPaidDetails.setCoupon(null);
+
+                // 保险信息
+                ArrayList<Insure> insures = new ArrayList<>();
+                List<String> insureName = ordersFee.getInsureName();
+                List<String> insureFee = ordersFee.getInsureFee();
+                for (int i = 0; i < insureName.size(); i++) {
+                    String name = insureName.get(i);
+                    if ("".equals(name)) {
+                        break;
+                    }
+                    String price = insureFee.get(i);
+                    insures.add(new Insure().setContent(name).setPrice(Integer.valueOf(price)));
+                }
+                ordersPaidDetails.setInsures(insures);
+
+                // 订单备注
+                ordersPaidDetails.setNote(record.getNote());
+
+                // 游侠币抵扣金额
+                ordersPaidDetails.setYouxiabi(null);
+
+                // 订单状态
+                ordersPaidDetails.setStatus(record.getStatus());
+
+                // 每次处理完之后，将orderAllDetails对象加入ordersAllDetails集合中
+                ordersAllDetails.add(ordersPaidDetails);
+            });
+        }
+
+        // 设置page对象的records属性
+        ordersAllDetailsPage.setRecords(ordersAllDetails);
+
+        return ordersAllDetailsPage;
+    }
+
+    @Override
+    public IPage<OrdersAllDetails> getUnpaidOrdersBySearch(Page<OrdersAllDetails> page, String keyword) {
+        // 获取第几页和每页几条
+        long current = page.getCurrent();
+        long size = page.getSize();
+
+        // 创建OrdersUnpaid的page对象
+        Page<OrdersUnpaid> unpaidPage = new Page<>(current, size);
+        // 查询orders_unpaid表，status = 0 的数据,并且按照创建时间倒序排列
+        Page<OrdersUnpaid> ordersUnpaidPage = ordersUnpaidMapper.selectPage(unpaidPage, new LambdaQueryWrapper<OrdersUnpaid>().eq(OrdersUnpaid::getStatus, "0")
+                .orderByDesc(OrdersUnpaid::getCreateTime).eq(OrdersUnpaid::getId, keyword)
+        );
+
+        // 得到未付款的订单初始集合
+        List<OrdersUnpaid> ordersUnpaidPageRecords = ordersUnpaidPage.getRecords();
+
+        // 创建 IPage<OrdersAllDetails> 对象，等待处理完数据填充其records部分
+        Page<OrdersAllDetails> ordersAllDetailsPage = new Page<>();
+        BeanUtils.copyProperties(ordersUnpaidPage, ordersAllDetailsPage);
+        // 创建 空集合，等待填充数据
+        ArrayList<OrdersAllDetails> ordersAllDetails = new ArrayList<>();
+
+        // 先处理未付款订单的初始集合
+        if (ordersUnpaidPageRecords != null) {
+            ordersUnpaidPageRecords.forEach(record -> {
+                // 创建orderAllDetails对象 等待赋值
+                OrdersAllDetails ordersUnpaidDetails = new OrdersAllDetails();
+
+                // 订单id
+                ordersUnpaidDetails.setId(record.getId());
+
+                // 订单创建时间
+                ordersUnpaidDetails.setCreateTime(record.getCreateTime());
+
+                // 微信支付订单号
+                ordersUnpaidDetails.setTransactionId(null); // 未付款，所以没有微信支付订单号
+
+                // 产品信息
+                String productId = record.getProductId();
+                Product product = productMapper.selectById(productId);
+                ordersUnpaidDetails.setProduct(product);
+
+                // 出发日期
+                ordersUnpaidDetails.setDateStarted(record.getDateStarted());
+
+                // 结束日期
+                ordersUnpaidDetails.setDateClosed(record.getDateClosed());
+
+
+                OrdersFee ordersFee = ordersFeeMapper.selectOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId, record.getId()));
+                // 行程套餐（在ordersFee里面查到）
+                JourneyPackage journeyPackage = new JourneyPackage();
+                journeyPackage.setJpContent(ordersFee.getPackageName());
+                journeyPackage.setJpPriceAdult(ordersFee.getPackageFeeAdult());
+                journeyPackage.setJpPriceChild(ordersFee.getPackageFeeChild());
+                // 组装journeyPackage对象完毕，加入OrdersAllDetails类的属性中
+                ordersUnpaidDetails.setJourneypackage(journeyPackage);
+
+                // 导游信息（可能没有导游，非空判断）
+                if (StringUtils.isNotEmpty(record.getBatchpackageId())) {
+                    TouristGuide touristGuide = touristGuideMapper.selectById(record.getBatchpackageId());
+                    ordersUnpaidDetails.setTouristGuide(touristGuide);
+                }
+
+                // 用户信息
+                String userId = record.getUserId();
+                WxClientUserinfo userinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, userId));
+                ordersUnpaidDetails.setUserinfo(userinfo);
+
+                // 联系人姓名
+                ordersUnpaidDetails.setContactName(record.getContactName());
+
+                // 联系人手机号
+                ordersUnpaidDetails.setContactPhone(record.getContactPhone());
+
+                // 出行人信息
+                ArrayList<Traveler> travelerArrayList = new ArrayList<>();
+                record.getTravelerId().forEach(travelerId -> {
+                    travelerArrayList.add(travelerMapper.selectById(travelerId));
+                });
+                ordersUnpaidDetails.setTravellers(travelerArrayList);
+
+                // 成人个数
+                ordersUnpaidDetails.setAdultCount(record.getAdultCount());
+
+                // 儿童个数
+                ordersUnpaidDetails.setChildrenCount(record.getChildrenCount());
+
+                // 实付金额
+                ordersUnpaidDetails.setPaidMoney(record.getPayingMoney());
+
+                // 付款方式
+                ordersUnpaidDetails.setPaidMethod("微信支付");
+
+                // 优惠卷抵扣金额
+                ordersUnpaidDetails.setCoupon(null);
+
+                // 保险信息
+                ArrayList<Insure> insures = new ArrayList<>();
+                List<String> insureName = ordersFee.getInsureName();
+                List<String> insureFee = ordersFee.getInsureFee();
+                for (int i = 0; i < insureName.size(); i++) {
+                    String name = insureName.get(i);
+                    if ("".equals(name)) {
+                        break;
+                    }
+                    String price = insureFee.get(i);
+                    insures.add(new Insure().setContent(name).setPrice(Integer.valueOf(price)));
+                }
+                ordersUnpaidDetails.setInsures(insures);
+
+                // 订单备注
+                ordersUnpaidDetails.setNote(record.getNote());
+
+                // 游侠币抵扣金额
+                ordersUnpaidDetails.setYouxiabi(null);
+
+                // 订单状态
+                ordersUnpaidDetails.setStatus(record.getStatus());
+
+                // 每次处理完之后，将orderAllDetails对象加入ordersAllDetails集合中
+                ordersAllDetails.add(ordersUnpaidDetails);
+            });
+        }
+        // 设置page对象的records属性
+        ordersAllDetailsPage.setRecords(ordersAllDetails);
+
+        return ordersAllDetailsPage;
+    }
+
+    @Override
+    public IPage<OrdersAllDetails> getPaidOrdersBySearch(Page<OrdersAllDetails> page, String keyword) {
+        // 获取第几页和每页几条
+        long current = page.getCurrent();
+        long size = page.getSize();
+
+        // 创建OrdersPaid的page对象
+        Page<OrdersPaid> paidPage = new Page<>(current, size);
+        // 查询orders_paid表的数据,并且按照创建时间倒序排列
+        Page<OrdersPaid> ordersPaidPage = ordersPaidMapper.selectPage(paidPage, new LambdaQueryWrapper<OrdersPaid>()
+                .orderByDesc(OrdersPaid::getCreateTime).eq(OrdersPaid::getId, keyword));
+        // 得到已付款的订单初始集合
+        List<OrdersPaid> ordersPaidPageRecords = ordersPaidPage.getRecords();
+
+
+        // 创建 IPage<OrdersAllDetails> 对象，等待处理完数据填充其records部分
+        Page<OrdersAllDetails> ordersAllDetailsPage = new Page<>();
+        BeanUtils.copyProperties(ordersPaidPage, ordersAllDetailsPage);
+        // 创建 空集合，等待填充数据
+        ArrayList<OrdersAllDetails> ordersAllDetails = new ArrayList<>();
+
+        // 再处理已付款订单的初始集合
+        if (ordersPaidPageRecords != null) {
+            ordersPaidPageRecords.forEach(record -> {
+                // 创建orderAllDetails对象 等待赋值
+                OrdersAllDetails ordersPaidDetails = new OrdersAllDetails();
+
+                // 订单id
+                ordersPaidDetails.setId(record.getId());
+
+                // 订单创建时间
+                ordersPaidDetails.setCreateTime(record.getCreateTime());
+
+                // 微信支付订单号
+                ordersPaidDetails.setTransactionId(record.getTransactionId()); // 未付款，所以没有微信支付订单号
+
+                // 产品信息
+                String productId = record.getProductId();
+                Product product = productMapper.selectById(productId);
+                ordersPaidDetails.setProduct(product);
+
+                // 出发日期
+                ordersPaidDetails.setDateStarted(record.getDateStarted());
+
+                // 结束日期
+                ordersPaidDetails.setDateClosed(record.getDateClosed());
+
+                OrdersFee ordersFee = ordersFeeMapper.selectOne(new LambdaQueryWrapper<OrdersFee>().eq(OrdersFee::getOrdersPaidId, record.getId()));
+                // 行程套餐（在ordersFee里面查到）
+                JourneyPackage journeyPackage = new JourneyPackage();
+                journeyPackage.setJpContent(ordersFee.getPackageName());
+                journeyPackage.setJpPriceAdult(ordersFee.getPackageFeeAdult());
+                journeyPackage.setJpPriceChild(ordersFee.getPackageFeeChild());
+                // 组装journeyPackage对象完毕，加入OrdersAllDetails类的属性中
+                ordersPaidDetails.setJourneypackage(journeyPackage);
+
+                // 导游信息（可能没有导游，非空判断）
+                if (StringUtils.isNotEmpty(record.getBatchpackageId())) {
+                    TouristGuide touristGuide = touristGuideMapper.selectById(record.getBatchpackageId());
+                    ordersPaidDetails.setTouristGuide(touristGuide);
+                }
+
+                // 用户信息
+                String userId = record.getUserId();
+                WxClientUserinfo userinfo = wxClientUserinfoMapper.selectOne(new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId, userId));
+                ordersPaidDetails.setUserinfo(userinfo);
+
+                // 联系人姓名
+                ordersPaidDetails.setContactName(record.getContactName());
+
+                // 联系人手机号
+                ordersPaidDetails.setContactPhone(record.getContactPhone());
+
+                // 出行人信息
+                ArrayList<Traveler> travelerArrayList = new ArrayList<>();
+                record.getTravellerId().forEach(travelerId -> {
+                    travelerArrayList.add(travelerMapper.selectById(travelerId));
+                });
+                ordersPaidDetails.setTravellers(travelerArrayList);
+
+                // 成人个数
+                ordersPaidDetails.setAdultCount(record.getAdultCount());
+
+                // 儿童个数
+                ordersPaidDetails.setChildrenCount(record.getChildrenCount());
+
+                // 实付金额
+                ordersPaidDetails.setPaidMoney(record.getPaidMoney());
+
+                // 付款方式
+                ordersPaidDetails.setPaidMethod(record.getPaidMethod());
+
+                // 优惠卷抵扣金额
+                ordersPaidDetails.setCoupon(null);
+
+                // 保险信息
+                ArrayList<Insure> insures = new ArrayList<>();
+                List<String> insureName = ordersFee.getInsureName();
+                List<String> insureFee = ordersFee.getInsureFee();
+                for (int i = 0; i < insureName.size(); i++) {
+                    String name = insureName.get(i);
+                    if ("".equals(name)) {
+                        break;
+                    }
+                    String price = insureFee.get(i);
+                    insures.add(new Insure().setContent(name).setPrice(Integer.valueOf(price)));
+                }
+                ordersPaidDetails.setInsures(insures);
+
+                // 订单备注
+                ordersPaidDetails.setNote(record.getNote());
+
+                // 游侠币抵扣金额
+                ordersPaidDetails.setYouxiabi(null);
+
+                // 订单状态
+                ordersPaidDetails.setStatus(record.getStatus());
+
+                // 每次处理完之后，将orderAllDetails对象加入ordersAllDetails集合中
+                ordersAllDetails.add(ordersPaidDetails);
+            });
+        }
+
+        // 设置page对象的records属性
+        ordersAllDetailsPage.setRecords(ordersAllDetails);
+
+        return ordersAllDetailsPage;
+    }
 
 }

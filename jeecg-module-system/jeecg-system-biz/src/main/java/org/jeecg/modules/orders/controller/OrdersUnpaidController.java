@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.orders.vo.OrdersAllDetails;
 import org.jeecg.modules.orders.vo.OrdersPaidDetails;
 import org.jeecg.modules.orders.vo.OrdersUnpaidDetails;
 import org.jeecg.modules.user.userinfo.entity.WxClientUserinfo;
@@ -270,6 +271,113 @@ public class OrdersUnpaidController extends JeecgController<OrdersUnpaid, IOrder
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, OrdersUnpaid.class);
+    }
+
+
+    /**
+     * 后台查询所有订单信息(未付款 status = 0 )
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    //@AutoLog(value = "未付款的订单表-分页列表查询")
+    @ApiOperation(value = "后台查询所有订单信息(未付款 status = 0 和已付款 所有的)", notes = "后台查询所有订单信息(未付款 status = 0 和已付款 所有的)")
+    @GetMapping(value = "/listAllUnPaidDetails")
+    public Result<IPage<OrdersAllDetails>> listAllUnPaidDetails(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        Page<OrdersAllDetails> page = new Page<OrdersAllDetails>(pageNo, pageSize);
+        IPage<OrdersAllDetails> unpaidDetails = ordersUnpaidService.getOrdersAllUnPaidDetails(page);
+        return Result.OK(unpaidDetails);
+    }
+
+
+    /**
+     * 后台查询所有订单信息(已付款 所有的)
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    //@AutoLog(value = "未付款的订单表-分页列表查询")
+    @ApiOperation(value = "后台查询所有订单信息(未付款 status = 0 和已付款 所有的)", notes = "后台查询所有订单信息(未付款 status = 0 和已付款 所有的)")
+    @GetMapping(value = "/listAllPaidDetails")
+    public Result<IPage<OrdersAllDetails>> listAllPaidDetails(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                              @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        Page<OrdersAllDetails> page = new Page<OrdersAllDetails>(pageNo, pageSize);
+        IPage<OrdersAllDetails> unpaidDetails = ordersUnpaidService.getOrdersAllPaidDetails(page);
+        return Result.OK(unpaidDetails);
+    }
+
+
+    /**
+     * 后台审核通过待确认订单
+     *
+     * @param id
+     * @return
+     */
+    //@AutoLog(value = "未付款的订单表-分页列表查询")
+    @ApiOperation(value = "后台审核通过待确认订单", notes = "后台审核通过待确认订单")
+    @GetMapping(value = "/toConfirmOrders")
+    public Result<String> toConfirmOrders(@RequestParam String id) {
+        OrdersPaid ordersPaid = ordersPaidService.getById(id);
+        ordersPaid.setStatus(2);
+        boolean b = ordersPaidService.updateById(ordersPaid);
+        if (b) {
+            return Result.OK("审核订单成功~");
+        }
+
+        return Result.error("审核订单失败~");
+    }
+
+    /**
+     * 后台取消审核通过订单
+     *
+     * @param id
+     * @return
+     */
+    //@AutoLog(value = "未付款的订单表-分页列表查询")
+    @ApiOperation(value = "后台取消审核通过订单", notes = "后台取消审核通过订单")
+    @GetMapping(value = "/toCancelConfirmed")
+    public Result<String> toCancelConfirmed(@RequestParam String id) {
+        OrdersPaid ordersPaid = ordersPaidService.getById(id);
+        ordersPaid.setStatus(1);
+        boolean b = ordersPaidService.updateById(ordersPaid);
+        if (b) {
+            return Result.OK("取消审核成功~");
+        }
+
+        return Result.error("取消审核失败~");
+    }
+
+    /**
+     * 后台未付款订单根据订单id搜索
+     *
+     * @param keyword
+     * @return
+     */
+    @ApiOperation(value = "后台未付款订单根据订单id搜索", notes = "后台未付款订单根据订单id搜索")
+    @GetMapping(value = "/searchByUnpaidOrdersId")
+    public Result<IPage<OrdersAllDetails>> searchByUnpaidOrdersId(@RequestParam String keyword, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        Page<OrdersAllDetails> page = new Page<OrdersAllDetails>(pageNo, pageSize);
+        return Result.ok(ordersUnpaidService.getUnpaidOrdersBySearch(page, keyword));
+    }
+
+    /**
+     * 后台已付款订单根据订单id搜索
+     *
+     * @param keyword
+     * @return
+     */
+    @ApiOperation(value = "后台已付款订单根据订单id搜索", notes = "后台已付款订单根据订单id搜索")
+    @GetMapping(value = "/searchByPaidOrdersId")
+    public Result<IPage<OrdersAllDetails>> searchByPaidOrdersId(@RequestParam String keyword, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        Page<OrdersAllDetails> page = new Page<OrdersAllDetails>(pageNo, pageSize);
+        return Result.ok(ordersUnpaidService.getPaidOrdersBySearch(page, keyword));
     }
 
 }
