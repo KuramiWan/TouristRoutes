@@ -237,12 +237,25 @@ public class WxClientUserinfoController extends JeecgController<WxClientUserinfo
      * @param userId
      * @return
      */
+//    @AutoLog(value = "微信客户端用户信息表-更新")
+//    @ApiOperation(value = "微信客户端用户信息表-更新", notes = "微信客户端用户信息表-更新")
+//    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.POST})
+//    public Result<WxClientUserinfo> update(@RequestParam(name="userId",required=true) String userId,
+//                               @RequestParam(name="signature",required=true) String signature) {
+//        WxClientUserinfo user = iWxClientUserinfoService.getById(userId);
+//        user.setSignature(signature);
+//        iWxClientUserinfoService.update(user,new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId,userId));
+//
+//        return Result.OK(user);
+//    }
     @AutoLog(value = "微信客户端用户信息表-更新")
     @ApiOperation(value = "微信客户端用户信息表-更新", notes = "微信客户端用户信息表-更新")
-    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.POST})
+    @RequestMapping(value = "/update", method = {RequestMethod.PUT, RequestMethod.POST})
     public Result<WxClientUserinfo> update(@RequestParam(name="userId",required=true) String userId,
-                               @RequestParam(name="signature",required=true) String signature) {
+                                           @RequestParam(name = "username",required=true) String username,
+                                           @RequestParam(name="signature",required=true) String signature) {
         WxClientUserinfo user = iWxClientUserinfoService.getById(userId);
+        user.setUsername(username);
         user.setSignature(signature);
         iWxClientUserinfoService.update(user,new LambdaQueryWrapper<WxClientUserinfo>().eq(WxClientUserinfo::getId,userId));
 

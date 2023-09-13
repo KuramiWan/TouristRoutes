@@ -107,18 +107,18 @@ public class InsureController extends JeecgController<Insure, IInsureService> {
 	}
 	
 	/**
-	 *   通过id删除
-	 *
-	 * @param id
-	 * @return
-	 */
-	@AutoLog(value = "保险-通过id删除")
-	@ApiOperation(value="保险-通过id删除", notes="保险-通过id删除")
-	@DeleteMapping(value = "/delete")
-	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		insureService.removeById(id);
-		return Result.OK("删除成功!");
-	}
+	  *   通过id删除
+	  *
+	  * @param id
+	  * @return
+	  */
+	 @AutoLog(value = "保险-通过id删除")
+	 @ApiOperation(value="保险-通过id删除", notes="保险-通过id删除")
+	 @DeleteMapping(value = "/delete")
+	 public Result<String> delete(@RequestParam(name="id",required=true) String id) {
+		 insureService.removeById(id);
+		 return Result.OK("删除成功!");
+	 }
 	
 	/**
 	 *  批量删除

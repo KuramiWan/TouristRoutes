@@ -7,11 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jeecg-boot-base-core" />
-        <module name="jeecg-system-biz" />
-        <module name="jeecg-system-start" />
-        <module name="jeecg-system-cloud-api" />
         <module name="jeecg-system-local-api" />
+        <module name="jeecg-boot-base-core" />
+        <module name="jeecg-system-start" />
+        <module name="jeecg-system-biz" />
+        <module name="jeecg-system-cloud-api" />
         <module name="jeecg-module-demo" />
       </profile>
     </annotationProcessing>
@@ -20,7 +20,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="TouristRoutes" options="" />
       <module name="jeecg-boot-base-core" options="-parameters" />
-      <module name="jeecg-boot-parent" options="-parameters" />
+      <module name="jeecg-boot-parent" options="" />
       <module name="jeecg-module-demo" options="-parameters" />
       <module name="jeecg-module-system" options="" />
       <module name="jeecg-system-api" options="" />
