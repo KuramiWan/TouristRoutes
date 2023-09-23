@@ -127,5 +127,10 @@ public class ProductVo {
     private List<PriceDate> price_date;
     private List<BatchPackage> batch_package;
     private List<JourneyPackage> journey;
-
+    /**
+     * 旅行社id
+     */
+    @Excel(name = "旅行社id", width = 15)
+    @ApiModelProperty(value = "旅行社id")
+    private java.lang.String TravelId;
 }

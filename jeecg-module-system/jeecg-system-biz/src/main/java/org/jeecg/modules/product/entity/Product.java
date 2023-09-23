@@ -147,4 +147,10 @@ public class Product implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新日期")
     private java.util.Date updateTime;
+    /**
+     * 旅行社id
+     */
+    @Excel(name = "旅行社id", width = 15)
+    @ApiModelProperty(value = "旅行社id")
+    private java.lang.String TravelId;
 }

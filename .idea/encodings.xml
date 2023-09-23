@@ -7,12 +7,32 @@
     <file url="file://$PROJECT_DIR$/jeecg-module-demo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-api/jeecg-system-cloud-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-api/jeecg-system-local-api/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-biz/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-biz/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/jeecg-module-system/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-cloud-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-cloud-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-cloud-nacos/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-demo-cloud-start/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-demo-cloud-start/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-system-cloud-start/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-system-cloud-start/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-monitor/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-monitor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-sentinel/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-sentinel/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-more/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-rabbitmq/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-account/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-account/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-order/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-product/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-seata/jeecg-cloud-test-seata-product/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-shardingsphere/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-test/jeecg-cloud-test-shardingsphere/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-xxljob/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jeecg-server-cloud/jeecg-visual/jeecg-cloud-xxljob/src/main/resources" charset="UTF-8" />
   </component>
 </project>
