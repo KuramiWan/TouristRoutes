@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c2f5478-26ca-4047-8d4c-bf5e323ee150" name="变更" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-boot-base-core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-boot-base-core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-boot-base-core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-boot-base-core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-module-demo/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-demo/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-module-demo/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-demo/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +52,10 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -93,7 +93,8 @@
       <updated>1695459166543</updated>
       <workItem from="1695459170428" duration="315000" />
       <workItem from="1695459500329" duration="113000" />
-      <workItem from="1695540492346" duration="1580000" />
+      <workItem from="1695540492346" duration="2266000" />
+      <workItem from="1695565172731" duration="939000" />
     </task>
     <servers />
   </component>
