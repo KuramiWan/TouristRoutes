@@ -14,7 +14,6 @@
         <module name="jeecg-cloud-test-shardingsphere" />
         <module name="jeecg-cloud-test-seata-account" />
         <module name="jeecg-cloud-monitor" />
-        <module name="jeecg-system-local-api" />
         <module name="jeecg-boot-base-core" />
         <module name="jeecg-cloud-test-rabbitmq" />
         <module name="jeecg-cloud-sentinel" />
@@ -22,8 +21,6 @@
         <module name="jeecg-system-start" />
         <module name="jeecg-cloud-xxljob" />
         <module name="jeecg-system-local-api" />
-        <module name="jeecg-system-biz" />
-        <module name="jeecg-system-cloud-api" />
         <module name="jeecg-module-demo" />
         <module name="jeecg-cloud-test-seata-order" />
         <module name="jeecg-demo-cloud-start" />
@@ -36,7 +33,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="TouristRoutes" options="" />
       <module name="jeecg-boot-base-core" options="-parameters" />
-      <module name="jeecg-boot-parent" options="-parameters" />
+      <module name="jeecg-boot-parent" options="" />
       <module name="jeecg-cloud-gateway" options="-parameters" />
       <module name="jeecg-cloud-monitor" options="-parameters" />
       <module name="jeecg-cloud-nacos" options="-parameters" />
@@ -49,10 +46,9 @@
       <module name="jeecg-cloud-test-shardingsphere" options="-parameters" />
       <module name="jeecg-cloud-xxljob" options="-parameters" />
       <module name="jeecg-demo-cloud-start" options="-parameters" />
-      <module name="jeecg-boot-parent" options="" />
       <module name="jeecg-module-demo" options="-parameters" />
       <module name="jeecg-module-system" options="" />
-      <module name="jeecg-system-api" options="" />
+      <module name="jeecg-system-api" options="-parameters" />
       <module name="jeecg-system-biz" options="-parameters" />
       <module name="jeecg-system-cloud-api" options="-parameters" />
       <module name="jeecg-system-cloud-start" options="-parameters" />
