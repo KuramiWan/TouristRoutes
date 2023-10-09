@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c2f5478-26ca-4047-8d4c-bf5e323ee150" name="变更" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/src/main/resources/application-prod.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/jeecg-module-system/jeecg-system-start/target/classes/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +18,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="JpbToolWindowState">
     <option name="myId2FirstActivated">
@@ -40,7 +48,7 @@
     </option>
     <option name="enabledProfiles">
       <list>
-        <option value="prod" />
+        <option value="dev" />
       </list>
     </option>
   </component>
@@ -94,7 +102,11 @@
       <workItem from="1695459170428" duration="315000" />
       <workItem from="1695459500329" duration="113000" />
       <workItem from="1695540492346" duration="2266000" />
-      <workItem from="1695565172731" duration="939000" />
+      <workItem from="1695565172731" duration="1636000" />
+      <workItem from="1695635494210" duration="2167000" />
+      <workItem from="1695716753726" duration="3625000" />
+      <workItem from="1695867685941" duration="3506000" />
+      <workItem from="1696553557501" duration="693000" />
     </task>
     <servers />
   </component>

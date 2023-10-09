@@ -47,8 +47,8 @@
       <module name="jeecg-cloud-xxljob" options="-parameters" />
       <module name="jeecg-demo-cloud-start" options="-parameters" />
       <module name="jeecg-module-demo" options="-parameters" />
-      <module name="jeecg-module-system" options="" />
-      <module name="jeecg-system-api" options="-parameters" />
+      <module name="jeecg-module-system" options="-parameters" />
+      <module name="jeecg-system-api" options="" />
       <module name="jeecg-system-biz" options="-parameters" />
       <module name="jeecg-system-cloud-api" options="-parameters" />
       <module name="jeecg-system-cloud-start" options="-parameters" />
